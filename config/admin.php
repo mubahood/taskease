@@ -176,7 +176,7 @@ return [
         'connection' => '',
 
         // User tables and model.
-        'users_table' => 'users',
+        'users_table' => 'admin_users',
         'users_model' => Encore\Admin\Auth\Database\Administrator::class,
 
         // Role table and model.
@@ -403,13 +403,15 @@ return [
     |
     */
     'extensions' => [
-        
+
+        'grid-lightbox' => [
+            'enable' => true,
+        ],
         'chartjs' => [
-        
+
             // Set to `false` if you want to disable this extension
             'enable' => true,
-    ],
-
+        ],
 
         'quill' => [
             'enable' => true,

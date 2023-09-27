@@ -7,7 +7,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany as RelationsBelongsToMany;
 use Laravel\Sanctum\HasApiTokens;
-use Tymon\JWTAuth\Contracts\JWTSubject ;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -15,9 +15,11 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements JWTSubject
 {
-    use HasFactory; 
+    use HasFactory;
     use Notifiable;
- 
+
+    protected $table = "admin_users";
+
     public function getJWTIdentifier()
     {
         return $this->getKey();
@@ -32,10 +34,9 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->belongsTo(Campus::class, 'campus_id');
     }
- 
+
     public function programs()
     {
         return $this->hasMany(UserHasProgram::class, 'user_id');
     }
- 
 }

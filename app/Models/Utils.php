@@ -478,50 +478,33 @@ administrator_id
     }
 
 
-
-
-
-
-    public static function checkEventRegustration()
-    {
-        return true;
-        $u = Admin::user();
-        if ($u == null) {
-            return;
-        }
-
-        if (!$u->complete_profile) {
-            return;
-        }
-
-        $ev = EventBooking::where(['administrator_id' => $u->id, 'event_id' => 1])->first();
-        if ($ev != null) {
-            return;
-        }
-
-
-        $btn = '<a class="btn btn-lg btn-primary" href="' . admin_url('event-bookings/create?event=1') . '" >BOOK A SEAT</a>';
-        admin_info(
-            'NOTICE: IUIU-ALUMNI GRAND DINNER - 2023',
-            "Dear {$u->name}, there is an upcoming IUIUAA Grand dinner that will take place on 10th FEB, 2023.
-        Please this form to apply for your ticket now! {$btn}"
-        );
-    }
     public static function system_boot()
     {
-        $u = Admin::user();
 
-        if ($u != null) {
-            $r = AdminRoleUser::where([
-                'user_id' => $u->id
-            ])->first();
-            if ($r == null) {
-                $role = new AdminRoleUser();
-                $role->user_id = $u->id;
-                $role->role_id = 2;
-                $role->save();
+
+        //Companies with no financial years
+        foreach (Company::where([
+            'dp_year' => NULL
+        ])->get() as $key => $company) {
+            $year = FinancialYear::where([
+                'company_id' => $company->id
+            ])->orderBy('id', 'desc')->first();
+
+            if ($year == null) {
+                $year = new FinancialYear();
+                $year->company_id = $company->id;
+                $year->name = date('Y');
+                $year->start_date = Carbon::now();
+                $year->end_date = Carbon::now()->addYears(1);
+                $year->is_active = 'Yes';
+                $year->save();
             }
+
+            $company->dp_year = $company->id;
+            $company->active_year = $company->id;
+            $company->save();
         }
+        $u = Admin::user();
     }
 
     public static function start_session()

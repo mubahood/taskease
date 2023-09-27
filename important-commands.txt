@@ -1,9 +1,8 @@
 php artisan migrate
 
-php artisan make:migration create_courses_table 
+php artisan make:migration create_courses_table
 
  
-php artisan admin:make SaccoController --model=App\Models\Sacco
+php artisan admin:make AdminRoleController --model=App\\Models\\AdminRole
  
-php artisan make:model Sacco -m
-
+php artisan make:model AdminRole -m
