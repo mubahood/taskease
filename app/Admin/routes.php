@@ -17,6 +17,11 @@ Route::group([
     $router->resource('clients', ClientController::class);
     $router->resource('employees', EmployeesController::class);
     $router->resource('admin-roles', AdminRoleController::class);
+    $router->resource('projects', ProjectController::class);
+    $router->resource('project-sections', ProjectSectionController::class);
+    $router->resource('weekly-tasks', TaskController::class);
+    $router->resource('montly-tasks', TaskController::class);
+    $router->resource('tasks', TaskController::class);
 
     $router->resource('gens', GenController::class);
 });

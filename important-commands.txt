@@ -3,6 +3,6 @@ php artisan migrate
 php artisan make:migration create_courses_table
 
  
-php artisan admin:make AdminRoleController --model=App\\Models\\AdminRole
+php artisan admin:make TaskController --model=App\\Models\\Task
  
-php artisan make:model AdminRole -m
+php artisan make:model Task -m
