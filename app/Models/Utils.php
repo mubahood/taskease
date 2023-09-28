@@ -12,6 +12,32 @@ class Utils extends Model
 {
     use HasFactory;
 
+    public static function prepare_calendar_events($u)
+    {
+
+        $conditions = [
+            'reminder_state' => 'On'
+        ];
+        if (!$u->isRole('admin')) {
+            //$conditions['administrator_id'] = $u->id;
+        }
+
+        $eves = Event::where($conditions)->get();
+        $events = [];
+        foreach ($eves as $key => $event) {
+            $ev['title'] = substr($event->description, 0, 20) . '...';
+            $ev['start'] = Carbon::parse($event->reminder_date)->format('Y-m-d');
+            $ev['Reminder Date'] = Carbon::parse($event->event_date)->format('Y-m-d');
+            $details = "<b>Description:</b> " . $event->description . '<br>';
+            $details .= "<b>Due to:</b> " . $ev['start'] . '<br>';
+            $ev['classNames'] = ['bg-success', 'border-success', 'text-white'];
+            $details .= "<b>Pririty:</b> {$event->priority}<br>";
+            $ev['administrator_id'] = $u->id;
+            $ev['details'] = $details;
+            $events[] = $ev;
+        }
+        return $events;
+    }
     /* 
 /* 
 

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Utils;
 use Carbon\Carbon;
+use Encore\Admin\Controllers\Dashboard;
 use Encore\Admin\Facades\Admin;
 use Encore\Admin\Layout\Column;
 use Encore\Admin\Layout\Content;
@@ -72,6 +73,28 @@ class HomeController extends Controller
                 ]));
             });
         });
+
+
+        return $content;
+    }
+
+    public function calendar(Content $content)
+    {
+
+
+        $u = Auth::user();
+        $content
+            ->title('Calendar');
+
+
+        $content->row(function (Row $row) {
+
+            $row->column(8, function (Column $column) {
+
+                $column->append(Dashboard::dashboard_calender());
+            });
+        });
+        return $content;
 
 
         return $content;

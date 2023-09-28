@@ -27,9 +27,14 @@ use App\Admin\Extensions\Nav\Dropdown;
 Utils::system_boot();
 
 
+Admin::css('/assets/js/calender/main.css');
+Admin::js('/assets/js/calender/main.js');
+
+Admin::css('/css/jquery-confirm.min.css');
+Admin::js('/assets/js/jquery-confirm.min.js');
 Admin::navbar(function (\Encore\Admin\Widgets\Navbar $navbar) {
 
-/*     $u = Auth::user();
+    /*     $u = Auth::user();
     $navbar->left(view('admin.search-bar', [
         'u' => $u
     ]));

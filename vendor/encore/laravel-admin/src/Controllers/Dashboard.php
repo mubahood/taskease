@@ -4,12 +4,24 @@ namespace Encore\Admin\Controllers;
 
 use App\Models\Event;
 use App\Models\NewsPost;
+use App\Models\Utils;
 use Encore\Admin\Admin;
 use Encore\Admin\Auth\Database\Administrator;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 
 class Dashboard
 {
+
+
+    public static function dashboard_calender()
+    {
+        $events = Utils::prepare_calendar_events(Auth::user()); 
+        return view('dashboard.calender', [
+            'events' => $events
+        ]);
+    }
+
 
     public static function dashboard_members()
     {
