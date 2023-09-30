@@ -3,6 +3,9 @@
 namespace App\Admin\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Event;
+use App\Models\Project;
+use App\Models\Task;
 use App\Models\User;
 use App\Models\Utils;
 use Carbon\Carbon;
@@ -21,77 +24,46 @@ class HomeController extends Controller
     {
         $u = Auth::user();
         $content
-            ->title('Company Name - Dashboard')
-            ->description('Hello ' . $u->name . "!");
+            ->title('<b>' . Utils::greet() . " " . $u->last_name . '!</b>');
         $u = Admin::user();
 
 
+
         $content->row(function (Row $row) {
-            $row->column(3, function (Column $column) {
-                $column->append(view('widgets.box-5', [
-                    'is_dark' => false,
-                    'title' => 'Registered Farmers',
-                    'sub_title' => 'Joined 30 days ago.',
-                    'number' => number_format(User::count()),
-                    'link' => 'javascript:;'
+            $row->column(6, function (Column $column) {
+                $u = Admin::user();
+                $column->append(view('widgets.dashboard-segment-1', [
+                    'events' => Event::where([
+                        'company_id' => $u->company_id,
+                    ])->where('event_date', '>=', Carbon::now()->format('Y-m-d'))->orderBy('id', 'desc')->limit(8)->get()
                 ]));
             });
-            // $row->column(3, function (Column $column) {
-            //     $column->append(view('widgets.box-5', [
-            //         'is_dark' => false,
-            //         'title' => 'Registered Gardens',
-            //         'sub_title' => 'All time.',
-            //         'number' => number_format(Garden::count()),
-            //         'link' => 'javascript:;'
-            //     ]));
-            // });
-            $row->column(3, function (Column $column) {
-                $column->append(view('widgets.box-5', [
-                    'is_dark' => false,
-                    'title' => 'Garden Activities',
-                    'sub_title' => 'From System',
-                    'number' => number_format(User::count()),
-                    'link' => 'javascript:;'
-                ]));
-            });
-            $row->column(3, function (Column $column) {
-                $column->append(view('widgets.box-5', [
-                    'is_dark' => false,
-                    'title' => 'Production Guides',
-                    'sub_title' => 'From system',
-                    'number' => number_format(User::count()),
-                    'link' => 'javascript:;'
-                ]));
-            });
-            $row->column(3, function (Column $column) {
-                $column->append(view('widgets.box-5', [
-                    'is_dark' => false,
-                    'title' => 'Weather',
-                    'sub_title' => 'Weather API',
-                    'number' => 20 . '&#176;C',
-                    'link' => 'javascript:;'
-                ]));
+            $row->column(6, function (Column $column) {
+                $column->append(Dashboard::dashboard_calender());
             });
         });
-
 
         return $content;
     }
 
     public function calendar(Content $content)
     {
-
-
         $u = Auth::user();
         $content
-            ->title('Calendar');
-
-
+            ->title('Company Calendar');
         $content->row(function (Row $row) {
-
             $row->column(8, function (Column $column) {
-
                 $column->append(Dashboard::dashboard_calender());
+            });
+            $row->column(4, function (Column $column) {
+                $u = Admin::user();
+                $column->append(view('dashboard.upcoming-events', [
+                    'items' => Event::where([
+                        'company_id' => $u->company_id,
+                    ])
+                        ->where('event_date', '>=', Carbon::now()->format('Y-m-d'))
+                        ->orderBy('id', 'desc')->limit(8)->get()
+                ]));
             });
         });
         return $content;

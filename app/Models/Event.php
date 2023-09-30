@@ -15,6 +15,7 @@ class Event extends Model
     {
         parent::boot();
         self::creating(function ($m) {
+            $m->event_conducted = 'Pending';
             return Event::my_update($m);
         });
         self::updating(function ($m) {
@@ -22,6 +23,27 @@ class Event extends Model
         });
     }
 
+    public function get_participants()
+    {
+        $users = [];
+        $users[] = $this->user;
+        $users[] = Administrator::where('id', $this->administrator_id)->first();
+        $users = array_merge($users, Administrator::whereIn('id', $this->users_to_notify)->get()->all());
+        return $users;
+    }
+
+    public function get_participants_names()
+    {
+        $users = $this->get_participants();
+        $names = [];
+        foreach ($users as $u) {
+            if ($u == null) {
+                continue;
+            }
+            $names[] = $u->name;
+        }
+        return implode(', ', $names);
+    } 
     public static function my_update($m)
     {
         if ($m->reminder_state == 'On') {

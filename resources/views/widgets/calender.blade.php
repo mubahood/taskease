@@ -1,6 +1,6 @@
 <?php
 use App\Models\Utils;
-?> 
+?>
 <div>
     <!-- Content Header (Page header) -->
     <section class="content-header">
@@ -131,5 +131,3 @@ use App\Models\Utils;
         })
     </script>
 @endpush
-
-

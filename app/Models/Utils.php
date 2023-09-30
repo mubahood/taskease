@@ -12,11 +12,28 @@ class Utils extends Model
 {
     use HasFactory;
 
+    //static php fuction that greets the user according to the time of the day
+    public static function greet()
+    {
+        $hour = date('H');
+        if ($hour > 0 && $hour < 12) {
+            return "Good Morning";
+        } else if ($hour >= 12 && $hour < 17) {
+            return "Good Afternoon";
+        } else if ($hour >= 17 && $hour < 19) {
+            return "Good Evening";
+        } else {
+            return "Good Night";
+        }
+    }
+
     public static function prepare_calendar_events($u)
     {
 
+
+
         $conditions = [
-            'reminder_state' => 'On'
+            'company_id' => $u->company_id,
         ];
         if (!$u->isRole('admin')) {
             //$conditions['administrator_id'] = $u->id;
@@ -25,58 +42,37 @@ class Utils extends Model
         $eves = Event::where($conditions)->get();
         $events = [];
         foreach ($eves as $key => $event) {
-            $ev['title'] = substr($event->description, 0, 20) . '...';
-            $ev['start'] = Carbon::parse($event->reminder_date)->format('Y-m-d');
-            $ev['Reminder Date'] = Carbon::parse($event->event_date)->format('Y-m-d');
-            $details = "<b>Description:</b> " . $event->description . '<br>';
-            $details .= "<b>Due to:</b> " . $ev['start'] . '<br>';
-            $ev['classNames'] = ['bg-success', 'border-success', 'text-white'];
-            $details .= "<b>Pririty:</b> {$event->priority}<br>";
-            $ev['administrator_id'] = $u->id;
+            $ev['activity_id'] = $event->id;
+            $event_date_time = Carbon::parse($event->event_date);
+            $ev['title'] = $event_date_time->format('h:m ') . $event->name;
+            $event_date = $event_date_time->format('Y-m-d');
+            $event_time = $event_date_time->format('h:m a');
+            $ev['name'] = $event->name;
+            $ev['url_edit'] = admin_url('events/' . $event->id . '/edit');
+            $ev['url_view'] = admin_url('events/' . $event->id);
+            $ev['status'] = $event->event_conducted;
+            $details = $event->description . '<br>';
+            $participants = $event->get_participants_names();
+            $ev['classNames'] = ['bg-warning', 'border-warning', 'text-dark'];
+            if ($event->event_conducted == 'Conducted') {
+                $ev['classNames'] = ['bg-success', 'border-success', 'text-white'];
+            } else if ($event->event_conducted == 'Pending') {
+                $ev['classNames'] = ['bg-warning', 'border-warning', 'text-dark'];
+            } else if ($event->event_conducted == 'Cancelled' || $event->event_conducted == 'Missed') {
+                $ev['classNames'] = ['bg-danger', 'border-danger', 'text-white'];
+            }
+
+            $details .= "<b>Event Date:</b> {$event_date}<br>";
+            $details .= "<b>Event Time:</b> {$event_time}<br>";
+            $details .= "<b>Participants:</b> {$participants}<br>";
             $ev['details'] = $details;
+            $ev['start'] = Carbon::parse($event->event_date)->format('Y-m-d');
+
             $events[] = $ev;
         }
         return $events;
     }
-    /* 
-/* 
 
-Full texts
-id	
-created_at	
-updated_at	
-association_id	
-group_id	
-name	
-address	
-parish	
-village	
-phone_number	
-email		
-subcounty_id	
-	
-phone_number_2	
-dob	
-sex	
-	 
-	
-caregiver_sex	
-caregiver_phone_number	
-caregiver_age	
-caregiver_relationship	
-photo	
-deleted_at	
-status	
-administrator_id	
-	
-*/
-
-    /* 
-  
-[] => 
-[9] => RELATIONSHIP WITH CAREGIVER
-[] => District
-*/
 
     public static function success($data = [], $message = "")
     {
@@ -576,6 +572,16 @@ administrator_id
             return $t;
         }
         return $c->format('d M, Y');
+    }
+
+    public static function my_date_time_1($t)
+    {
+        $c = Carbon::parse($t);
+        if ($t == null) {
+            return $t;
+        }
+        //return date and 24 hours format time
+        return $c->format('d M, Y - H:m');
     }
 
     public static function my_date_time($t)

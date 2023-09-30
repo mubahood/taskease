@@ -16,12 +16,11 @@ class Dashboard
 
     public static function dashboard_calender()
     {
-        $events = Utils::prepare_calendar_events(Auth::user()); 
+        $events = Utils::prepare_calendar_events(Auth::user());
         return view('dashboard.calender', [
             'events' => $events
         ]);
     }
-
 
     public static function dashboard_members()
     {
@@ -44,7 +43,7 @@ class Dashboard
         $events = NewsPost::where([])->orderBy('id', 'desc')->limit(8)->get();
         return view('dashboard.news', [
             'items' => $events
-        ]); 
+        ]);
     }
 
 

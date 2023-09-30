@@ -74,4 +74,5 @@ Admin::navbar(function (\Encore\Admin\Widgets\Navbar $navbar) {
 
 Encore\Admin\Form::forget(['map', 'editor']);
 Admin::css(url('/assets/css/bootstrap.css'));
-Admin::css('/assets/css/styles.css');
+Admin::css('/css/styles.css');
+Admin::css('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css');

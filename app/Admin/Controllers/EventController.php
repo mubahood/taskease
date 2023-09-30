@@ -30,7 +30,7 @@ class EventController extends AdminController
         $grid = new Grid(new Event());
         $conditions = [];
         $u = auth()->user();
-        
+
 
         $grid->filter(function ($filter) {
             // Remove the default id filter
@@ -64,15 +64,12 @@ class EventController extends AdminController
             })
             ->sortable();
 
-        $grid->column('reminder_state', __('Reminder State'))
-            ->using([
-                'On' => 'On',
-                'Off' => 'Off',
-            ], 'No')
-            ->label([
-                'Yes' => 'success',
-                'No' => 'danger',
-            ])
+        $grid->column('event_conducted', __('Event Status'))
+            ->dot([
+                'Pending' => 'warning',
+                'Conducted' => 'success',
+                'Cancelled' => 'danger',
+            ], 'warning')
             ->sortable();
         $grid->column('priority', __('Priority'))
             ->using([
@@ -111,7 +108,6 @@ class EventController extends AdminController
         $show->field('reminder_date', __('Reminder date'));
         $show->field('description', __('Description'));
         $show->field('remind_beofre_days', __('Remind beofre days'));
-        $show->field('users_to_notify', __('Users to notify'));
         $show->field('reminders_sent', __('Reminders sent'));
 
         return $show;
@@ -127,8 +123,7 @@ class EventController extends AdminController
         $form = new Form(new Event());
 
         $form->hidden('administrator_id')->default(auth()->user()->id);
-
-
+        $form->hidden('company_id')->default(auth()->user()->company_id);
         if (!$form->isEditing()) {
             $form->hidden('reminders_sent')->default('No');
         } else {
@@ -140,7 +135,8 @@ class EventController extends AdminController
         }
 
         $form->hidden('reminder_state')->default('On');
-        $form->textarea('description', 'Event Description')->rules('required');
+        $form->text('name', 'Event Title')->rules('required');
+        $form->quill('description', 'Event Description')->rules('required');
         $form->datetime('event_date', __('Event Date'))->rules('required');
         $form->decimal('remind_beofre_days', __('Reminder Before Days'))
             ->rules('required')
@@ -155,9 +151,14 @@ class EventController extends AdminController
             Administrator::where([])->pluck('name', 'id')
         )->rules('required');
         if ($form->isEditing()) {
-            $form->textarea('Event outcome');
+            $form->radioCard('event_conducted', 'Was the event conducted?')->options([
+                'Pending' => 'Pending',
+                'Conducted' => 'Conducted',
+                'Cancelled' => 'Cancelled',
+            ])->default('Pending')
+                ->rules('required');
+            $form->quill('outcome', 'Event outcome');
         }
-
         return $form;
     }
 }

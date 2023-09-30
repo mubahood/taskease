@@ -33,7 +33,8 @@ class TaskController extends AdminController
     {
         $grid = new Grid(new Task());
 
-        $grid->model()->where('company_id', auth()->user()->company_id);
+        $grid->model()->where('company_id', auth()->user()->company_id)
+            ->orderBy('due_to_date', 'desc');
 
         if (!auth()->user()->can('administrator')) {
             $grid->model()->where('manager_id', auth()->user()->id)
@@ -46,22 +47,21 @@ class TaskController extends AdminController
         $grid->column('created_at', __('Created'))
             ->display(function ($created_at) {
                 return date('d-m-Y', strtotime($created_at));
-            })->sortable();
+            })
+            ->hide()
+            ->sortable();
 
 
         $grid->column('name', __('Task'))->sortable();
 
-        $grid->column('priority', __('Priority'))
-            ->dot([
-                'Low' => 'default',
-                'Medium' => 'warning',
-                'High' => 'danger',
-            ])
-            ->filter([
-                'Low' => 'Low',
-                'Medium' => 'Medium',
-                'High' => 'High',
-            ])
+        $grid->column('assigned_to', __('Assigned To'))
+            ->display(function ($assigned_to) {
+                $user = $this->assigned_to_user;
+                if ($user == null) {
+                    return "User not found";
+                }
+                return $user->name;
+            })
             ->sortable();
 
         $grid->column('due_to_date', __('Due Date'))
@@ -98,6 +98,19 @@ class TaskController extends AdminController
             })
             ->sortable();
 
+        $grid->column('priority', __('Priority'))
+            ->dot([
+                'Low' => 'default',
+                'Medium' => 'warning',
+                'High' => 'danger',
+            ])
+            ->filter([
+                'Low' => 'Low',
+                'Medium' => 'Medium',
+                'High' => 'High',
+            ])
+            ->sortable();
+
         $grid->column('created_by', __('Created By'))
             ->display(function ($created_by) {
                 $user = $this->created_by_user;
@@ -106,8 +119,9 @@ class TaskController extends AdminController
                 }
                 return $user->name;
             })
+            ->hide()
             ->sortable();
-        $grid->column('project_section_id', __('Deliverable'))
+        $grid->column('project_section_id', __('Project'))
             ->display(function ($project_section_id) {
                 $project_section = $this->project_section;
                 if ($project_section == null) {
@@ -117,15 +131,7 @@ class TaskController extends AdminController
             })
             ->hide()
             ->sortable();
-        $grid->column('assigned_to', __('Assigned To'))
-            ->display(function ($assigned_to) {
-                $user = $this->assigned_to_user;
-                if ($user == null) {
-                    return "User not found";
-                }
-                return $user->name;
-            })
-            ->sortable();
+
 
 
         return $grid;
