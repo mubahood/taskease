@@ -25,6 +25,8 @@ Route::group([
     $router->resource('tasks', TaskController::class);
     $router->resource('events', EventController::class);
     $router->get('/calendar', 'HomeController@calendar')->name('calendar');
+    $router->resource('patients', PatientController::class); 
+    $router->resource('patient-records', PatientRecordController::class); 
 
     $router->resource('gens', GenController::class);
 });
