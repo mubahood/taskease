@@ -5,11 +5,42 @@ use App\Http\Controllers\MainController;
 use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\RedirectIfAuthenticated;
 use App\Models\Gen;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 
 
-Route::get('policy', function(){
-    return view('policy'); 
+
+Route::get('departmental-workplan', function () {
+
+    $id = 0;
+    if (isset($_GET['id'])) {
+        $id = $_GET['id'];
+    }
+    $department = \App\Models\Department::find($id);
+    if ($department == null) {
+        die("Department not found");
+    }
+
+    //set file name to name of department and date (dompdf) 
+    $title = $department->name . " " . date("Y-m-d H:i:s");
+    $file_name = $title . ".pdf";
+    $pdf = App::make('dompdf.wrapper', ['enable_remote' => true, 'enable_html5_parser' => true, 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
+
+
+    $pdf->setPaper('A4', 'portrait');
+    $pdf->setOptions(['dpi' => 150, 'defaultFont' => 'open-sans']);
+    $pdf->setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
+    $pdf->loadHTML(view('departmental-workplan', [
+        'department' => $department,
+        'title' => $title,
+    ])->render());
+    return $pdf->stream($file_name);
+});
+
+
+
+Route::get('policy', function () {
+    return view('policy');
 });
 
 Route::get('/gen-form', function () {

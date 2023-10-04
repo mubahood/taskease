@@ -4,6 +4,6 @@ php artisan make:migration create_courses_table
 
 php artisan make:migration add_ccompany_id_to_events --table=events
  
-php artisan admin:make TaskController --model=App\\Models\\Task
+php artisan admin:make DepartmentController --model=App\\Models\\Department
  
-php artisan make:model Task -m
+php artisan make:model Department -m

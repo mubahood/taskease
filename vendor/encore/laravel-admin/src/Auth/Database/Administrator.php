@@ -3,6 +3,7 @@
 namespace Encore\Admin\Auth\Database;
 
 use App\Models\Campus;
+use App\Models\Company;
 use App\Models\UserHasProgram;
 use Carbon\Carbon;
 use Encore\Admin\Traits\DefaultDatetimeFormat;
@@ -23,6 +24,23 @@ class Administrator extends Model implements AuthenticatableContract, JWTSubject
     use Authenticatable;
     use HasPermissions;
     use DefaultDatetimeFormat;
+
+    //this model to array, id and name
+    public static function toSelectArray()
+    {
+        $administrators = Administrator::all();
+        $administrators_array = [];
+        foreach ($administrators as $administrator) {
+            $administrators_array[$administrator->id] = $administrator->name;
+        }
+        return $administrators_array;
+    }
+
+    //company
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
 
     public function getJWTIdentifier()
     {
@@ -67,7 +85,7 @@ class Administrator extends Model implements AuthenticatableContract, JWTSubject
             $n = $m->first_name . " " . $m->last_name;
             if (strlen(trim($n)) > 1) {
                 $m->name = trim($n);
-            } 
+            }
         });
     }
 
