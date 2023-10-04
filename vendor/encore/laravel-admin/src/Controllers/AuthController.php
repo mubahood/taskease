@@ -259,8 +259,6 @@ class AuthController extends Controller
     {
         $class = config('admin.database.users_model');
 
-        Utils::checkEventRegustration();
-
         $form = new Form(new $class());
 
         $form->divider('Bio information');

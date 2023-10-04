@@ -3,6 +3,7 @@
 namespace App\Admin\Controllers;
 
 use App\Models\Event;
+use App\Models\Patient;
 use App\Models\Utils;
 use Encore\Admin\Auth\Database\Administrator;
 use Encore\Admin\Controllers\AdminController;
@@ -17,7 +18,7 @@ class EventController extends AdminController
      *
      * @var string
      */
-    protected $title = 'Scheduled Events';
+    protected $title = 'Appointments';
 
     /**
      * Make a grid builder.
@@ -124,6 +125,8 @@ class EventController extends AdminController
 
         $form->hidden('administrator_id')->default(auth()->user()->id);
         $form->hidden('company_id')->default(auth()->user()->company_id);
+        $form->select('patient_id', __('Patient'))->options(Patient::toSelectArray())->rules('required');
+
         if (!$form->isEditing()) {
             $form->hidden('reminders_sent')->default('No');
         } else {
@@ -135,9 +138,9 @@ class EventController extends AdminController
         }
 
         $form->hidden('reminder_state')->default('On');
-        $form->text('name', 'Event Title')->rules('required');
-        $form->quill('description', 'Event Description')->rules('required');
-        $form->datetime('event_date', __('Event Date'))->rules('required');
+        $form->text('name', 'Appointment Title')->rules('required');
+        $form->quill('description', 'Appointment Description')->rules('required');
+        $form->datetime('event_date', __('Appointment Date'))->rules('required');
         $form->decimal('remind_beofre_days', __('Reminder Before Days'))
             ->rules('required')
             ->default(1);
@@ -147,17 +150,17 @@ class EventController extends AdminController
             'High' => 'High',
         ])->default('Medium')
             ->rules('required');
-        $form->multipleSelect('users_to_notify', 'Users to notify')->options(
+        $form->multipleSelect('users_to_notify', 'Add users to notify')->options(
             Administrator::where([])->pluck('name', 'id')
         )->rules('required');
         if ($form->isEditing()) {
-            $form->radioCard('event_conducted', 'Was the event conducted?')->options([
+            $form->radioCard('event_conducted', 'Was the appointment conducted?')->options([
                 'Pending' => 'Pending',
                 'Conducted' => 'Conducted',
                 'Cancelled' => 'Cancelled',
             ])->default('Pending')
                 ->rules('required');
-            $form->quill('outcome', 'Event outcome');
+            $form->quill('outcome', 'Appointment outcome');
         }
         return $form;
     }

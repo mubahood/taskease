@@ -4,23 +4,21 @@
 
 <?php
 
-$primt_color = '#23A454';
+$primt_color = '#0761BB';
 ?><style> 
-    .sidebar {
-        background-color: #FFFFFF;
-    }
+   
 
     .content-header {
         background-color: #F9F9F9;
     }
 
-    .sidebar-menu .active {
+   /*  .sidebar-menu .active {
         border-left: solid 5px {{ $primt_color }} !important;
         ;
         color: {{ $primt_color }} !important;
         ;
     }
-
+ */
 
     .navbar,
     .logo,

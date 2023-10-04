@@ -34,6 +34,17 @@ class Administrator extends Model implements AuthenticatableContract, JWTSubject
         return [];
     }
 
+    //function to get list of this model in array for select
+    public static function get_list()
+    {
+        $list = []; 
+        $users = Administrator::all();
+        foreach ($users as $u) {
+            $list[$u->id] = $u->name;
+        }
+        return $list;
+    }
+
 
     protected $fillable = ['username', 'password', 'name', 'avatar', 'created_at_text'];
 

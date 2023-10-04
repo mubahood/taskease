@@ -15,27 +15,27 @@ if (!isset($tasks_count)) {
             <div class="col-md-4">
                 @include('widgets.box-6', [
                     'is_dark' => false,
-                    'title' => 'Ongoing Projects',
+                    'title' => 'Today\'s Appointments',
                     'icon' => 'box',
-                    'number' => $project_count,
+                    'number' => rand(1, 100),
                     'link' => 'javascript:;',
                 ])
             </div>
             <div class="col-md-4">
                 @include('widgets.box-6', [
                     'is_dark' => false,
-                    'title' => 'This Week\'s Tasks',
+                    'title' => 'This Week\'s Appointments',
                     'icon' => 'list-task',
-                    'number' => $tasks_count,
+                    'number' => rand(50, 300),
                     'link' => 'javascript:;',
                 ])
             </div>
             <div class="col-md-4">
                 @include('widgets.box-6', [
                     'is_dark' => false,
-                    'title' => 'This Week\'s Events',
+                    'title' => 'Upcoming Appointments',
                     'icon' => 'calendar-event-fill',
-                    'number' => $events_count,
+                    'number' => rand(2, 500),
                     'link' => 'javascript:;',
                 ])
             </div>
