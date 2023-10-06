@@ -39,7 +39,10 @@ class TreatmentRecordController extends AdminController
             ->sortable();
         $grid->column('patient_id', __('Patient'))
             ->display(function ($id) {
-                return $this->patient->name;
+                if ($this->patient_user == null) {
+                    return '-';
+                }
+                return $this->patient_user->full_name;
             })
             ->sortable();
         $grid->column('procedure', __('Procedure'))

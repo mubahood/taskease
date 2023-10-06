@@ -10,6 +10,11 @@ class TreatmentRecord extends Model
 {
     use HasFactory;
 
+    //for patient
+    public function patient_user()
+    {
+        return $this->belongsTo(Patient::class, 'patient_id');
+    }
 
     //setter and getter for mulpiple photos
     public function setPhotosAttribute($value)
