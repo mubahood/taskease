@@ -11,7 +11,7 @@ return [
     | login page.
     |
     */
-    'name' => 'For Wold Wide Smile',
+    'name' => 'For Wold Wide Smiles',
 
     /*
     |--------------------------------------------------------------------------
@@ -22,7 +22,7 @@ return [
     | `img` tag, eg '<img src="http://logo-url" alt="Admin logo">'.
     |
     */
-    'logo' => '<b>For Wold Wide Smile</b> admin',
+    'logo' => '<b>For Wold Wide Smiles</b> admin',
 
     /*
     |--------------------------------------------------------------------------
@@ -34,7 +34,7 @@ return [
     | '<img src="http://logo-url" alt="Admin logo">'.
     |
     */
-    'logo-mini' => '<b>For Wold Wide Smile</b>',
+    'logo-mini' => '<b>For Wold Wide Smiles</b>',
 
     /*
     |--------------------------------------------------------------------------
