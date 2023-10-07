@@ -27,30 +27,61 @@ class PatientRecordController extends AdminController
     {
         $grid = new Grid(new PatientRecord());
 
-        $grid->column('id', __('Id'));
-        $grid->column('created_at', __('Created at'));
-        $grid->column('updated_at', __('Updated at'));
-        $grid->column('administrator_id', __('Administrator id'));
-        $grid->column('patient_id', __('Patient id'));
-        $grid->column('medications_and_allergies', __('Medications and allergies'));
-        $grid->column('existing_medical_conditions', __('Existing medical conditions'));
-        $grid->column('past_surgeries_or_hospitalizations', __('Past surgeries or hospitalizations'));
-        $grid->column('history_of_smoking', __('History of smoking'));
-        $grid->column('history_of_alcohol', __('History of alcohol'));
-        $grid->column('any_other_relevant_medical_history', __('Any other relevant medical history'));
-        $grid->column('chief_complaint', __('Chief complaint'));
-        $grid->column('date_of_the_last_dental_visit', __('Date of the last dental visit'));
-        $grid->column('previous_dental_treatments', __('Previous dental treatments'));
-        $grid->column('dental_insurance_information', __('Dental insurance information'));
-        $grid->column('intraoral_and_extraoral_photographs', __('Intraoral and extraoral photographs'));
-        $grid->column('radiographic_images', __('Radiographic images'));
-        $grid->column('periodontal_assessment_gum_health', __('Periodontal assessment gum health'));
-        $grid->column('oral_cancer_screening', __('Oral cancer screening'));
-        $grid->column('tooth_charting_notations', __('Tooth charting notations'));
-        $grid->column('occlusion_bite_assessment', __('Occlusion bite assessment'));
-        $grid->column('diagnosis_outcome', __('Diagnosis outcome'));
-        $grid->column('proposed_dental_treatments', __('Proposed dental treatments'));
-        $grid->column('priority_and_urgency_of_treatments', __('Priority and urgency of treatments'));
+        $grid->column('id', __('Id'))->sortable();
+        $grid->column('created_at', __('Date'))
+            ->display(function ($date) {
+                return date('d-m-Y', strtotime($date));
+            });
+        $grid->column('administrator_id', __('Docttor'))
+            ->display(function ($id) {
+                return $this->administrator->name;
+            })
+            ->sortable();
+        $grid->column('patient_id', __('Patient'))
+            ->display(function ($id) {
+                if ($this->patient_user == null) {
+                    return '-';
+                }
+                return $this->patient_user->full_name;
+            })
+            ->sortable();
+
+        $grid->column('existing_medical_conditions', __('Medications Conditions'))
+            ->dot([
+                'Yes' => 'danger',
+                'No' => 'success',
+            ])->sortable();
+        $grid->column('medications_and_allergies', __('Allergies'))
+            ->dot([
+                'Yes' => 'danger',
+                'No' => 'success',
+            ])->sortable();
+        $grid->column('history_of_smoking', __('History of smoking'))->dot([
+            'Yes' => 'danger',
+            'No' => 'success',
+        ])->sortable();
+
+        $grid->column('history_of_alcohol', __('History of alcohol'))->dot([
+            'Yes' => 'danger',
+            'No' => 'success',
+        ])->sortable();
+
+        $grid->column('past_surgeries_or_hospitalizations', __('Past surgeries or hospitalizations'))->hide();
+
+        $grid->column('any_other_relevant_medical_history', __('Any other relevant medical history'))->hide();
+        $grid->column('chief_complaint', __('Chief complaint'))->hide();
+        $grid->column('date_of_the_last_dental_visit', __('Date of the last dental visit'))->hide();
+        $grid->column('previous_dental_treatments', __('Previous dental treatments'))->hide();
+        $grid->column('dental_insurance_information', __('Dental insurance information'))->hide();
+        $grid->column('intraoral_and_extraoral_photographs', __('Intraoral and extraoral photographs'))->hide();
+        $grid->column('radiographic_images', __('Radiographic images'))->hide();
+        $grid->column('periodontal_assessment_gum_health', __('Periodontal assessment gum health'))->hide();
+        $grid->column('oral_cancer_screening', __('Oral cancer screening'))->hide();
+        $grid->column('tooth_charting_notations', __('Tooth charting notations'))->hide();
+        $grid->column('occlusion_bite_assessment', __('Occlusion bite assessment'))->hide();
+        $grid->column('diagnosis_outcome', __('Diagnosis outcome'))->sortable();
+        $grid->column('proposed_dental_treatments', __('Proposed dental treatments'))->hide();
+        $grid->column('priority_and_urgency_of_treatments', __('Priority and urgency of treatments'))->hide();
         $grid->column('cost_estimates', __('Cost estimates'));
 
         return $grid;
