@@ -36,6 +36,7 @@ class PatientRecordController extends AdminController
             ->display(function ($id) {
                 return $this->administrator->name;
             })
+            ->hide()
             ->sortable();
         $grid->column('patient_id', __('Patient'))
             ->display(function ($id) {
@@ -68,7 +69,10 @@ class PatientRecordController extends AdminController
 
         $grid->column('past_surgeries_or_hospitalizations', __('Past surgeries or hospitalizations'))->hide();
 
-        $grid->column('any_other_relevant_medical_history', __('Any other relevant medical history'))->hide();
+        $grid->column('any_other_relevant_medical_history', __('Other Medical History'))->dot([
+            'Yes' => 'danger',
+            'No' => 'success',
+        ])->sortable();
         $grid->column('chief_complaint', __('Chief complaint'))->hide();
         $grid->column('date_of_the_last_dental_visit', __('Date of the last dental visit'))->hide();
         $grid->column('previous_dental_treatments', __('Previous dental treatments'))->hide();
