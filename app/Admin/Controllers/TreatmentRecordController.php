@@ -148,7 +148,7 @@ class TreatmentRecordController extends AdminController
                 'Other' => 'Other',
             ])->when('Other', function (Form $form) {
                 $form->textarea('procedure_other', __('Other Procedure'));
-            })->when([
+            })->when('in',[
                 'Extraction',
                 'Filling',
                 'Root Canal',
