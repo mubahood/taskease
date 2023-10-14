@@ -17,7 +17,7 @@ if (!isset($tasks_count)) {
                     'is_dark' => false,
                     'title' => 'Today\'s Appointments',
                     'icon' => 'box',
-                    'number' => rand(1, 100),
+                    'number' => 0,
                     'link' => 'javascript:;',
                 ])
             </div>
@@ -26,7 +26,7 @@ if (!isset($tasks_count)) {
                     'is_dark' => false,
                     'title' => 'This Week\'s Appointments',
                     'icon' => 'list-task',
-                    'number' => rand(50, 300),
+                    'number' => 0,
                     'link' => 'javascript:;',
                 ])
             </div>
@@ -35,7 +35,7 @@ if (!isset($tasks_count)) {
                     'is_dark' => false,
                     'title' => 'Upcoming Appointments',
                     'icon' => 'calendar-event-fill',
-                    'number' => rand(2, 500),
+                    'number' => 0,
                     'link' => 'javascript:;',
                 ])
             </div>
