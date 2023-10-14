@@ -72,13 +72,13 @@ class TreatmentRecordController extends AdminController
                 'Other' => 'Other',
             ])->sortable();
         /*  
-                $form->decimal('upper_canines', __('Number of Upper Canines Exracted'));
-                $form->decimal('upper_premolars', __('Number of Upper Premolars Exracted'));
-                $form->decimal('upper_molars', __('Number of Upper Molars Exracted'));
-                $form->decimal('lower_incisors', __('Number of Lower Incisors Exracted'));
-                $form->decimal('lower_canines', __('Number of Lower Canines Exracted'));
-                $form->decimal('lower_premolars', __('Number of Lower Premolars Exracted'));
-                $form->decimal('lower_molars', __('Number of Lower Molars Exracted'));
+                $form->decimal('upper_canines', __('Number of Upper Canines'));
+                $form->decimal('upper_premolars', __('Number of Upper Premolars'));
+                $form->decimal('upper_molars', __('Number of Upper Molars'));
+                $form->decimal('lower_incisors', __('Number of Lower Incisors'));
+                $form->decimal('lower_canines', __('Number of Lower Canines'));
+                $form->decimal('lower_premolars', __('Number of Lower Premolars'));
+                $form->decimal('lower_molars', __('Number of Lower Molars'));
  */
 
         $grid->column('upper_incisors', __('Upper Incisors'))->sortable();
@@ -148,15 +148,26 @@ class TreatmentRecordController extends AdminController
                 'Other' => 'Other',
             ])->when('Other', function (Form $form) {
                 $form->textarea('procedure_other', __('Other Procedure'));
-            })->when('Extraction', function (Form $form) {
-                $form->decimal('upper_incisors', __('Number of Upper Incisors Exracted'));
-                $form->decimal('upper_canines', __('Number of Upper Canines Exracted'));
-                $form->decimal('upper_premolars', __('Number of Upper Premolars Exracted'));
-                $form->decimal('upper_molars', __('Number of Upper Molars Exracted'));
-                $form->decimal('lower_incisors', __('Number of Lower Incisors Exracted'));
-                $form->decimal('lower_canines', __('Number of Lower Canines Exracted'));
-                $form->decimal('lower_premolars', __('Number of Lower Premolars Exracted'));
-                $form->decimal('lower_molars', __('Number of Lower Molars Exracted'));
+            })->when([
+                'Extraction',
+                'Filling',
+                'Root Canal',
+                'Crown',
+                'Bridge',
+                'Implant',
+                'Denture',
+                'Braces',
+                'Invisalign',
+                'Other',
+            ], function (Form $form) {
+                $form->decimal('upper_incisors', __('Number of Upper Incisors'));
+                $form->decimal('upper_canines', __('Number of Upper Canines'));
+                $form->decimal('upper_premolars', __('Number of Upper Premolars'));
+                $form->decimal('upper_molars', __('Number of Upper Molars'));
+                $form->decimal('lower_incisors', __('Number of Lower Incisors'));
+                $form->decimal('lower_canines', __('Number of Lower Canines'));
+                $form->decimal('lower_premolars', __('Number of Lower Premolars'));
+                $form->decimal('lower_molars', __('Number of Lower Molars'));
             })->rules('required');
         $form->multipleImage('photos', __('Photos'));
         $form->textarea('details', __('Details'));
