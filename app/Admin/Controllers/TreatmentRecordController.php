@@ -114,7 +114,7 @@ class TreatmentRecordController extends AdminController
         $show->field('administrator_id', __('Administrator id'));
         $show->field('patient_id', __('Patient id'));
         $show->field('procedure', __('Procedure'));
-        $show->field('teeth_extracted', __('Teeth extracted'));
+        $show->field('teeth_extracted', __('teeth extracted'));
         $show->field('details', __('Details'));
         $show->field('photos', __('Photos'));
 
@@ -132,9 +132,9 @@ class TreatmentRecordController extends AdminController
 
         $form->hidden('administrator_id', __('Administrator id'))->default(auth('admin')->user()->id);
         $form->select('patient_id', __('Patient'))->options(Patient::toSelectArray())->rules('required');
-        $teeth = [];
-        $form->hasMany('items', 'Teeth', function ($form) {
-            $form->radio('teeth', __('Teeth'))
+        $tooth = [];
+        $form->hasMany('items', 'tooth', function ($form) {
+            $form->radio('tooth', __('tooth'))
                 ->options([
                     '11' => '11',
                     '12' => '12',
