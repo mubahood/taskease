@@ -132,6 +132,39 @@ class TreatmentRecordController extends AdminController
 
         $form->hidden('administrator_id', __('Administrator id'))->default(auth('admin')->user()->id);
         $form->select('patient_id', __('Patient'))->options(Patient::toSelectArray())->rules('required');
+        $form->hasMany('items', 'Teeth', function ($form) {
+            $form->select('teeth', __('Teeth'))
+                ->options([
+                    'Teeth 1' => 'Teeth 1',
+                    'Teeth 2' => 'Teeth 2',
+                    'Teeth 3' => 'Teeth 3',
+                ])
+                ->rules('required');
+            $form->select('finding', __('Clinical Finding'))
+                ->options([
+                    'CP' => 'CP',
+                    'DC' => 'DC',
+                    'OC' => 'OC',
+                    'GC' => 'GC',
+                    'STAINS' => 'STAINS',
+                    'CALCULUS' => 'CALCULUS',
+                ]);
+            $form->select('treatment', __('Treatment Options'))
+                ->options([
+                    'EXT' => 'EXT',
+                    'FILLING' => 'FILLING',
+                    'SCALING' => 'SCALING',
+                    'ROOT CANAL' => 'ROOT CANAL',
+                ]);
+            $form->radio('status', __('Treatment Done'))
+                ->options([
+                    'Done' => 'Done',
+                    'Not Done' => 'Not Done',
+                ]);
+        });
+        $form->multipleImage('photos', __('Photos'));
+        $form->textarea('details', __('Details'));
+        return $form;
 
         $form->radio('procedure', __('Dental Procedure'))
             ->options([
@@ -148,7 +181,7 @@ class TreatmentRecordController extends AdminController
                 'Other' => 'Other',
             ])->when('Other', function (Form $form) {
                 $form->textarea('procedure_other', __('Other Procedure'));
-            })->when('in',[
+            })->when('in', [
                 'Extraction',
                 'Filling',
                 'Root Canal',
@@ -169,8 +202,7 @@ class TreatmentRecordController extends AdminController
                 $form->decimal('lower_premolars', __('Number of Lower Premolars'));
                 $form->decimal('lower_molars', __('Number of Lower Molars'));
             })->rules('required');
-        $form->multipleImage('photos', __('Photos'));
-        $form->textarea('details', __('Details'));
+
 
         return $form;
     }

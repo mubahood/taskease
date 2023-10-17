@@ -6,4 +6,4 @@ php artisan make:migration add_cols_to_events --table=events
  
 php artisan admin:make TreatmentRecordController --model=App\\Models\\TreatmentRecord
  
-php artisan make:model TreatmentRecord -m
+php artisan make:model TreatmentRecordItem -m

@@ -36,4 +36,8 @@ class TreatmentRecord extends Model
     {
         return $this->belongsTo(Administrator::class);
     }
+    public function items()
+    {
+        return $this->hasMany(TreatmentRecordItem::class);
+    }
 }
