@@ -9,5 +9,11 @@ class TreatmentRecordItem extends Model
 {
     use HasFactory;
 
-    
+    protected $fillable = [
+        'teeth',
+        'finding',
+        'treatment',
+        'status',
+    ];
+
 }
