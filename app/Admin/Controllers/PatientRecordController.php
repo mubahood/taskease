@@ -173,7 +173,12 @@ class PatientRecordController extends AdminController
                 'Yes' => 'Yes',
                 'No' => 'No'
             ]);
-        $form->radio('any_other_relevant_medical_history', __('Does the patient have any other relevant medical history?'))
+        $form->radio('any_other_relevant_medical_history', __('Is The Patient Prignant?'))
+            ->options([
+                'Yes' => 'Yes',
+                'No' => 'No'
+            ]);
+        $form->radio('periodontal_assessment_gum_health', __('Is The Patient  Breast Feeding?'))
             ->options([
                 'Yes' => 'Yes',
                 'No' => 'No'
@@ -181,21 +186,10 @@ class PatientRecordController extends AdminController
         $form->textarea('chief_complaint', __('Chief complaint'));
         $form->date('date_of_the_last_dental_visit', __('Date of the last dental visit'));
         $form->text('previous_dental_treatments', __('Previous dental treatments'));
-        $form->text('dental_insurance_information', __('Dental insurance information'));
         $form->image('intraoral_and_extraoral_photographs', __('Intraoral and extraoral photographs'));
         $form->image('radiographic_images', __('Radiographic images'));
-        $form->radio('periodontal_assessment_gum_health', __('Does the patient have any periodontal disease?'))
-            ->options([
-                'Yes' => 'Yes',
-                'No' => 'No'
-            ]);
-        $form->textarea('oral_cancer_screening', __('Oral cancer screening'));
-        $form->textarea('tooth_charting_notations', __('Tooth charting notations'));
-        $form->textarea('occlusion_bite_assessment', __('Occlusion bite assessment'));
         $form->textarea('diagnosis_outcome', __('Diagnosis outcome'));
-        $form->textarea('proposed_dental_treatments', __('Proposed dental treatments'));
-        $form->textarea('priority_and_urgency_of_treatments', __('Priority and urgency of treatments'));
-        $form->textarea('cost_estimates', __('Cost estimates'));
+
 
         return $form;
     }
