@@ -46,5 +46,5 @@ class TreatmentRecord extends Model
         'finding',
         'treatment',
         'status',
-    ]
+    ];
 }
