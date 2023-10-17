@@ -40,4 +40,11 @@ class TreatmentRecord extends Model
     {
         return $this->hasMany(TreatmentRecordItem::class);
     }
+
+    protected $fillable = [
+        'teeth',
+        'finding',
+        'treatment',
+        'status',
+    ]
 }
