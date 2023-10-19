@@ -66,8 +66,24 @@ class TreatmentRecordItemController extends AdminController
             ->sortable();
         $grid->column('tooth', __('Tooth'))
             ->sortable();
-        $grid->column('finding', __('Finding'))->sortable();
-        $grid->column('treatment', __('Treatment'))->sortable();
+        $grid->column('finding', __('Finding'))
+            ->filter([
+                'CP' => 'CP',
+                'DC' => 'DC',
+                'OC' => 'OC',
+                'GC' => 'GC',
+                'STAINS' => 'STAINS',
+                'CALCULUS' => 'CALCULUS',
+            ])
+            ->sortable();
+        $grid->column('treatment', __('Treatment'))
+            ->filter([
+                'EXT' => 'EXT',
+                'FILLING' => 'FILLING',
+                'SCALING' => 'SCALING',
+                'ROOT CANAL' => 'ROOT CANAL',
+            ])
+            ->sortable();
         $grid->column('status', __('Status'))
             ->sortable()
 
