@@ -27,16 +27,22 @@ class TreatmentRecordController extends AdminController
     {
         $grid = new Grid(new TreatmentRecord());
 
+        $grid->model()->orderBy('id', 'desc');
+        $grid->disableBatchActions();
+
+        $grid->filter(function ($filter) {
+            // Remove the default id filter
+            $filter->disableIdFilter();
+            //filter by patient
+            $filter->equal('patient_id', 'Filter by Patient')->select(Patient::toSelectArray());
+        });
+
         $grid->column('id', __('Id'))->sortable();
         $grid->column('created_at', __('Date'))
             ->display(function ($date) {
-                return date('d-m-Y', strtotime($date));
-            });
-        $grid->column('administrator_id', __('Docttor'))
-            ->display(function ($id) {
-                return $this->administrator->name;
-            })
-            ->sortable();
+                //to date and hours and minutes displayed
+                return date('d-m-Y h:m A', strtotime($date));
+            })->sortable();
         $grid->column('patient_id', __('Patient'))
             ->display(function ($id) {
                 if ($this->patient_user == null) {
@@ -45,6 +51,28 @@ class TreatmentRecordController extends AdminController
                 return $this->patient_user->full_name;
             })
             ->sortable();
+
+        $grid->column('items', __('Affetced Teeth'))
+            ->display(function ($items) {
+                $items = array_map(function ($item) {
+                    return "<span class='label label-danger'>{$item['tooth']}</span>";
+                }, $items);
+                return join('&nbsp;', $items);
+            });
+        $grid->column('items_count', __('Affetced Teeth Count'))
+            ->display(function ($items) {
+                return count($this->items);
+            })->sortable();
+        $grid->column('action', __('Action'))
+            ->display(function ($id) {
+                return "<a href='".admin_url('treatment-record-items')."?treatment_record_id={$this->id}' class='btn btn-xs btn-primary'>UPDATE</a>";
+            });
+
+        $grid->column('administrator_id', __('Doctor'))
+            ->display(function ($id) {
+                return $this->administrator->name;
+            });
+        return $grid;
         $grid->column('procedure', __('Procedure'))
             ->dot([
                 'Extraction' => 'danger',

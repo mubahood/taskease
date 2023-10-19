@@ -16,4 +16,9 @@ class TreatmentRecordItem extends Model
         'status',
     ];
 
+    //treatment record relationship
+    public function treatment_record()
+    {
+        return $this->belongsTo(TreatmentRecord::class);
+    }
 }

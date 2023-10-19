@@ -33,11 +33,8 @@ class Utils extends Model
 
 
         $conditions = [
-            'company_id' => $u->company_id,
+/*             'company_id' => $u->company_id, */
         ];
-        if (!$u->isRole('admin')) {
-            //$conditions['administrator_id'] = $u->id;
-        }
 
         $eves = Event::where($conditions)->get();
         $events = [];

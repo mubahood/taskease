@@ -10,6 +10,20 @@ class TreatmentRecord extends Model
 {
     use HasFactory;
 
+    //create function to array for select
+    public static function toSelectArray()
+    {
+        $items = TreatmentRecord::all();
+        $ret = [];
+        foreach ($items as $item) {
+            if ($item->patient == null) {
+                $item->delete();
+            }
+            $ret[$item->id] = "#" . $item->id . " " . $item->patient->first_name . " " . $item->patient->last_name . ", " . $item->patient->phone_number . ' - ' . Utils::my_date($item->created_at);
+        }
+        return $ret;
+    }
+
     //for patient
     public function patient_user()
     {
@@ -41,5 +55,9 @@ class TreatmentRecord extends Model
         return $this->hasMany(TreatmentRecordItem::class);
     }
 
-  
+    //name attribute
+    public function getNameAttribute()
+    {
+        return $this->patient_user->name;
+    }
 }

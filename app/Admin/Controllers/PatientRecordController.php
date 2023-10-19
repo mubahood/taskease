@@ -26,12 +26,15 @@ class PatientRecordController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new PatientRecord());
+        $grid->model()->orderBy('id', 'desc');
+        $grid->disableBatchActions();
 
         $grid->column('id', __('Id'))->sortable();
         $grid->column('created_at', __('Date'))
             ->display(function ($date) {
-                return date('d-m-Y', strtotime($date));
-            });
+                //to date and hours and minutes displayed
+                return date('d-m-Y h:m A', strtotime($date));
+            })->sortable();
         $grid->column('administrator_id', __('Docttor'))
             ->display(function ($id) {
                 return $this->administrator->name;
@@ -69,11 +72,15 @@ class PatientRecordController extends AdminController
 
         $grid->column('past_surgeries_or_hospitalizations', __('Past surgeries or hospitalizations'))->hide();
 
-        $grid->column('any_other_relevant_medical_history', __('Other Medical History'))->dot([
+        $grid->column('any_other_relevant_medical_history', __('Pregant'))->dot([
             'Yes' => 'danger',
             'No' => 'success',
         ])->sortable();
-        $grid->column('chief_complaint', __('Chief complaint'))->hide();
+        $grid->column('periodontal_assessment_gum_health', __('Breast Feeding'))->dot([
+            'Yes' => 'danger',
+            'No' => 'success',
+        ])->sortable();
+        $grid->column('chief_complaint', __('Chief complaint'));
         $grid->column('date_of_the_last_dental_visit', __('Date of the last dental visit'))->hide();
         $grid->column('previous_dental_treatments', __('Previous dental treatments'))->hide();
         $grid->column('dental_insurance_information', __('Dental insurance information'))->hide();
@@ -83,10 +90,8 @@ class PatientRecordController extends AdminController
         $grid->column('oral_cancer_screening', __('Oral cancer screening'))->hide();
         $grid->column('tooth_charting_notations', __('Tooth charting notations'))->hide();
         $grid->column('occlusion_bite_assessment', __('Occlusion bite assessment'))->hide();
-        $grid->column('diagnosis_outcome', __('Diagnosis outcome'))->sortable();
         $grid->column('proposed_dental_treatments', __('Proposed dental treatments'))->hide();
-        $grid->column('priority_and_urgency_of_treatments', __('Priority and urgency of treatments'))->hide();
-        $grid->column('cost_estimates', __('Cost estimates'));
+        $grid->column('priority_and_urgency_of_treatments', __('Priority and urgency of treatments'))->hide();;
 
         return $grid;
     }

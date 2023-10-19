@@ -75,7 +75,7 @@ class HomeController extends Controller
                 $u = Admin::user();
                 $column->append(view('widgets.dashboard-segment-1', [
                     'events' => Event::where([
-                        'company_id' => $u->company_id,
+
                     ])->where('event_date', '>=', Carbon::now()->format('Y-m-d'))->orderBy('id', 'desc')->limit(8)->get()
                 ]));
             });
@@ -100,7 +100,6 @@ class HomeController extends Controller
                 $u = Admin::user();
                 $column->append(view('dashboard.upcoming-events', [
                     'items' => Event::where([
-                        'company_id' => $u->company_id,
                     ])
                         ->where('event_date', '>=', Carbon::now()->format('Y-m-d'))
                         ->orderBy('id', 'desc')->limit(8)->get()
