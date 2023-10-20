@@ -229,7 +229,6 @@ class TreatmentRecordController extends AdminController
                     'DC' => 'DC',
                     'OC' => 'OC',
                     'GC' => 'GC',
-                    'TF' => 'TF',
                     'RR' => 'RR',
                     'STAINS' => 'STAINS',
                     'CALCULUS' => 'CALCULUS',
@@ -237,6 +236,7 @@ class TreatmentRecordController extends AdminController
             $form->radio('treatment', __('Treatment Options'))
                 ->options([
                     'EXT' => 'EXT',
+                    'TF' => 'TF',
                     'FILLING' => 'FILLING',
                     'SCALING' => 'SCALING',
                     'ROOT CANAL' => 'ROOT CANAL',
