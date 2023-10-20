@@ -229,6 +229,8 @@ class TreatmentRecordController extends AdminController
                     'DC' => 'DC',
                     'OC' => 'OC',
                     'GC' => 'GC',
+                    'TF' => 'TF',
+                    'RR' => 'RR',
                     'STAINS' => 'STAINS',
                     'CALCULUS' => 'CALCULUS',
                 ]);
