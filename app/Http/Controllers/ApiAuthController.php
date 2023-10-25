@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Image;
+use App\Models\Meeting;
+use App\Models\Task;
 use App\Models\User;
 use App\Models\Utils;
 use App\Traits\ApiResponser;
@@ -193,10 +195,128 @@ class ApiAuthController extends Controller
     }
 
 
+    public function meetings_post(Request $r)
+    {
+        $u = auth('api')->user();
+        if ($u == null) {
+            return Utils::response([
+                'status' => 0,
+                'code' => 0,
+                'message' => "User not found.",
+            ]);
+        }
+
+        if ($r->gps_latitude == null) {
+            return Utils::response([
+                'status' => 0,
+                'code' => 0,
+                'message' => "GPS latitude is required.",
+            ]);
+        }
+
+
+        if ($r->resolutions == null) {
+            return Utils::response([
+                'status' => 0,
+                'code' => 0,
+                'message' => "Resolutions are required.",
+            ]);
+        }
+
+
+
+
+        $meeting = new Meeting();
+        $meeting->name = $r->gps_latitude;
+        $meeting->company_id = $u->company_id;
+        $meeting->created_by = $u->id;
+        $meeting->minutes_of_meeting = $r->details;
+        $meeting->details = $r->details;
+        $meeting->meeting_start_time = Carbon::parse($r->created_at);
+        $start_date = Carbon::parse($r->start_date);
+        $end_date = Carbon::parse($r->end_date);
+        $meeting->meeting_start_time = $meeting->meeting_start_time->addHours($start_date->hour)->addMinutes($start_date->minute);
+        $meeting->meeting_end_time = $meeting->meeting_start_time->addHours($end_date->hour)->addMinutes($end_date->minute);
+        $meeting->other_data = $r->location_text;
+        $meeting->location_gps_latitude = $r->location_gps_latitude;
+
+        $images = [];
+        foreach (Image::where([
+            'parent_id' => $r->id,
+        ])->get() as $key => $value) {
+            $images[] = 'images/' . $value->src;
+        }
+        $meeting->attendance_list_pictures = $images;
+
+        $message = "";
+        try {
+            $meeting->save();
+            $_resolutions = [];
+            if (strlen($r->resolutions) > 2) {
+                try {
+                    $_resolutions = json_decode($r->resolutions);
+                } catch (\Throwable $th) {
+                    return Utils::response([
+                        'status' => 0,
+                        'code' => 0,
+                        'message' => "Failed to parse resolutions.",
+                    ]);
+                }
+            }
+
+
+            foreach ($_resolutions as $key => $val) {
+                $task = new Task();
+                $task->company_id = $u->id;
+                $task->meeting_id = $meeting->id;
+                $task->assigned_to = $val->attribute_5;
+                $task->manager_id = $val->attribute_7;
+                $task->created_by = $u->id;
+                $task->name = $val->attribute_2;
+                $task->task_description = $val->attribute_3;
+                $task->due_to_date = Carbon::parse($val->attribute_4);
+                $task->priority = 'Medium';
+                $task->save();
+            }
+        } catch (\Throwable $th) {
+            $message = $th->getMessage();
+            return Utils::response([
+                'status' => 0,
+                'code' => 0,
+                'message' => $message,
+            ]);
+        }
+
+
+        return Utils::response([
+            'status' => 1,
+            'code' => 1,
+            'message' => 'Meeting created successfully.',
+        ]);
+
+        /* 
+updated_at
+company_id
+created_by
+name
+details
+minutes_of_meeting
+location
+location_gps_latitude
+location_gps_longitude
+meeting_start_time
+meeting_end_time
+attendance_list_pictures
+members_pictures
+attachments
+members_present
+other_data
+        */
+    }
+
     public function upload_media(Request $request)
     {
-
-        $u = auth('api')->user(); 
+        $u = auth('api')->user();
         if ($u == null) {
             return Utils::response([
                 'status' => 0,
@@ -242,7 +362,7 @@ class ApiAuthController extends Controller
             ]);
         }
 
-        
+
         $images = Utils::upload_images_2($_FILES, false);
         $_images = [];
 
@@ -281,7 +401,7 @@ class ApiAuthController extends Controller
 
 
             $img = new Image();
-            $img->administrator_id =  $administrator_id; 
+            $img->administrator_id =  $administrator_id;
             $img->src =  $src;
             $img->thumbnail =  null;
             $img->parent_endpoint =  $request->parent_endpoint;
@@ -320,5 +440,5 @@ class ApiAuthController extends Controller
             'data' => json_encode($_POST),
             'message' => "File uploaded successfully.",
         ]);
-    } 
+    }
 }

@@ -76,6 +76,7 @@ return array(
     'App\\Models\\FinancialYear' => $baseDir . '/app/Models/FinancialYear.php',
     'App\\Models\\Gen' => $baseDir . '/app/Models/Gen.php',
     'App\\Models\\Image' => $baseDir . '/app/Models/Image.php',
+    'App\\Models\\Meeting' => $baseDir . '/app/Models/Meeting.php',
     'App\\Models\\Patient' => $baseDir . '/app/Models/Patient.php',
     'App\\Models\\PatientRecord' => $baseDir . '/app/Models/PatientRecord.php',
     'App\\Models\\Project' => $baseDir . '/app/Models/Project.php',

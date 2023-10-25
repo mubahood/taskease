@@ -26,8 +26,8 @@ class Task extends Model
         });
 
         static::creating(function ($model) {
-            $model->manager_submission_status = 'Not Submitted'; 
-            $model->delegate_submission_status = 'Not Submitted'; 
+            $model->manager_submission_status = 'Not Submitted';
+            $model->delegate_submission_status = 'Not Submitted';
             return Task::prepare_saving($model);
         });
         static::updating(function ($model) {
@@ -39,6 +39,7 @@ class Task extends Model
     {
         $project_section = ProjectSection::find($model->project_section_id);
         if ($project_section == null) {
+            return;
             throw new \Exception("Project section not found");
         }
         $assigned_to_user = Administrator::find($model->assigned_to);
@@ -51,7 +52,6 @@ class Task extends Model
             $model->manager_id = $assigned_to_user->manager_id;
         }
         $model->project_id = $project_section->project_id;
-
     }
 
 

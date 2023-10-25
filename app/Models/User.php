@@ -13,10 +13,24 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Encore\Admin\Auth\Database\Administrator;
 
 
-class User extends Authenticatable implements JWTSubject, Administrator
+class User extends Authenticatable implements JWTSubject
 {
     use HasFactory;
     use Notifiable;
+
+
+    private $admin;
+
+    public function __construct()
+    {
+        $this->admin = new Administrator();
+    }
+
+    // fake "extends C" using magic function
+    public function __call($method, $args)
+    {
+        $this->admin->$method($args[0]);
+    }
 
     protected $table = "admin_users";
 
