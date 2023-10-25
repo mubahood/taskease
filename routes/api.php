@@ -17,41 +17,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get("saccos", [ApiResurceController::class, "saccos"]);
-Route::post("sacco-join-request", [ApiResurceController::class, "sacco_join_request"]);
 
 Route::middleware([EnsureTokenIsValid::class])->group(function () {
-    Route::get("sacco-members", [ApiResurceController::class, "sacco_members"]);
-    Route::post("sacco-members-review", [ApiResurceController::class, "sacco_members_review"]);
-    Route::get("my-sacco-membership", [ApiResurceController::class, "my_sacco_membership"]);
-
-    Route::get("gardens", [ApiResurceController::class, "gardens"]);
-    Route::get("garden-activities", [ApiResurceController::class, "garden_activities"]);
-    Route::get("garden-activities", [ApiResurceController::class, "garden_activities"]);
-    Route::POST("gardens", [ApiResurceController::class, "garden_create"]);
-    Route::POST("products", [ApiResurceController::class, "product_create"]);
-    Route::POST("garden-activities", [ApiResurceController::class, "activity_submit"]);
 });
-Route::get("crops", [ApiResurceController::class, "crops"]);
-
-
-
+Route::get('users/me', [ApiAuthController::class, 'me']);
+Route::POST("post-media-upload", [ApiAuthController::class, 'upload_media']);
 
 
 Route::POST("users/login", [ApiAuthController::class, "login"]);
 Route::POST("users/register", [ApiAuthController::class, "register"]);
-Route::get("people", [ApiResurceController::class, "people"]);
-Route::POST("people", [ApiResurceController::class, "person_create"]);
-Route::get("jobs", [ApiResurceController::class, "jobs"]);
 Route::get('api/{model}', [ApiResurceController::class, 'index']);
-Route::get('groups', [ApiResurceController::class, 'groups']);
-Route::get('associations', [ApiResurceController::class, 'associations']);
-Route::get('institutions', [ApiResurceController::class, 'institutions']);
-Route::get('service-providers', [ApiResurceController::class, 'service_providers']);
-Route::get('counselling-centres', [ApiResurceController::class, 'counselling_centres']);
-Route::get('products', [ApiResurceController::class, 'products']);
-Route::get('events', [ApiResurceController::class, 'events']);
-Route::get('news-posts', [ApiResurceController::class, 'news_posts']);
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

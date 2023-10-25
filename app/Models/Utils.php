@@ -7,10 +7,32 @@ use Encore\Admin\Facades\Admin;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use SplFileObject;
+use Zebra_Image;
 
 class Utils extends Model
 {
     use HasFactory;
+
+
+    public static function response($data = [])
+    {
+        header('Content-Type: application/json; charset=utf-8');
+        $resp['status'] = "1";
+        $resp['code'] = "1";
+        $resp['message'] = "Success";
+        $resp['data'] = null;
+        if (isset($data['status'])) {
+            $resp['status'] = $data['status'] . "";
+            $resp['code'] = $data['status'] . "";
+        }
+        if (isset($data['message'])) {
+            $resp['message'] = $data['message'];
+        }
+        if (isset($data['data'])) {
+            $resp['data'] = $data['data'];
+        }
+        return $resp;
+    }
 
     //static php fuction that greets the user according to the time of the day
     public static function greet()
@@ -33,8 +55,7 @@ class Utils extends Model
 
 
         $conditions = [
-/*             'company_id' => $u->company_id, */
-        ];
+            /*             'company_id' => $u->company_id, */];
 
         $eves = Event::where($conditions)->get();
         $events = [];
@@ -494,6 +515,86 @@ class Utils extends Model
 
 
         return $is_single_file ? $single_file : $uploaded_images;
+    }
+
+
+    public static function create_thumbail($params = array())
+    {
+
+        ini_set('memory_limit', '-1');
+
+        if (
+            !isset($params['source']) ||
+            !isset($params['target'])
+        ) {
+            return [];
+        }
+
+
+
+        if (!file_exists($params['source'])) {
+            $img = url('assets/images/cow.jpeg');
+            return $img;
+        }
+
+
+        $image = new Zebra_Image();
+
+        $image->auto_handle_exif_orientation = true;
+        $image->source_path = "" . $params['source'];
+        $image->target_path = "" . $params['target'];
+
+
+        if (isset($params['quality'])) {
+            $image->jpeg_quality = $params['quality'];
+        }
+
+        $image->preserve_aspect_ratio = true;
+        $image->enlarge_smaller_images = true;
+        $image->preserve_time = true;
+        $image->handle_exif_orientation_tag = true;
+
+        $img_size = getimagesize($image->source_path); // returns an array that is filled with info
+
+
+
+
+
+        $image->jpeg_quality = 50;
+        if (isset($params['quality'])) {
+            $image->jpeg_quality = $params['quality'];
+        } else {
+            $image->jpeg_quality = Utils::get_jpeg_quality(filesize($image->source_path));
+        }
+        if (!$image->resize(0, 0, ZEBRA_IMAGE_CROP_CENTER)) {
+            return $image->source_path;
+        } else {
+            return $image->target_path;
+        }
+    }
+
+    public static function get_jpeg_quality($_size)
+    {
+        $size = ($_size / 1000000);
+
+        $qt = 50;
+        if ($size > 5) {
+            $qt = 10;
+        } else if ($size > 4) {
+            $qt = 10;
+        } else if ($size > 2) {
+            $qt = 10;
+        } else if ($size > 1) {
+            $qt = 11;
+        } else if ($size > 0.8) {
+            $qt = 11;
+        } else if ($size > .5) {
+            $qt = 12;
+        } else {
+            $qt = 15;
+        }
+
+        return $qt;
     }
 
 

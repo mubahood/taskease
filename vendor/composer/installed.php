@@ -3,7 +3,7 @@
         'name' => 'laravel/laravel',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '8450e7ae0b8f62621ed40f647e597ec258c92a9c',
+        'reference' => '5a2108d291f656eeaab54ae99a6ee47a3e0c2b62',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -496,7 +496,7 @@
         'laravel/laravel' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '8450e7ae0b8f62621ed40f647e597ec258c92a9c',
+            'reference' => '5a2108d291f656eeaab54ae99a6ee47a3e0c2b62',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -1120,6 +1120,15 @@
             'install_path' => __DIR__ . '/../sebastian/version',
             'aliases' => array(),
             'dev_requirement' => true,
+        ),
+        'stefangabos/zebra_image' => array(
+            'pretty_version' => '2.8.2',
+            'version' => '2.8.2.0',
+            'reference' => '11c343fa312d8cc3ffc70231f027af6bdd01f42b',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../stefangabos/zebra_image',
+            'aliases' => array(),
+            'dev_requirement' => false,
         ),
         'swiftmailer/swiftmailer' => array(
             'pretty_version' => 'v6.3.0',

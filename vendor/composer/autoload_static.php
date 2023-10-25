@@ -624,6 +624,7 @@ class ComposerStaticInitda89eef54c810448a827ed04bb3da82f
         'App\\Admin\\Controllers\\ProjectSectionController' => __DIR__ . '/../..' . '/app/Admin/Controllers/ProjectSectionController.php',
         'App\\Admin\\Controllers\\TaskController' => __DIR__ . '/../..' . '/app/Admin/Controllers/TaskController.php',
         'App\\Admin\\Controllers\\TreatmentRecordController' => __DIR__ . '/../..' . '/app/Admin/Controllers/TreatmentRecordController.php',
+        'App\\Admin\\Controllers\\TreatmentRecordItemController' => __DIR__ . '/../..' . '/app/Admin/Controllers/TreatmentRecordItemController.php',
         'App\\Admin\\Controllers\\UserController' => __DIR__ . '/../..' . '/app/Admin/Controllers/UserController.php',
         'App\\Admin\\Extensions\\Column\\FloatBar' => __DIR__ . '/../..' . '/app/Admin/Extensions/Column/FloatBar.php',
         'App\\Admin\\Extensions\\Column\\OpenMap' => __DIR__ . '/../..' . '/app/Admin/Extensions/Column/OpenMap.php',
@@ -678,6 +679,7 @@ class ComposerStaticInitda89eef54c810448a827ed04bb3da82f
         'App\\Models\\Event' => __DIR__ . '/../..' . '/app/Models/Event.php',
         'App\\Models\\FinancialYear' => __DIR__ . '/../..' . '/app/Models/FinancialYear.php',
         'App\\Models\\Gen' => __DIR__ . '/../..' . '/app/Models/Gen.php',
+        'App\\Models\\Image' => __DIR__ . '/../..' . '/app/Models/Image.php',
         'App\\Models\\Patient' => __DIR__ . '/../..' . '/app/Models/Patient.php',
         'App\\Models\\PatientRecord' => __DIR__ . '/../..' . '/app/Models/PatientRecord.php',
         'App\\Models\\Project' => __DIR__ . '/../..' . '/app/Models/Project.php',
@@ -6707,6 +6709,7 @@ class ComposerStaticInitda89eef54c810448a827ed04bb3da82f
         'Whoops\\Util\\Misc' => __DIR__ . '/..' . '/filp/whoops/src/Whoops/Util/Misc.php',
         'Whoops\\Util\\SystemFacade' => __DIR__ . '/..' . '/filp/whoops/src/Whoops/Util/SystemFacade.php',
         'Whoops\\Util\\TemplateHelper' => __DIR__ . '/..' . '/filp/whoops/src/Whoops/Util/TemplateHelper.php',
+        'Zebra_Image' => __DIR__ . '/..' . '/stefangabos/zebra_image/Zebra_Image.php',
         'voku\\helper\\ASCII' => __DIR__ . '/..' . '/voku/portable-ascii/src/voku/helper/ASCII.php',
     );
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Image;
 use App\Models\User;
 use App\Models\Utils;
 use App\Traits\ApiResponser;
@@ -61,22 +62,18 @@ class ApiAuthController extends Controller
 
         $r->username = trim($r->username);
 
-        $u = User::where('phone_number', $r->username)
+        $u = User::where('phone_number_1', $r->username)
             ->orWhere('username', $r->username)
             ->orWhere('id', $r->username)
             ->orWhere('email', $r->username)
             ->first();
 
 
-
         if ($u == null) {
-
             $phone_number = Utils::prepare_phone_number($r->username);
-
             if (Utils::phone_number_is_valid($phone_number)) {
                 $phone_number = $r->phone_number;
-
-                $u = User::where('phone_number', $phone_number)
+                $u = User::where('phone_number_1', $phone_number)
                     ->orWhere('username', $phone_number)
                     ->orWhere('email', $phone_number)
                     ->first();
@@ -111,7 +108,7 @@ class ApiAuthController extends Controller
 
     public function register(Request $r)
     {
-        if ($r->phone_number == null) {
+        if ($r->phone_number_1 == null) {
             return $this->error('Phone number is required.');
         }
 
@@ -134,7 +131,7 @@ class ApiAuthController extends Controller
 
 
 
-        $u = Administrator::where('phone_number', $phone_number)
+        $u = Administrator::where('phone_number_1', $phone_number)
             ->orWhere('username', $phone_number)->first();
         if ($u != null) {
             return $this->error('User with same phone number already exists.');
@@ -156,7 +153,7 @@ class ApiAuthController extends Controller
             $user->first_name = $name;
         }
 
-        $user->phone_number = $phone_number;
+        $user->phone_number_1 = $phone_number;
         $user->username = $phone_number;
         $user->reg_number = $phone_number;
         $user->country = $phone_number;
@@ -194,4 +191,134 @@ class ApiAuthController extends Controller
         $new_user->remember_token = $token;
         return $this->success($new_user, 'Account created successfully.');
     }
+
+
+    public function upload_media(Request $request)
+    {
+
+        $u = auth('api')->user(); 
+        if ($u == null) {
+            return Utils::response([
+                'status' => 0,
+                'code' => 0,
+                'message' => "User not found.",
+            ]);
+        }
+
+        $administrator_id = $u->id;
+        if (
+            !isset($request->parent_id) ||
+            $request->parent_id == null ||
+            ((int)($request->parent_id)) < 1
+        ) {
+            return Utils::response([
+                'status' => 0,
+                'code' => 0,
+                'message' => "Local parent ID is missing.",
+            ]);
+        }
+
+        if (
+            !isset($request->parent_endpoint) ||
+            $request->parent_endpoint == null ||
+            (strlen(($request->parent_endpoint))) < 3
+        ) {
+            return Utils::response([
+                'status' => 0,
+                'code' => 0,
+                'message' => "Local parent ID endpoint is missing.",
+            ]);
+        }
+
+
+
+        if (
+            empty($_FILES)
+        ) {
+            return Utils::response([
+                'status' => 0,
+                'code' => 0,
+                'message' => "Files not found.",
+            ]);
+        }
+
+        
+        $images = Utils::upload_images_2($_FILES, false);
+        $_images = [];
+
+        if (empty($images)) {
+            return Utils::response([
+                'status' => 0,
+                'code' => 0,
+                'message' => 'Failed to upload files.',
+                'data' => null
+            ]);
+        }
+
+
+        $msg = "";
+        foreach ($images as $src) {
+
+            if ($request->parent_endpoint == 'edit') {
+                $img = Image::find($request->local_parent_id);
+                if ($img) {
+                    return Utils::response([
+                        'status' => 0,
+                        'code' => 0,
+                        'message' => "Original photo not found",
+                    ]);
+                }
+                $img->src =  $src;
+                $img->thumbnail =  null;
+                $img->save();
+                return Utils::response([
+                    'status' => 1,
+                    'code' => 1,
+                    'data' => json_encode($img),
+                    'message' => "File updated.",
+                ]);
+            }
+
+
+            $img = new Image();
+            $img->administrator_id =  $administrator_id; 
+            $img->src =  $src;
+            $img->thumbnail =  null;
+            $img->parent_endpoint =  $request->parent_endpoint;
+            $img->parent_id =  (int)($request->parent_id);
+            $img->size = 0;
+            $img->note = '';
+            if (
+                isset($request->note)
+            ) {
+                $img->note =  $request->note;
+                $msg .= "Note not set. ";
+            }
+
+            $online_parent_id = ((int)($request->online_parent_id));
+            if (
+                $online_parent_id > 0
+            ) {
+                $animal = Product::find($online_parent_id);
+                if ($animal != null) {
+                    $img->parent_endpoint =  'Animal';
+                    $img->parent_id =  $animal->id;
+                } else {
+                    $msg .= "parent_id NOT not found => {$request->online_parent_id}.";
+                }
+            } else {
+                $msg .= "Online_parent_id NOT set. => {$online_parent_id} ";
+            }
+
+            $img->save();
+            $_images[] = $img;
+        }
+        //Utils::process_images_in_backround();
+        return Utils::response([
+            'status' => 1,
+            'code' => 1,
+            'data' => json_encode($_POST),
+            'message' => "File uploaded successfully.",
+        ]);
+    } 
 }

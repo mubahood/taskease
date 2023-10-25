@@ -20,6 +20,7 @@ return array(
     'App\\Admin\\Controllers\\ProjectSectionController' => $baseDir . '/app/Admin/Controllers/ProjectSectionController.php',
     'App\\Admin\\Controllers\\TaskController' => $baseDir . '/app/Admin/Controllers/TaskController.php',
     'App\\Admin\\Controllers\\TreatmentRecordController' => $baseDir . '/app/Admin/Controllers/TreatmentRecordController.php',
+    'App\\Admin\\Controllers\\TreatmentRecordItemController' => $baseDir . '/app/Admin/Controllers/TreatmentRecordItemController.php',
     'App\\Admin\\Controllers\\UserController' => $baseDir . '/app/Admin/Controllers/UserController.php',
     'App\\Admin\\Extensions\\Column\\FloatBar' => $baseDir . '/app/Admin/Extensions/Column/FloatBar.php',
     'App\\Admin\\Extensions\\Column\\OpenMap' => $baseDir . '/app/Admin/Extensions/Column/OpenMap.php',
@@ -74,6 +75,7 @@ return array(
     'App\\Models\\Event' => $baseDir . '/app/Models/Event.php',
     'App\\Models\\FinancialYear' => $baseDir . '/app/Models/FinancialYear.php',
     'App\\Models\\Gen' => $baseDir . '/app/Models/Gen.php',
+    'App\\Models\\Image' => $baseDir . '/app/Models/Image.php',
     'App\\Models\\Patient' => $baseDir . '/app/Models/Patient.php',
     'App\\Models\\PatientRecord' => $baseDir . '/app/Models/PatientRecord.php',
     'App\\Models\\Project' => $baseDir . '/app/Models/Project.php',
@@ -6103,5 +6105,6 @@ return array(
     'Whoops\\Util\\Misc' => $vendorDir . '/filp/whoops/src/Whoops/Util/Misc.php',
     'Whoops\\Util\\SystemFacade' => $vendorDir . '/filp/whoops/src/Whoops/Util/SystemFacade.php',
     'Whoops\\Util\\TemplateHelper' => $vendorDir . '/filp/whoops/src/Whoops/Util/TemplateHelper.php',
+    'Zebra_Image' => $vendorDir . '/stefangabos/zebra_image/Zebra_Image.php',
     'voku\\helper\\ASCII' => $vendorDir . '/voku/portable-ascii/src/voku/helper/ASCII.php',
 );
