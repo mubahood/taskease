@@ -19,18 +19,8 @@ class User extends Authenticatable implements JWTSubject
     use Notifiable;
 
 
-    private $admin;
+     
 
-    public function __construct()
-    {
-        $this->admin = new Administrator();
-    }
-
-    // fake "extends C" using magic function
-    public function __call($method, $args)
-    {
-        $this->admin->$method($args[0]);
-    }
 
     protected $table = "admin_users";
 
