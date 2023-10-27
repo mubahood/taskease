@@ -1,6 +1,10 @@
 <?php
+
+
 $headers = getallheaders();
-printf(json_encode($headers));
+
+
+printf($_SERVER['HTTP_AUTHORIZATION']);
 die();
 
 use Illuminate\Contracts\Http\Kernel;
@@ -8,6 +12,7 @@ use Illuminate\Http\Request;
 
 
 define('LARAVEL_START', microtime(true));
+
 
 /*
 |--------------------------------------------------------------------------
