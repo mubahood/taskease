@@ -49,6 +49,19 @@ class ApiAuthController extends Controller
     }
 
 
+    public function users()
+    {
+        $u = auth('api')->user();
+        if ($u == null) {
+            return $this->error('Account not found');
+        }
+
+        return $this->success(User::where([
+            'company_id' => $u->company_id
+        ])->get(), $message = "Success", 200);
+    }
+
+
 
 
 
