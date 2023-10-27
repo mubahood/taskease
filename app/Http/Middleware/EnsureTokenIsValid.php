@@ -19,6 +19,7 @@ class EnsureTokenIsValid
     public function handle(Request $request, Closure $next)
     {
         $headers = getallheaders();
+        dd($headers);
 
         /*         return Utils::success($headers);  */
 

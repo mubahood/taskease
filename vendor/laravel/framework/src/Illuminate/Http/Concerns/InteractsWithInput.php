@@ -55,8 +55,6 @@ trait InteractsWithInput
     {
         $header = $this->header('Authorization', '');
 
-        die("romina");
-
         $position = strrpos($header, 'Bearer ');
 
         if ($position !== false) {
