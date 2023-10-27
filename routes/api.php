@@ -19,11 +19,8 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::middleware([EnsureTokenIsValid::class])->group(function () {
-    Route::get('users/me', [ApiAuthController::class, 'me']);
 });
-
-
-
+Route::get('users/me', [ApiAuthController::class, 'me']);
 Route::POST("post-media-upload", [ApiAuthController::class, 'upload_media']);
 Route::POST("meetings", [ApiAuthController::class, 'meetings_post']);
 
