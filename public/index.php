@@ -1,7 +1,11 @@
 <?php
+$headers = getallheaders();
+printf(json_encode($headers));
+die();
 
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
+
 
 define('LARAVEL_START', microtime(true));
 
