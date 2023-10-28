@@ -67,7 +67,7 @@ class ApiAuthController extends Controller
         if ($u == null) {
             return $this->error('Account not found');
         }
-        return $this->success(User::where([])->get(), $message = "Success", 200);
+        return $this->success(Task::where([])->get(), $message = "Success", 200);
     }
 
     public function tasks_update_status(Request $r)
