@@ -61,6 +61,18 @@ class ApiAuthController extends Controller
         ])->get(), $message = "Success", 200);
     }
 
+    public function tasks()
+    {
+        $u = auth('api')->user();
+        if ($u == null) {
+            return $this->error('Account not found');
+        }
+
+        return $this->success(User::where([
+            'company_id' => $u->company_id
+        ])->get(), $message = "Success", 200);
+    }
+
 
 
 
@@ -277,6 +289,7 @@ class ApiAuthController extends Controller
                 }
             }
 
+            dd($r->resolutions);
 
             foreach ($_resolutions as $key => $val) {
                 $task = new Task();
