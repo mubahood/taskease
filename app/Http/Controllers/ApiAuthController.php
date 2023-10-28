@@ -63,12 +63,56 @@ class ApiAuthController extends Controller
 
     public function tasks()
     {
-        return $this->success(User::where([])->get(), $message = "Success", 200); 
         $u = auth('api')->user();
         if ($u == null) {
             return $this->error('Account not found');
         }
         return $this->success(User::where([])->get(), $message = "Success", 200);
+    }
+
+    public function tasks_update_staus(Request $r)
+    {
+        $u = auth('api')->user();
+        if ($u == null) {
+            return $this->error('Account not found');
+        }
+
+        if ($r->task_id == null) {
+            return $this->error('Task ID is required.');
+        }
+        if (
+            $r->delegate_submission_status == null ||
+            $r->delegate_submission_remarks == null ||
+            $r->manager_submission_status == null ||
+            $r->manager_submission_remarks == null
+        ) {
+            return $this->error('All fields are required.');
+        }
+
+        $task = Task::find($r->task_id);
+        if ($task == null) {
+            return $this->error('Task not found.');
+        }
+        if (strlen($r->delegate_submission_remarks) > 2) {
+            $task->delegate_submission_remarks = $r->delegate_submission_remarks;
+        }
+        if (strlen($r->manager_submission_remarks) > 2) {
+            $task->manager_submission_remarks = $r->manager_submission_remarks;
+        }
+        if (strlen($r->manager_submission_status) > 2) {
+            $task->manager_submission_status = $r->manager_submission_status;
+        }
+        if (strlen($r->manager_submission_remarks) > 2) {
+            $task->manager_submission_remarks = $r->manager_submission_remarks;
+        }
+
+        try {
+            $task->save();
+        } catch (\Throwable $th) {
+            return $this->error('Failed to update task.');
+        }
+
+        return $this->success(null, $message = "Success", 200);
     }
 
 
