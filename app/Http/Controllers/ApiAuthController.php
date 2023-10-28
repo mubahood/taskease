@@ -84,7 +84,7 @@ class ApiAuthController extends Controller
 
         $task = Task::find($r->task_id);
         if ($task == null) {
-            return $this->error('Task not found.');
+            return $this->error('Task not found. '.$r->task_id);
         }
         if (strlen($r->delegate_submission_remarks) > 2) {
             $task->delegate_submission_remarks = $r->delegate_submission_remarks;
