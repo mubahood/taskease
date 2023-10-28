@@ -80,20 +80,20 @@ class ApiAuthController extends Controller
         if ($r->task_id == null) {
             return $this->error('Task ID is required.');
         }
-      
+
 
         $task = Task::find($r->task_id);
         if ($task == null) {
-            return $this->error('Task not found. '.$r->task_id);
+            return $this->error('Task not found. ' . $r->task_id);
         }
-        if (strlen($r->delegate_submission_remarks) > 2) {
-            $task->delegate_submission_remarks = $r->delegate_submission_remarks;
-        }
-        if (strlen($r->manager_submission_remarks) > 2) {
-            $task->manager_submission_remarks = $r->manager_submission_remarks;
+        if (strlen($r->delegate_submission_status) > 2) {
+            $task->delegate_submission_status = $r->delegate_submission_status;
         }
         if (strlen($r->manager_submission_status) > 2) {
             $task->manager_submission_status = $r->manager_submission_status;
+        }
+        if (strlen($r->delegate_submission_remarks) > 2) {
+            $task->delegate_submission_remarks = $r->delegate_submission_remarks;
         }
         if (strlen($r->manager_submission_remarks) > 2) {
             $task->manager_submission_remarks = $r->manager_submission_remarks;
