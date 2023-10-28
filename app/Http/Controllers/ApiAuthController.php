@@ -70,7 +70,7 @@ class ApiAuthController extends Controller
         return $this->success(User::where([])->get(), $message = "Success", 200);
     }
 
-    public function tasks_update_staus(Request $r)
+    public function tasks_update_status(Request $r)
     {
         $u = auth('api')->user();
         if ($u == null) {
