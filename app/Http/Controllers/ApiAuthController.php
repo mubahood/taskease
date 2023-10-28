@@ -80,14 +80,7 @@ class ApiAuthController extends Controller
         if ($r->task_id == null) {
             return $this->error('Task ID is required.');
         }
-        if (
-            $r->delegate_submission_status == null ||
-            $r->delegate_submission_remarks == null ||
-            $r->manager_submission_status == null ||
-            $r->manager_submission_remarks == null
-        ) {
-            return $this->error('All fields are required.');
-        }
+      
 
         $task = Task::find($r->task_id);
         if ($task == null) {
