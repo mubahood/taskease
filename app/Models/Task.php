@@ -10,6 +10,25 @@ class Task extends Model
 {
     use HasFactory;
 
+    //fillables
+    protected $fillable = [
+        'company_id',
+        'project_id',
+        'project_section_id',
+        'assigned_to',
+        'created_by',
+        'manager_id',
+        'name',
+        'task_description',
+        'due_to_date',
+        'delegate_submission_status',
+        'delegate_submission_remarks',
+        'manager_submission_status',
+        'manager_submission_remarks',
+        'priority',
+        'meeting_id',
+    ];
+
 
     static public function boot()
     {

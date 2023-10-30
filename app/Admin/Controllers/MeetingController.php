@@ -3,6 +3,8 @@
 namespace App\Admin\Controllers;
 
 use App\Models\Meeting;
+use App\Models\Utils;
+use Encore\Admin\Auth\Database\Administrator;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -25,25 +27,33 @@ class MeetingController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new Meeting());
+        $grid->model()->orderBy('id', 'desc');
+        $grid->disableBatchActions();
+        $grid->disableExport();
+        $grid->column('id', __('Id'))->sortable();
+        $grid->column('created_at', __('Created'))
+            ->display(function ($created_at) {
+                return date('d-m-Y', strtotime($created_at));
+            })->sortable();
+        $grid->column('name', __('Name'))->sortable();
+        $grid->column('details', __('Details'))->hide();
+        $grid->column('location', __('Venue'))->sortable();
+        $grid->column('meeting_start_time', __('Meeting started'))
+            ->display(function ($meeting_start_time) {
+                return Utils::my_date_time_1($meeting_start_time);
+            })->sortable();
+        $grid->column('meeting_end_time', __('Meeting ended'))
+            ->display(function ($meeting_start_time) {
+                return Utils::my_date_time_1($meeting_start_time);
+            })->sortable();
+        $grid->column('attendance_list_pictures', __('Attachments'))
+            ->display(function ($attendance_list_pictures) {
+                if (!is_array($attendance_list_pictures)) {
+                    return "-";
+                }
+                return count($attendance_list_pictures);
+            });
 
-        $grid->column('id', __('Id'));
-        $grid->column('created_at', __('Created at'));
-        $grid->column('updated_at', __('Updated at'));
-        $grid->column('company_id', __('Company id'));
-        $grid->column('created_by', __('Created by'));
-        $grid->column('name', __('Name'));
-        $grid->column('details', __('Details'));
-        $grid->column('minutes_of_meeting', __('Minutes of meeting'));
-        $grid->column('location', __('Location'));
-        $grid->column('location_gps_latitude', __('Location gps latitude'));
-        $grid->column('location_gps_longitude', __('Location gps longitude'));
-        $grid->column('meeting_start_time', __('Meeting start time'));
-        $grid->column('meeting_end_time', __('Meeting end time'));
-        $grid->column('attendance_list_pictures', __('Attendance list pictures'));
-        $grid->column('members_pictures', __('Members pictures'));
-        $grid->column('attachments', __('Attachments'));
-        $grid->column('members_present', __('Members present'));
-        $grid->column('other_data', __('Other data'));
 
         return $grid;
     }
@@ -88,7 +98,6 @@ class MeetingController extends AdminController
     protected function form()
     {
         $form = new Form(new Meeting());
-
         $u = auth()->user();
         /* 
     "id" => 2
@@ -170,21 +179,99 @@ class MeetingController extends AdminController
     "intro" => null
 */
 
+
         $form->hidden('company_id', __('Company id'))->default($u->company_id);
         $form->hidden('created_by', __('Created by'))->default($u->id);
         $form->text('name', __('Meeting Title'))->rules('required');
-        $form->textarea('details', __('Details'));
-        $form->textarea('minutes_of_meeting', __('Minutes of meeting'));
-        $form->textarea('location', __('Location'));
-        $form->textarea('location_gps_latitude', __('Location gps latitude'));
-        $form->textarea('location_gps_longitude', __('Location gps longitude'));
-        $form->textarea('meeting_start_time', __('Meeting start time'));
-        $form->textarea('meeting_end_time', __('Meeting end time'));
-        $form->textarea('attendance_list_pictures', __('Attendance list pictures'));
+        $form->datetime('meeting_start_time', __('Meeting Start Time'));
+        $form->datetime('meeting_end_time', __('Meeting End Time'));
+        $form->text('location', __('Meeting Venue'));
+        $form->textarea('details', __('Minutes of meeting'))->rules('required');
+
+        /* $form->textarea('minutes_of_meeting', __('Minutes of meeting')); */
+        /*         $form->textarea('location_gps_latitude', __('Location gps latitude'));
+        $form->textarea('location_gps_longitude', __('Location gps longitude')); */
+
+        $form->multipleFile('attendance_list_pictures', __('Attachments'))
+            ->removable()
+            ->sortable()
+            ->help('Please upload the attendance list pictures here. You can upload multiple pictures at once.');
+
+
+
+        $form->hasMany('tasks', 'Resolutions', function (Form\NestedForm $form) {
+            $u = auth()->user();
+            $form->text('name', __('Resolution title'))->rules('required');
+            $form->text('task_description', __('Resolution Description'))->rules('required');
+            $form->select('assigned_to', __('Assigned to'))
+                ->options(Administrator::where([])
+                    ->pluck('name', 'id'))->rules('required');
+            $form->select('manager_id', __('Supervised by'))
+                ->options(Administrator::where([])
+                    ->pluck('name', 'id'))->rules('required');
+
+            $form->select('delegate_submission_status', __('Delegate submission status'))
+                ->options([
+                    'Not Submitted' => 'Not Submitted',
+                    'Done' => 'Done',
+                    'Done Late' => 'Done Late',
+                    'Not Attended To' => 'Not Attended To',
+                ])->default('Not Submitted');
+            $form->textarea('delegate_submission_remarks', __('Delegate submission remarks'))->rules('required');
+            $form->select('manager_submission_status', __('Supervisor submission status'))
+                ->options([
+                    'Not Submitted' => 'Not Submitted',
+                    'Done' => 'Done',
+                    'Done Late' => 'Done Late',
+                    'Not Attended To' => 'Not Attended To',
+                ])->default('Not Submitted');
+
+
+            $form->textarea('manager_submission_remarks', __('Manager submission remarks'));
+            $form->hidden('project_id', __('Company id'))->default(1);
+            $form->hidden('project_section_id', __('Company id'))->default(1);
+            $form->hidden('priority', __('Priority'))->default('Medium');
+            $form->datetime('due_to_date', __('Deadline'))->rules('required');
+            $form->hidden('company_id', __('Company id'))->default($u->company_id);
+            $form->hidden('created_by', __('Created by'))->default($u->id);
+        });
+
+        /*		
+
+Full texts
+id	
+created_at	
+updated_at	
+company_id	
+project_id	
+project_section_id	
+assigned_to	
+created_by	
+manager_id	
+name	
+task_description	
+due_to_date	
+delegate_submission_status	
+delegate_submission_remarks	
+manager_submission_status	
+manager_submission_remarks	
+priority	
+meeting_id	
+
+    */
+
+
+        $form->tools(function (Form\Tools $tools) {
+            $tools->disableDelete();
+        });
+        $form->disableReset();
+        $form->disableCreatingCheck();
+
+        /*
         $form->textarea('members_pictures', __('Members pictures'));
         $form->textarea('attachments', __('Attachments'));
         $form->textarea('members_present', __('Members present'));
-        $form->textarea('other_data', __('Other data'));
+        $form->textarea('other_data', __('Other data')); */
 
         return $form;
     }

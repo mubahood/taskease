@@ -20,4 +20,8 @@ class Meeting extends Model
         if ($pictures != null)
             return json_decode($pictures, true);
     }
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
+    }
 }
