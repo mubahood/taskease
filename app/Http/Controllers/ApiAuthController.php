@@ -324,8 +324,6 @@ class ApiAuthController extends Controller
                 }
             }
 
-            dd($r->resolutions);
-
             foreach ($_resolutions as $key => $val) {
                 $task = new Task();
                 $task->company_id = $u->id;
