@@ -13,6 +13,7 @@ Route::group([
 
 
     $router->get('/', 'HomeController@index')->name('home');
+    $router->resource('meetings', MeetingController::class);
     $router->resource('companies', CompanyController::class);
     $router->resource('clients', ClientController::class);
     $router->resource('employees', EmployeesController::class);
