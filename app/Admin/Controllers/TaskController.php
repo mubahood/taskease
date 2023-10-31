@@ -184,15 +184,17 @@ class TaskController extends AdminController
         if (!auth()->user()->can('administrator')) {
             $conditions['managed_by'] = auth()->user()->id;
         }
-        $users = \App\Models\User::where($conditions)->pluck('name', 'id');
+        $users = \App\Models\User::where([])->pluck('name', 'id');
         $users[auth()->user()->id] = auth()->user()->name;
         $form->select('assigned_to', __('Assigned To'))
             ->options($users)
             ->default(auth()->user()->id)
             ->rules('required');
-        $form->select('project_section_id', __('Select Project Deliverable'))
-            ->options(ProjectSection::get_array())
+        $form->select('manager_id', __('Supervisor'))
+            ->options($users)
+            ->default(auth()->user()->id)
             ->rules('required');
+        $form->hidden('project_section_id', __('Project Section'))->value(1);
 
         $form->hidden('created_by', __('Created by'))->value(auth()->user()->id);
         $form->text('name', __('Task Description'))->rules('required');
@@ -216,28 +218,30 @@ class TaskController extends AdminController
             }
 
             $form->divider('Task Submission');
-            if ($model->assigned_to == auth()->user()->id) {
-                $form->radioCard('delegate_submission_status', __('Delegate Submission Status'))
-                    ->options([
-                        'Not Submitted' => 'Not Submitted',
-                        'Done' => 'Done',
-                        'Missed' => 'Missed',
-                    ]);
-                $form->textarea('delegate_submission_remarks', __('Delegate Task Submission Remarks'));
-            }
+            /* if ($model->assigned_to == auth()->user()->id) { */
+            $form->radioCard('delegate_submission_status', __('Delegate Submission Status'))
+                ->options([
+                    'Not Submitted' => 'Not Submitted',
+                    'Done' => 'Done',
+                    'Done Late' => 'Done Late',
+                    'Not Attended To' => 'Not Attended To',
+                ]);
+            $form->textarea('delegate_submission_remarks', __('Delegate Task Submission Remarks'));
+            /*     } */
 
-            if ($model->manager_id == auth()->user()->id) {
-                $form->radioCard('manager_submission_status', __('Manager submission status'))
-                    ->options([
-                        'Not Submitted' => 'Not Submitted',
-                        'Done' => 'Done',
-                        'Missed' => 'Missed',
-                    ]);
-                $form->textarea('manager_submission_remarks', __('Manager Task Submission Remarks'));
-            }
+            /*           if ($model->manager_id == auth()->user()->id) { */
+            $form->radioCard('manager_submission_status', __('Supervisor submission status'))
+                ->options([
+                    'Not Submitted' => 'Not Submitted',
+                    'Done' => 'Done',
+                    'Done Late' => 'Done Late',
+                    'Not Attended To' => 'Not Attended To',
+                ]);
+            $form->textarea('manager_submission_remarks', __('Supervisor Task Submission Remarks'));
+            /*           } */
         }
 
-        $form->disableEditingCheck();
+        //$form->disableEditingCheck();
         $form->disableViewCheck();
         $form->disableReset();
         return $form;

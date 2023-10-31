@@ -57,34 +57,48 @@ class Utils extends Model
         $conditions = [
             /*             'company_id' => $u->company_id, */];
 
-        $eves = Event::where($conditions)->get();
+        $eves = Task::where($conditions)->get();
         $events = [];
         foreach ($eves as $key => $event) {
             $ev['activity_id'] = $event->id;
-            $event_date_time = Carbon::parse($event->event_date);
+            $event_date_time = Carbon::parse($event->due_to_date);
             $ev['title'] = $event_date_time->format('h:m ') . $event->name;
             $event_date = $event_date_time->format('Y-m-d');
             $event_time = $event_date_time->format('h:m a');
-            $ev['name'] = $event->name;
-            $ev['url_edit'] = admin_url('events/' . $event->id . '/edit');
-            $ev['url_view'] = admin_url('events/' . $event->id);
-            $ev['status'] = $event->event_conducted;
-            $details = $event->description . '<br>';
-            $participants = $event->get_participants_names();
+            $ev['name'] = "Task#" . $event->id;
+            $ev['url_edit'] = admin_url('tasks/' . $event->id . '/edit');
+            $ev['url_view'] = admin_url('tasks/' . $event->id);
+            $ev['status'] = 'N/A';
             $ev['classNames'] = ['bg-warning', 'border-warning', 'text-dark'];
-            if ($event->event_conducted == 'Conducted') {
-                $ev['classNames'] = ['bg-success', 'border-success', 'text-white'];
+            if (($event->manager_submission_status == 'Done' ||
+                    $event->manager_submission_status == 'Done Late' ||
+                    $event->manager_submission_status == 'Not Attended To') ||
+                ($event->delegate_submission_status == 'Done' ||
+                    $event->delegate_submission_status == 'Done Late' ||
+                    $event->delegate_submission_status == 'Not Attended To')
+            ) {
+                $ev['status'] = 'Submitted';
+                $ev['classNames'] = ['bg-success', 'border-success', 'text-white']; 
+            }else{
+                $ev['status'] = 'Not Submitted';
+            }
+
+            $details = $event->name . '<br><br>';
+            $participants = $event->assigned_to_user->name;
+
+         /*    if ($event->event_conducted == 'Conducted') {
+
             } else if ($event->event_conducted == 'Pending') {
                 $ev['classNames'] = ['bg-warning', 'border-warning', 'text-dark'];
             } else if ($event->event_conducted == 'Cancelled' || $event->event_conducted == 'Missed') {
                 $ev['classNames'] = ['bg-danger', 'border-danger', 'text-white'];
-            }
+            } */
 
-            $details .= "<b>Event Date:</b> {$event_date}<br>";
-            $details .= "<b>Event Time:</b> {$event_time}<br>";
-            $details .= "<b>Participants:</b> {$participants}<br>";
+            $details .= "<b>Due Date:</b> {$event_date}<br>";
+            $details .= "<b>Time:</b> {$event_time}<br>";
+            $details .= "<b>Assigned To:</b> {$participants}<br>";
             $ev['details'] = $details;
-            $ev['start'] = Carbon::parse($event->event_date)->format('Y-m-d');
+            $ev['start'] = Carbon::parse($event->due_to_date)->format('Y-m-d');
 
             $events[] = $ev;
         }
