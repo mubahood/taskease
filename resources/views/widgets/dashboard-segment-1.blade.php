@@ -1,4 +1,8 @@
 <?php
+if (!isset($tasks_done)) {
+    $tasks_done = 0;
+}
+
 if (!isset($events_count)) {
     $events_count = 0;
 }
@@ -9,33 +13,36 @@ if (!isset($tasks_count)) {
     $tasks_count = 0;
 }
 ?>
-<div class="row">
+{{-- 
+    '' => $tasks_missed,
+    '' => $tasks_not_submitted,
+    --}}<div class="row">
     <div class="col-12">
         <div class="row">
             <div class="col-md-4">
                 @include('widgets.box-6', [
                     'is_dark' => false,
-                    'title' => 'Today\'s Appointments',
+                    'title' => 'Done Tasks',
                     'icon' => 'box',
-                    'number' => 0,
+                    'number' => $tasks_done,
                     'link' => 'javascript:;',
                 ])
             </div>
             <div class="col-md-4">
                 @include('widgets.box-6', [
                     'is_dark' => false,
-                    'title' => 'This Week\'s Appointments',
+                    'title' => 'Not Attended To',
                     'icon' => 'list-task',
-                    'number' => 0,
+                    'number' => $tasks_missed,
                     'link' => 'javascript:;',
                 ])
             </div>
             <div class="col-md-4">
                 @include('widgets.box-6', [
-                    'is_dark' => false,
-                    'title' => 'Upcoming Appointments',
+                    'is_dark' => true,
+                    'title' => 'Not Submitted',
                     'icon' => 'calendar-event-fill',
-                    'number' => 0,
+                    'number' => $tasks_not_submitted,
                     'link' => 'javascript:;',
                 ])
             </div>
@@ -45,12 +52,12 @@ if (!isset($tasks_count)) {
 <div class="row">
     <div class="col-md-6">
         @include('dashboard.upcoming-events', [
-            'items' => $events,
+            'items' => $meetings,
         ])
     </div>
     <div class="col-md-6">
         @include('dashboard.tasks', [
-            'items' => $events,
+            'items' => $tasks,
         ])
     </div>
 </div>

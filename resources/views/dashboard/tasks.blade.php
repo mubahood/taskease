@@ -13,13 +13,13 @@ use App\Models\Utils;
                 <a href="{{ admin_url('events/' . $item->id) }}" target="_blank" title="View Event Details"
                     class="list-group-item list-group-item-action flex-column align-items-start py-2">
                     <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1"><b>{{ $item->name }}</b></h5>
-                        <small><b class="text-primay">{{ Utils::my_date_time_1($item->event_date) }}</b></small>
+                        <h5 class="mb-1"><b>{{-- {{ $item->name }} --}}</b></h5>
+                        <small><b class="text-primay">{{ Utils::my_date_time_1($item->due_to_date) }}</b></small>
                     </div>
                     <p class="mb-1">
-                        {{ $item->details }}
+                        {{ $item->name }}
                     </p>
-                    <small class="text-muted">{{ $item->get_participants_names() }}</small>
+                    <small class="text-muted">{{ $item->assigned_to_user->name }}</small>
                 </a>
             @endforeach
         </div>
