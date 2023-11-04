@@ -229,7 +229,6 @@ class TaskController extends AdminController
             $form->textarea('delegate_submission_remarks', __('Delegate Task Submission Remarks'));
             /*     } */
 
-            /*           if ($model->manager_id == auth()->user()->id) { */
             $form->radioCard('manager_submission_status', __('Supervisor submission status'))
                 ->options([
                     'Not Submitted' => 'Not Submitted',
