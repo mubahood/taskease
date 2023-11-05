@@ -8,8 +8,8 @@ use App\Models\Gen;
 use Illuminate\Support\Facades\Route;
 
 
-Route::get('policy', function(){
-    return view('policy'); 
+Route::get('policy', function () {
+    return view('policy');
 });
 
 Route::get('/gen-form', function () {
