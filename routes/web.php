@@ -55,7 +55,7 @@ Route::get('/gen', function () {
  
 
 /* 
-
+x
 Route::get('generate-variables', [MainController::class, 'generate_variables']); 
 Route::get('/', [MainController::class, 'index'])->name('home');
 Route::get('/about-us', [MainController::class, 'about_us']);
