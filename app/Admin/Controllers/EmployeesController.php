@@ -105,6 +105,12 @@ class EmployeesController extends AdminController
         $grid->column('masters_university_year_graduated')->hide();
         $grid->column('phd_university_name')->hide();
         $grid->column('phd_university_year_graduated')->hide();
+        $grid->column('week', 'Weekly Report')
+            ->display(function ($x) {
+                $link = route('admin.weekly-reports.index', ['employee_id' => $this->id]);
+                return $x;
+            })
+            ->label('success');
 
         return $grid;
     }
@@ -217,7 +223,6 @@ class EmployeesController extends AdminController
                 $form->text('bank_name');
                 $form->text('bank_account_number');
             });
-
         $form->divider('USER ROLES');
         $roleModel = AdminRole::where(['company_id' => $u->company_id])->get()->pluck('name', 'id');
         $roleModel[2] = "System Administrator";
