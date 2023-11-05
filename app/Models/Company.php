@@ -31,4 +31,10 @@ class Company extends Model
             $owner->save();
         });
     }
+
+    //employees
+    public function employees()
+    {
+        return $this->hasMany(Administrator::class);
+    }
 }

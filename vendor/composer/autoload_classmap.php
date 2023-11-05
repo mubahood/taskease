@@ -72,6 +72,7 @@ return array(
     'App\\Models\\AdminRoleUser' => $baseDir . '/app/Models/AdminRoleUser.php',
     'App\\Models\\Client' => $baseDir . '/app/Models/Client.php',
     'App\\Models\\Company' => $baseDir . '/app/Models/Company.php',
+    'App\\Models\\Department' => $baseDir . '/app/Models/Department.php',
     'App\\Models\\Event' => $baseDir . '/app/Models/Event.php',
     'App\\Models\\FinancialYear' => $baseDir . '/app/Models/FinancialYear.php',
     'App\\Models\\Gen' => $baseDir . '/app/Models/Gen.php',

@@ -109,7 +109,7 @@ class CompanyController extends AdminController
         $form->text('phone_number', __('Phone Number'))->rules('required');
         $form->text('phone_number_2', __('Phone number 2'));
         $form->text('p_o_box', __('P o box'));
-        $form->email('email', __('Company Email'))->rules('required');
+        $form->text('email', __('Company Email'))->rules('required');
         $form->text('address', __('Address'));
         $form->text('website', __('Website'));
         $form->text('subdomain', __('Subdomain'));

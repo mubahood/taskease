@@ -2,8 +2,8 @@ php artisan migrate
 
 php artisan make:migration create_courses_table
 
-php artisan make:migration add_cols_to_events --table=events
+php artisan make:migration add_ccompany_id_to_events --table=events
  
-php artisan admin:make MeetingController --model=App\\Models\\Meeting
+php artisan admin:make DepartmentController --model=App\\Models\\Department
  
-php artisan make:model Meeting -m
+php artisan make:model Department -m
