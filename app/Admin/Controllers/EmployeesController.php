@@ -42,9 +42,7 @@ class EmployeesController extends AdminController
             //$actions->disableView();
         });
 
-
         $grid->filter(function ($filter) {
-
             $roleModel = config('admin.database.roles_model');
             $filter->equal('main_role_id', 'Filter by role')
                 ->select($roleModel::where('slug', '!=', 'super-admin')
@@ -104,14 +102,14 @@ class EmployeesController extends AdminController
         $grid->column('masters_university_name')->hide();
         $grid->column('masters_university_year_graduated')->hide();
         $grid->column('phd_university_name')->hide();
-        $grid->column('phd_university_year_graduated')->hide();
-        $grid->column('week', 'Weekly Report')
+        $grid->column('rate')->sortable()
+            ->label('primary');
+        $grid->column('week', 'Report')
             ->display(function ($x) {
-                $link = route('admin.weekly-reports.index', ['employee_id' => $this->id]);
-                return $x;
-            })
-            ->label('success');
-
+                $url = url("/departmental-workplan?id={$this->id}");
+                $link = '<a target="_blank" class="btn btn-primary btn-sm" href="' . $url . '">PRINT REPORT</a>';
+                return $link;
+            });
         return $grid;
     }
 

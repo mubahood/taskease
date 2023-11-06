@@ -19,7 +19,25 @@ class User extends Authenticatable implements JWTSubject
     use Notifiable;
 
 
-     
+
+    public static function update_rating($id)
+    {
+        $user = User::find($id);
+        $tasks = Task::where('assigned_to', $id)->get();
+        $rate = 0;
+        $count = 0;
+        foreach ($tasks as $task) {
+            if ($task->manager_submission_status != 'Not Submitted') {
+                $rate += $task->rate;
+                $count++;
+            }
+        }
+        if ($count > 0) {
+            $rate = $rate / $count;
+        }
+        $user->rate = $rate;
+        $user->save();
+    }
 
 
     protected $table = "admin_users";
@@ -34,13 +52,13 @@ class User extends Authenticatable implements JWTSubject
     }
 
 
-    public function campus()
+    public function company()
     {
-        return $this->belongsTo(Campus::class, 'campus_id');
+        return $this->belongsTo(Company::class);
     }
 
-    public function programs()
+    public function tasks()
     {
-        return $this->hasMany(UserHasProgram::class, 'user_id');
+        return $this->hasMany(Task::class, 'assigned_to');
     }
 }

@@ -23,6 +23,41 @@ use Encore\Admin\Facades\Admin;
 use Illuminate\Support\Facades\Auth;
 use App\Admin\Extensions\Nav\Shortcut;
 use App\Admin\Extensions\Nav\Dropdown;
+use App\Models\Task;
+use App\Models\User;
+use Carbon\Carbon;
+
+/* $tasks = Task::all();
+$status = ['Not Submitted', 'Done', 'Done Late', 'Not Attended To'];
+foreach ($tasks as $key => $x) {
+    $x->delegate_submission_status = $status[rand(0, 3)];
+    $x->manager_submission_status = $status[rand(0, 3)];
+    $x->save();
+}
+die();  */
+/* $ids = User::all()->pluck('id');
+
+for ($id = 1; $id < 100; $id++) {
+    $u = User::find($ids[rand(0, (count($ids) - 1))]);
+    $x = new Task();
+    $x->assigned_to = $u->id;
+    $x->created_by = $u->id;
+    $x->manager_id = $u->id;
+    $x->company_id = $u->company_id;
+    $x->project_id = 1;
+    $x->meeting_id = 1;
+    $x->project_section_id = 1;
+    $x->name = "Task #{$id}, This is a simple testing task {$id}.";
+    $x->task_description = "Task Details #{$id}, This is a simple description of testing task {$id}.";
+    $x->delegate_submission_remarks = "Delegate Remarks for task #{$id}, This is a simple description of testing task {$id}.";
+    $x->manager_submission_remarks = "Supervisor Remarks for task #{$id}, This is a simple description of testing task {$id}.";
+    $due_to_date = Carbon::now();
+    $x->due_to_date = $due_to_date->addDays(rand(-20, 20));
+
+    $x->priority = 'Low';
+    $x->save();
+}
+die("done"); */
 
 Utils::system_boot();
 

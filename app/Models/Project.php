@@ -11,10 +11,13 @@ class Project extends Model
 
     public static function update_progress($project_id)
     {
+
+        
+
         $project = Project::find($project_id);
-        if($project == null){
+        if ($project == null) {
             return;
-        } 
+        }
         $sections = ProjectSection::where('project_id', $project_id)->get();
         $progress = 0;
         $section_progress = 0;

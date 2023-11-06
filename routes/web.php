@@ -5,7 +5,9 @@ use App\Http\Controllers\MainController;
 use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\RedirectIfAuthenticated;
 use App\Models\Gen;
+use App\Models\User;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 
@@ -16,23 +18,95 @@ Route::get('departmental-workplan', function () {
     if (isset($_GET['id'])) {
         $id = $_GET['id'];
     }
-    $department = \App\Models\Department::find($id);
-    if ($department == null) {
-        die("Department not found");
+
+    $u = User::find($id);
+    if ($u == null) {
+        die("User not found");
+    }
+    //set file name to name of department and date (dompdf) 
+
+    $tasks_tot = 0;
+    $tasks_not_submited = 0;
+    $tasks_submited = 0;
+    $tasks_done = 0;
+    $tasks_done_late = 0;
+    $tasks_missed = 0;
+    $tasks_tot = count($u->tasks);
+    foreach ($u->tasks as $key => $task) {
+        if ($task->manager_submission_status == 'Not Submitted') {
+            $tasks_not_submited++;
+        } else {
+            $tasks_submited++;
+            if ($task->manager_submission_status == 'Done') {
+                $tasks_done++;
+            } else if ($task->manager_submission_status == 'Done Late') {
+                $tasks_done_late++;
+            } else if ($task->manager_submission_status == 'Not Attended To') {
+                $tasks_missed++;
+            }
+        }
     }
 
-    //set file name to name of department and date (dompdf) 
-    $title = $department->name . " " . date("Y-m-d H:i:s");
+    if ($tasks_submited > 0) {
+        $tasks_done .= " (" . round(($tasks_done / $tasks_submited) * 100, 0) . "%)";
+        $tasks_done_late .= " (" . round(($tasks_done_late / $tasks_submited) * 100, 0) . "%)";
+        $tasks_missed .= " (" . round(($tasks_missed / $tasks_submited) * 100, 0) . "%)";
+    }
+
+    if ($tasks_tot > 0) {
+        $tasks_not_submited .= " (" . round(($tasks_not_submited / $tasks_tot) * 100, 0) . "%)";
+        $tasks_submited .= " (" . round(($tasks_submited / $tasks_tot) * 100, 0) . "%)";
+    }
+
+
+
+    /* 
+        'Done' => 'Done',
+        'Done Late' => '',
+        'Not Attended To' => 'Not Attended To',
+
+        "id" => 1
+        "created_at" => "2023-10-25 23:23:14"
+        "updated_at" => "2023-10-25 23:23:14"
+        "company_id" => 1
+        "project_id" => null
+        "project_section_id" => null
+        "assigned_to" => 1
+        "created_by" => 1
+        "manager_id" => 1
+        "name" => "This is a simple tes"
+        "task_description" => "Spome das'"
+        "due_to_date" => "2023-10-09 00:00:00"
+        "delegate_submission_status" => "Not Submitted"
+        "delegate_submission_remarks" => null
+        "manager_submission_status" => "Not Submitted"
+        "manager_submission_remarks" => null
+        "priority" => "Medium"
+        "meeting_id" => 6
+
+
+    
+    */
+
+    $title = $u->name . " " . date("Y-m-d H:i:s");
     $file_name = $title . ".pdf";
     $pdf = App::make('dompdf.wrapper', ['enable_remote' => true, 'enable_html5_parser' => true, 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
 
 
+
     $pdf->setPaper('A4', 'portrait');
     $pdf->setOptions(['dpi' => 150, 'defaultFont' => 'open-sans']);
-    $pdf->setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
+    $pdf->setOptions(['isPhpEnabled' => true, 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
+
     $pdf->loadHTML(view('departmental-workplan', [
-        'department' => $department,
+        'user' => $u,
         'title' => $title,
+        'tasks_tot' => $tasks_tot,
+        'tasks_missed' => $tasks_missed,
+        'tasks_done_late' => $tasks_done_late,
+        'tasks_done' => $tasks_done,
+        'tasks_not_submited' => $tasks_not_submited,
+        'tasks_submited' => $tasks_submited,
     ])->render());
     return $pdf->stream($file_name);
 });
