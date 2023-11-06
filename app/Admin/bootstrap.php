@@ -27,14 +27,14 @@ use App\Models\Task;
 use App\Models\User;
 use Carbon\Carbon;
 
-$tasks = Task::all();
+/* $tasks = Task::all();
 $status = ['Not Submitted', 'Done', 'Done Late', 'Not Attended To'];
 foreach ($tasks as $key => $x) {
     $x->delegate_submission_status = $status[rand(0, 3)];
     $x->manager_submission_status = $status[rand(0, 3)];
     $x->save();
 }
-die(); 
+die();  */
 /* $ids = User::all()->pluck('id');
 
 for ($id = 1; $id < 100; $id++) {
