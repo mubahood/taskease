@@ -14,7 +14,7 @@ class UserController extends AdminController
      */
     protected function title()
     {
-        return trans('admin.administrator');
+        return 'System Users';
     }
 
     /**
@@ -27,13 +27,16 @@ class UserController extends AdminController
         $userModel = config('admin.database.users_model');
 
         $grid = new Grid(new $userModel());
-
+        $grid->quickSearch('name')->placeholder('Search by name');
+        $grid->disableBatchActions();
         $grid->column('id', 'ID')->sortable();
         $grid->column('username', trans('admin.username'));
         $grid->column('name', trans('admin.name'));
+        $grid->column('company.name', 'Company');
         $grid->column('roles', trans('admin.roles'))->pluck('name')->label();
-        $grid->column('created_at', trans('admin.created_at'));
-        $grid->column('updated_at', trans('admin.updated_at'));
+        $grid->column('created_at', trans('admin.created_at'))
+            ->date('Y-m-d H:i:s')
+            ->sortable();
 
         $grid->actions(function (Grid\Displayers\Actions $actions) {
             if ($actions->getKey() == 1) {
@@ -95,11 +98,14 @@ class UserController extends AdminController
         $connection = config('admin.database.connection');
 
         $form->display('id', 'ID');
-        $form->text('username', trans('admin.username'))
+        $form->text('email', trans('Email Address'))
             ->creationRules(['required', "unique:{$connection}.{$userTable}"])
             ->updateRules(['required', "unique:{$connection}.{$userTable},username,{{id}}"]);
 
-        $form->text('name', trans('admin.name'))->rules('required');
+
+        $form->text('first_name', 'First name')->rules('required');
+        $form->text('last_name', 'Last name')->rules('required');
+
         $form->image('avatar', trans('admin.avatar'));
         $form->password('password', trans('admin.password'))->rules('required|confirmed');
         $form->password('password_confirmation', trans('admin.password_confirmation'))->rules('required')
@@ -112,8 +118,6 @@ class UserController extends AdminController
         $form->multipleSelect('roles', trans('admin.roles'))->options($roleModel::all()->pluck('name', 'id'));
         $form->multipleSelect('permissions', trans('admin.permissions'))->options($permissionModel::all()->pluck('name', 'id'));
 
-        $form->display('created_at', trans('admin.created_at'));
-        $form->display('updated_at', trans('admin.updated_at'));
 
         $form->saving(function (Form $form) {
             if ($form->password && $form->model()->password != $form->password) {

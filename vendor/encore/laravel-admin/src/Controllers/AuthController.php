@@ -261,77 +261,92 @@ class AuthController extends Controller
 
         $form = new Form(new $class());
 
-        $form->divider('Bio information');
+        $form->divider('BIO DATA');
 
-        $form->radio('title', 'Title')
+        $u = Admin::user();
+        $form->hidden('company_id')->rules('required')->default($u->company_id)
+            ->value($u->company_id);
+        $form->text('first_name')->rules('required');
+        $form->text('last_name')->rules('required');
+        $form->date('date_of_birth');
+        $form->text('place_of_birth');
+        $form->radioCard('sex', 'Gender')->options(['Male' => 'Male', 'Female' => 'Female'])->rules('required');
+        $form->text('phone_number_1', 'Mobile phone number')->rules('required');
+        $form->text('phone_number_2', 'Home phone number');
+
+        $form->divider('PERSONAL INFORMATION');
+
+        $form->radioCard('has_personal_info', 'Does this user have personal information?')
             ->options([
-                'Mr' => 'Mr',
-                'Ms' => 'Ms',
-                'Mrs' => 'Mrs',
-                'Dr' => 'Dr',
-                'Prof' => 'Prof',
-                'Haji' => 'Haji',
-                'Hajjat' => 'Hajjat',
-                'Imam' => 'Imam',
-                'Shaykh' => 'Shaykh',
-                'Mufti' => 'Mufti',
-            ])
-            ->rules('required');
+                'Yes' => 'Yes',
+                'No' => 'No',
+            ])->when('Yes', function ($form) {
+                $form->text('religion');
+                $form->text('nationality');
+                $form->text('home_address');
+                $form->text('current_address');
 
-        $form->text('first_name', 'First name')->rules('required');
-        $form->text('last_name', 'Last name')->rules('required');
-        $form->radio('sex', 'Sex')->options(['Male' => 'Male', 'Female' => 'Female'])->rules('required');
-        $form->date('dob', 'Date of birth');
+                $form->text('spouse_name', "Spouse's name");
+                $form->text('spouse_phone', "Spouse's phone number");
+                $form->text('father_name', "Father's name");
+                $form->text('father_phone', "Father's phone number");
+                $form->text('mother_name', "Mother's name");
+                $form->text('mother_phone', "Mother's phone number");
 
-        $form->textarea('intro', 'Breifly Introduce yourself')->rules('required')
-            ->help('Write a very short bio about yourself');
-
+                $form->text('languages', "Languages/Dilect");
+                $form->text('emergency_person_name', "Emergency person to contact name");
+                $form->text('emergency_person_phone', "Emergency person to contact phone number");
+            });
 
 
-
-        $form->select('country', 'Nationality')
-            ->help('Your country of origin')
-            ->options(Utils::COUNTRIES())->rules('required');
-
-
-        $form->text('occupation', 'Occupation');
-
-
-
-        $form->image('avatar', 'Porfile photo');
-        $form->file('cv', 'CV File')->rules('mimes:doc,docx,pdf');
-
-
-
-
-        $form->divider('Contact information');
-        $form->text('address', 'Current Address')->help('Leave this field empty if you don\'t want it to appear on your profile.');
-        $form->mobile('phone_number', 'Phone number')->options(['mask' => '+999 9999 99999'])->help('Leave this field empty if you don\'t want it to appear on your profile.');
-
-
-        $form->select('language', 'Fluent Language')
+        $form->divider('EDUCATIONAL INFORMATION');
+        $form->radioCard('has_educational_info', 'Does this user have education information?')
             ->options([
-                'English' => 'English',
-                'Arabic' => 'Arabic',
-                'Swahili' => 'Swahili',
-                'French' => 'French',
-                'Other' => 'Other',
-            ]);
+                'Yes' => 'Yes',
+                'No' => 'No',
+            ])->when('Yes', function ($form) {
 
-        $form->url('website', 'Personal website');
-        $form->text('twitter', 'Twitter hundle (Username)');
-        $form->text('facebook', 'Facebook username');
-        $form->text('linkedin', 'Linkedin username');
-        $form->mobile('whatsapp', 'Whatsapp number')->options(['mask' => '+999 9999 99999']);
+                $form->text('primary_school_name');
+                $form->year('primary_school_year_graduated');
+                $form->text('seconday_school_name');
+                $form->year('seconday_school_year_graduated');
+                $form->text('high_school_name');
+                $form->year('high_school_year_graduated');
 
+                $form->text('certificate_school_name');
+                $form->year('certificate_year_graduated');
 
+                $form->text('diploma_school_name');
+                $form->year('diploma_year_graduated');
 
+                $form->text('degree_university_name');
+                $form->year('degree_university_year_graduated');
+                $form->text('masters_university_name');
+                $form->year('masters_university_year_graduated');
+                $form->text('phd_university_name');
+                $form->year('phd_university_year_graduated');
+            });
 
-        $form->divider('System account information');
+        $form->divider('ACCOUNT NUMBERS');
+        $form->radioCard('has_account_info', 'Does this user have account information?')
+            ->options([
+                'Yes' => 'Yes',
+                'No' => 'No',
+            ])->when('Yes', function ($form) {
+                $form->text('national_id_number', 'National ID number');
+                $form->text('passport_number', 'Passport number');
+                $form->text('tin', 'TIN Number');
+                $form->text('nssf_number', 'NSSF number');
+                $form->text('bank_name');
+                $form->text('bank_account_number');
+            });
 
+        $form->divider('SYSTEM ACCOUNT');
+        $form->image('avatar', trans('admin.avatar'));
 
-        $form->display('username', trans('admin.username'));
-        $form->display('email', 'Email address');
+        $form->text('email', 'Email address')
+            ->creationRules(["unique:admin_users"]);
+
 
         $form->radio('change_password', 'Do you want to change password?')->options(['No' => 'No', 'Yes' => 'Yes'])
             ->when('Yes', function ($form) {
@@ -350,6 +365,12 @@ class AuthController extends Controller
             })
             ->default('No');
 
+
+
+
+
+
+
         $form->setAction(admin_url('auth/setting'));
         $form->ignore(['password_confirmation']);
         $form->ignore(['change_password']);
@@ -359,6 +380,10 @@ class AuthController extends Controller
                 $form->password = Hash::make($form->password);
             }
         });
+
+        $form->disableCreatingCheck();
+        $form->disableViewCheck();
+        $form->disableReset();
 
         $form->saved(function () {
             admin_toastr(trans('admin.update_succeeded'));

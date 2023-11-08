@@ -31,9 +31,13 @@ class ProjectController extends AdminController
 
         $grid->model()->where('company_id', auth()->user()->company_id);
         $u = auth()->user();
-        if (!$u->can('administrator')) {
-            $grid->model()->where('administrator_id', auth()->user()->id);
+
+        if (!$u->isRole('company-admin')) {
+            if (!$u->can('administrator')) {
+                $grid->model()->where('administrator_id', auth()->user()->id);
+            }
         }
+
 
         $grid->disableBatchActions();
         $grid->quickSearch('name')->placeholder('Search by name');
@@ -74,7 +78,6 @@ class ProjectController extends AdminController
             ->display(function ($created_at) {
                 return date('d-m-Y', strtotime($created_at));
             });
-
         return $grid;
     }
 

@@ -94,6 +94,7 @@ class CompanyController extends AdminController
         $users = [];
         foreach (AdminRoleUser::where(['role_id' => 2])->get() as $key => $role) {
             if ($role->user == null) {
+                $role->delete();
                 continue;
             }
             $users[$role->user->id] = $role->user->name;

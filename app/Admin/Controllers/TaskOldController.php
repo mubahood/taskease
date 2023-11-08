@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Models\ProjectSection;
 use App\Models\Task;
 use App\Models\Utils;
 use Encore\Admin\Controllers\AdminController;
@@ -16,7 +17,12 @@ class TaskController extends AdminController
      *
      * @var string
      */
-    protected $title = 'Task';
+    protected function title()
+    {
+        $title = 'Tasks';
+        return $title;
+    }
+
 
     /**
      * Make a grid builder.
@@ -26,6 +32,8 @@ class TaskController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new Task());
+        
+
         $grid->filter(function ($filter) {
             $filter->disableIdFilter();
             $filter->equal('assigned_to', __('Assigned To'))->select(\App\Models\User::where('company_id', auth()->user()->company_id)->pluck('name', 'id'));
@@ -51,10 +59,18 @@ class TaskController extends AdminController
             ]);
             $filter->between('due_to_date', __('Due Date'))->date();
         });
-        $grid->disableBatchActions();
+
         $grid->model()->where('company_id', auth()->user()->company_id)
-            ->orderBy('id', 'Desc');
-        $grid->column('id', __('Id'))->sortable();
+            ->orderBy('due_to_date', 'desc');
+
+        if (!auth()->user()->can('administrator')) {
+            $grid->model()->where('manager_id', auth()->user()->id)
+                ->orWhere('assigned_to', auth()->user()->id)
+                ->orWhere('created_by', auth()->user()->id);
+        }
+
+
+        $grid->column('id', __('Id'))->hide()->sortable();
         $grid->column('created_at', __('Created'))
             ->display(function ($created_at) {
                 return date('d-m-Y', strtotime($created_at));
@@ -110,6 +126,16 @@ class TaskController extends AdminController
             ->sortable();
 
         $grid->column('priority', __('Priority'))
+            ->dot([
+                'Low' => 'default',
+                'Medium' => 'warning',
+                'High' => 'danger',
+            ])
+            ->filter([
+                'Low' => 'Low',
+                'Medium' => 'Medium',
+                'High' => 'High',
+            ])
             ->sortable();
 
         $grid->column('created_by', __('Created By'))
@@ -134,9 +160,9 @@ class TaskController extends AdminController
             ->sortable();
 
 
-        $grid->column('rate', __('Rating'))->sortable();
 
-        return $grid;
+        
+            return $grid;
     }
 
     /**
@@ -149,9 +175,13 @@ class TaskController extends AdminController
     {
         $show = new Show(Task::findOrFail($id));
 
-        $show->field('id', __('ID'));
-        $show->field('created_at', __('Created'));
-        $show->field('assigned_to', __('Assigned To'));
+        $show->field('id', __('Id'));
+        $show->field('created_at', __('Created at'));
+        $show->field('updated_at', __('Updated at'));
+        $show->field('company_id', __('Company id'));
+        $show->field('project_id', __('Project id'));
+        $show->field('project_section_id', __('Project section id'));
+        $show->field('assigned_to', __('Assigned to'));
         $show->field('created_by', __('Created by'));
         $show->field('manager_id', __('Manager id'));
         $show->field('name', __('Name'));
@@ -161,9 +191,6 @@ class TaskController extends AdminController
         $show->field('delegate_submission_remarks', __('Delegate submission remarks'));
         $show->field('manager_submission_status', __('Manager submission status'));
         $show->field('manager_submission_remarks', __('Manager submission remarks'));
-        $show->field('priority', __('Priority'));
-        $show->field('meeting_id', __('Meeting id'));
-        $show->field('rate', __('Rate'));
 
         return $show;
     }
@@ -176,24 +203,73 @@ class TaskController extends AdminController
     protected function form()
     {
         $form = new Form(new Task());
+        $form->hidden('company_id', __('Company'))->value(auth()->user()->company_id);
 
-        $form->number('company_id', __('Company id'));
-        $form->number('project_id', __('Project id'));
-        $form->number('project_section_id', __('Project section id'));
-        $form->number('assigned_to', __('Assigned to'));
-        $form->number('created_by', __('Created by'));
-        $form->number('manager_id', __('Manager id'));
-        $form->textarea('name', __('Name'));
-        $form->textarea('task_description', __('Task description'));
-        $form->datetime('due_to_date', __('Due to date'))->default(date('Y-m-d H:i:s'));
-        $form->text('delegate_submission_status', __('Delegate submission status'));
-        $form->textarea('delegate_submission_remarks', __('Delegate submission remarks'));
-        $form->text('manager_submission_status', __('Manager submission status'));
-        $form->textarea('manager_submission_remarks', __('Manager submission remarks'));
-        $form->text('priority', __('Priority'))->default('Medium');
-        $form->number('meeting_id', __('Meeting id'));
-        $form->number('rate', __('Rate'));
+        $conditions = [
+            'company_id' => auth()->user()->company_id
+        ];
+        if (!auth()->user()->can('administrator')) {
+            $conditions['managed_by'] = auth()->user()->id;
+        }
+        $users = \App\Models\User::where([])->pluck('name', 'id');
+        $users[auth()->user()->id] = auth()->user()->name;
+        $form->select('assigned_to', __('Assigned To'))
+            ->options($users)
+            ->default(auth()->user()->id)
+            ->rules('required');
+        $form->select('manager_id', __('Supervisor'))
+            ->options($users)
+            ->default(auth()->user()->id)
+            ->rules('required');
+        $form->hidden('project_section_id', __('Project Section'))->value(1);
 
+        $form->hidden('created_by', __('Created by'))->value(auth()->user()->id);
+        $form->text('name', __('Task Description'))->rules('required');
+        $form->datetime('due_to_date', __('Due to date'))->default(date('Y-m-d H:i:s'))->rules('required');
+        $form->radioCard('priority', __('Priority'))
+            ->options([
+                'Low' => 'Low',
+                'Medium' => 'Medium',
+                'High' => 'High',
+            ])
+            ->default('Medium')
+            ->rules('required');
+        $form->textarea('task_description', __('Task Details (Explanation)'));
+
+
+        if ($form->isEditing()) {
+            $exp = explode('/', request()->path());
+            $model = Task::find($exp[1]);
+            if ($model == null) {
+                throw new \Exception("Task not found");
+            }
+
+            $form->divider('Task Submission');
+            /* if ($model->assigned_to == auth()->user()->id) { */
+            $form->radioCard('delegate_submission_status', __('Delegate Submission Status'))
+                ->options([
+                    'Not Submitted' => 'Not Submitted',
+                    'Done' => 'Done',
+                    'Done Late' => 'Done Late',
+                    'Not Attended To' => 'Not Attended To',
+                ]);
+            $form->textarea('delegate_submission_remarks', __('Delegate Task Submission Remarks'));
+            /*     } */
+
+            $form->radioCard('manager_submission_status', __('Supervisor submission status'))
+                ->options([
+                    'Not Submitted' => 'Not Submitted',
+                    'Done' => 'Done',
+                    'Done Late' => 'Done Late',
+                    'Not Attended To' => 'Not Attended To',
+                ]);
+            $form->textarea('manager_submission_remarks', __('Supervisor Task Submission Remarks'));
+            /*           } */
+        }
+
+        //$form->disableEditingCheck();
+        $form->disableViewCheck();
+        $form->disableReset();
         return $form;
     }
 }

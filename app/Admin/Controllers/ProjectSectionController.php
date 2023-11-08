@@ -27,6 +27,9 @@ class ProjectSectionController extends AdminController
     {
         $grid = new Grid(new ProjectSection());
         $grid->model()->where('company_id', auth()->user()->company_id);
+        $grid->disableBatchActions();
+        $grid->disableCreation();
+        $grid->disableExport();
 
 
         $grid->column('name', __('Deliverable'))->sortable();
@@ -49,12 +52,11 @@ class ProjectSectionController extends AdminController
             ->sortable()
             ->help('Progress of the deliverable')
             ->totalRow(function ($amount) {
-                if($amount < 50){
+                if ($amount < 50) {
                     return "<b class='text-danger'>Total progress: $amount%</b>";
-                }else{
+                } else {
                     return "<b class='text-success'>Total progress: $amount%</b>";
                 }
-
             });
         $grid->column('section_progress', __('Section progress'));
 

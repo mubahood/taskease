@@ -55,7 +55,7 @@ class Administrator extends Model implements AuthenticatableContract, JWTSubject
     //function to get list of this model in array for select
     public static function get_list()
     {
-        $list = []; 
+        $list = [];
         $users = Administrator::all();
         foreach ($users as $u) {
             $list[$u->id] = $u->name;
@@ -91,12 +91,14 @@ class Administrator extends Model implements AuthenticatableContract, JWTSubject
             if (strlen(trim($n)) > 1) {
                 $m->name = trim($n);
             }
+            $m->username = $m->email;
         });
         self::updating(function ($m) {
             $n = $m->first_name . " " . $m->last_name;
             if (strlen(trim($n)) > 1) {
                 $m->name = trim($n);
             }
+            $m->username = $m->email;
         });
     }
 

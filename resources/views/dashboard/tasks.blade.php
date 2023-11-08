@@ -10,7 +10,7 @@ use App\Models\Utils;
         <div class="list-group list-group-flush p-0">
             @foreach ($items as $item)
                 <hr class="p-0 m-0">
-                <a href="{{ admin_url('events/' . $item->id) }}" target="_blank" title="View Event Details"
+                <a href="{{ admin_url('tasks/' . $item->id) }}" target="_blank" title="View Event Details"
                     class="list-group-item list-group-item-action flex-column align-items-start py-2">
                     <div class="d-flex w-100 justify-content-between">
                         <h5 class="mb-1"><b>{{-- {{ $item->name }} --}}</b></h5>

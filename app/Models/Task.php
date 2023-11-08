@@ -105,10 +105,8 @@ class Task extends Model
 
     public static function prepare_saving($model)
     {
-        return;
         $project_section = ProjectSection::find($model->project_section_id);
         if ($project_section == null) {
-            return;
             throw new \Exception("Project section not found");
         }
         $assigned_to_user = Administrator::find($model->assigned_to);

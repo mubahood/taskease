@@ -20,9 +20,9 @@ Route::group([
     $router->resource('admin-roles', AdminRoleController::class);
     $router->resource('projects', ProjectController::class);
     $router->resource('project-sections', ProjectSectionController::class);
-    $router->resource('daily-tasks', TaskController::class);
+    /*     $router->resource('daily-tasks', TaskController::class);
     $router->resource('weekly-tasks', TaskController::class);
-    $router->resource('montly-tasks', TaskController::class);
+    $router->resource('montly-tasks', TaskController::class); */
     $router->resource('tasks', TaskController::class);
     $router->resource('events', EventController::class);
     $router->get('/calendar', 'HomeController@calendar')->name('calendar');
