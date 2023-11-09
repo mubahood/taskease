@@ -366,6 +366,7 @@ class ApiAuthController extends Controller
             ]);
         }
 
+        $meeting->send_mails();
 
         return Utils::response([
             'status' => 1,
@@ -377,10 +378,6 @@ class ApiAuthController extends Controller
 
 
 
-    public function send_mail()
-    {
-        die("Sending mail");
-    }
     public function tasks_create(Request $val)
     {
         $u = auth('api')->user();
@@ -414,6 +411,7 @@ class ApiAuthController extends Controller
                 'message' => $message,
             ]);
         }
+
 
 
         return Utils::response([
