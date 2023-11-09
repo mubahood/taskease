@@ -27,6 +27,7 @@ Route::get('projects', [ApiAuthController::class, 'projects']);
 Route::POST("tasks-update-status", [ApiAuthController::class, 'tasks_update_status']);
 Route::POST("post-media-upload", [ApiAuthController::class, 'upload_media']);
 Route::POST("meetings", [ApiAuthController::class, 'meetings_post']);
+Route::POST("tasks-create", [ApiAuthController::class, 'tasks_create']);
 
 Route::POST("users/login", [ApiAuthController::class, "login"]);
 Route::POST("users/register", [ApiAuthController::class, "register"]);

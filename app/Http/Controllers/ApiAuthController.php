@@ -349,6 +349,7 @@ class ApiAuthController extends Controller
                 $task->meeting_id = $meeting->id;
                 $task->assigned_to = $val->attribute_5;
                 $task->manager_id = $val->attribute_7;
+                $task->project_id = $val->attribute_9;
                 $task->created_by = $u->id;
                 $task->name = $val->attribute_2;
                 $task->task_description = $val->attribute_3;
@@ -371,26 +372,55 @@ class ApiAuthController extends Controller
             'code' => 1,
             'message' => 'Meeting created successfully.',
         ]);
-
-        /* 
-updated_at
-company_id
-created_by
-name
-details
-minutes_of_meeting
-location
-location_gps_latitude
-location_gps_longitude
-meeting_start_time
-meeting_end_time
-attendance_list_pictures
-members_pictures
-attachments
-members_present
-other_data
-        */
     }
+
+
+
+
+    public function tasks_create(Request $val)
+    {
+        $u = auth('api')->user();
+        if ($u == null) {
+            return Utils::response([
+                'status' => 0,
+                'code' => 0,
+                'message' => "User not found.",
+            ]);
+        }
+
+        $message = "";
+        try {
+            $task = new Task();
+            $task->company_id = $u->id;
+            $task->meeting_id = null;
+            $task->assigned_to = $val->attribute_5;
+            $task->manager_id = $val->attribute_7;
+            $task->project_id = $val->attribute_9;
+            $task->created_by = $u->id;
+            $task->name = $val->attribute_2;
+            $task->task_description = $val->attribute_3;
+            $task->due_to_date = Carbon::parse($val->attribute_4);
+            $task->priority = 'Medium';
+            $task->save();
+        } catch (\Throwable $th) {
+            $message = $th->getMessage();
+            return Utils::response([
+                'status' => 0,
+                'code' => 0,
+                'message' => $message,
+            ]);
+        }
+
+
+        return Utils::response([
+            'status' => 1,
+            'code' => 1,
+            'message' => 'Meeting created successfully.',
+        ]);
+    }
+
+
+
 
     public function upload_media(Request $request)
     {
