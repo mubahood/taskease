@@ -107,10 +107,11 @@ class Task extends Model
     {
         $project_section = ProjectSection::find($model->project_section_id);
         if ($project_section == null) {
-            throw new \Exception("Project section not found");
+            return;
         }
         $assigned_to_user = Administrator::find($model->assigned_to);
         if ($assigned_to_user == null) {
+            return;
             throw new \Exception("Assigned to user not found");
         }
         if ($assigned_to_user->manager_id  == null) {
