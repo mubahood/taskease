@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Image;
 use App\Models\Meeting;
+use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\Utils;
@@ -61,13 +62,31 @@ class ApiAuthController extends Controller
         ])->get(), $message = "Success", 200);
     }
 
+    public function projects()
+    {
+        $u = auth('api')->user();
+        if ($u == null) {
+            return $this->error('Account not found');
+        }
+        return $this->success(Project::where([
+            'company_id' => $u->company_id
+        ])
+            ->get(), $message = "Success", 200);
+    }
+
     public function tasks()
     {
         $u = auth('api')->user();
         if ($u == null) {
             return $this->error('Account not found');
         }
-        return $this->success(Task::where([])->get(), $message = "Success", 200);
+        return $this->success(Task::where([
+            'assigned_to' => $u->id,
+        ])
+            ->orWhere([
+                'manager_id' => $u->id,
+            ])
+            ->get(), $message = "Success", 200);
     }
 
     public function tasks_update_status(Request $r)
