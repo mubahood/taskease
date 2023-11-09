@@ -49,19 +49,20 @@ class Task extends Model
 
         static::creating(function ($model) {
 
-            if (
+/*             if (
                 $model->manager_submission_status == null ||
                 strlen($model->manager_submission_status) < 2
             ) {
-                $model->manager_submission_status = 'Not Submitted';
-            }
 
-            if (
+            } */
+            $model->manager_submission_status = 'Not Submitted';
+            $model->delegate_submission_status = 'Not Submitted';
+/*             if (
                 $model->delegate_submission_status == null ||
                 strlen($model->delegate_submission_status) < 2
             ) {
-                $model->delegate_submission_status = 'Not Submitted';
-            }
+
+            } */
 
             $model->rate = 0;
             if ($model->manager_submission_status == 'Not Submitted') {
