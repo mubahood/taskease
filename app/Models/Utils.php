@@ -6,12 +6,28 @@ use Carbon\Carbon;
 use Encore\Admin\Facades\Admin;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Mail;
 use SplFileObject;
 use Zebra_Image;
 
 class Utils extends Model
 {
     use HasFactory;
+
+    //mail sender
+    public static function mail_sender($data)
+    {
+        try {
+            Mail::send('mail', ['body' => $data['body'], 'title' => $data['subject']], function ($m) use ($data) {
+                $m->to($data['email'], $data['name'])
+                    ->subject($data['subject']);
+                $m->from('noreply@8technologies.cloud', '8Technologies');
+            });
+        } catch (\Throwable $th) {
+            $msg = 'failed';
+            throw $th;
+        }
+    }
 
 
     public static function response($data = [])
@@ -78,15 +94,15 @@ class Utils extends Model
                     $event->delegate_submission_status == 'Not Attended To')
             ) {
                 $ev['status'] = 'Submitted';
-                $ev['classNames'] = ['bg-success', 'border-success', 'text-white']; 
-            }else{
+                $ev['classNames'] = ['bg-success', 'border-success', 'text-white'];
+            } else {
                 $ev['status'] = 'Not Submitted';
             }
 
             $details = $event->name . '<br><br>';
             $participants = $event->assigned_to_user->name;
 
-         /*    if ($event->event_conducted == 'Conducted') {
+            /*    if ($event->event_conducted == 'Conducted') {
 
             } else if ($event->event_conducted == 'Pending') {
                 $ev['classNames'] = ['bg-warning', 'border-warning', 'text-dark'];

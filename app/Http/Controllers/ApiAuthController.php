@@ -377,6 +377,10 @@ class ApiAuthController extends Controller
 
 
 
+    public function send_mail()
+    {
+        die("Sending mail");
+    }
     public function tasks_create(Request $val)
     {
         $u = auth('api')->user();
