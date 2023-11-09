@@ -38,7 +38,7 @@ use App\Models\Utils;
         class="mt-3 mb-1">
     <hr style="border-width: 3px; color: black; border-color: black;" class="mb-3 mt-0">
 
-    <p class="text-center fw-600 fs-24 mt-4"><u>Weekly Workplan and Report</u></p>
+    <p class="text-center fw-600 fs-24 mt-4"><u>Employee Performance Report</u></p>
 
     <p class="text-right mt-3 fw-600">As On {{ Utils::my_date(now()) }}</p>
 
