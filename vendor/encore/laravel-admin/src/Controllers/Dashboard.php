@@ -15,7 +15,7 @@ class Dashboard
 
 
     public static function dashboard_calender()
-    {
+    { 
         $events = Utils::prepare_calendar_events(Auth::user());
         return view('dashboard.calender', [
             'events' => $events
@@ -24,7 +24,10 @@ class Dashboard
 
     public static function dashboard_members()
     {
-        $members = Administrator::where([])->orderBy('id', 'desc')->limit(8)->get();
+        $u = Auth::user();
+        $members = Administrator::where([
+            'company_id' => $u->company_id,
+        ])->orderBy('id', 'desc')->limit(8)->get();
         return view('dashboard.members', [
             'items' => $members
         ]);
@@ -32,7 +35,10 @@ class Dashboard
 
     public static function dashboard_events()
     {
-        $events = Event::where([])->orderBy('id', 'desc')->limit(8)->get();
+        $u = Auth::user();
+        $events = Event::where([
+            'company_id' => $u->company_id,
+        ])->orderBy('id', 'desc')->limit(8)->get();
         return view('dashboard.events', [
             'items' => $events
         ]);
@@ -40,10 +46,10 @@ class Dashboard
 
     public static function dashboard_news()
     {
-        $events = NewsPost::where([])->orderBy('id', 'desc')->limit(8)->get();
+       /*  $events = NewsPost::where([])->orderBy('id', 'desc')->limit(8)->get();
         return view('dashboard.news', [
             'items' => $events
-        ]);
+        ]); */
     }
 
 

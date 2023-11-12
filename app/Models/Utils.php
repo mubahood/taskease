@@ -71,7 +71,8 @@ class Utils extends Model
 
 
         $conditions = [
-            /*             'company_id' => $u->company_id, */];
+            'company_id' => $u->company_id,
+        ];
 
         $eves = Task::where($conditions)->get();
         $events = [];

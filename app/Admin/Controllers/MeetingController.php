@@ -27,9 +27,15 @@ class MeetingController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new Meeting());
-        $grid->model()->orderBy('id', 'desc');
+        $u = auth()->user();
+
         $grid->disableBatchActions();
         $grid->disableExport();
+
+        $grid->model([
+            'company_id' => $u->company_id,
+        ])->orderBy('id', 'desc');
+
         $grid->column('id', __('Id'))->sortable();
         $grid->column('created_at', __('Created'))
             ->display(function ($created_at) {

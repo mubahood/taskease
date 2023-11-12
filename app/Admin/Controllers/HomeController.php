@@ -26,7 +26,7 @@ class HomeController extends Controller
     {
         $admin = Auth::user();
 
-        $faker = Faker::create();
+        //$faker = Faker::create();
 
         //example list of dental appointment titles
         /* 
@@ -75,26 +75,36 @@ class HomeController extends Controller
             $row->column(6, function (Column $column) {
                 $u = Admin::user();
                 $tasks_done = Task::where([
+                    'company_id' => $u->company_id,
                     'manager_submission_status' => 'Done'
                 ])->orWhere([
+                    'company_id' => $u->company_id,
                     'manager_submission_status' => 'Done Late'
                 ])
                     ->count();
                 $tasks_missed = Task::where([
+                    'company_id' => $u->company_id,
                     'manager_submission_status' => 'Not Attended To'
                 ])->count();
                 $tasks_not_submitted = Task::where([
+                    'company_id' => $u->company_id,
                     'manager_submission_status' => 'Not Submitted'
                 ])->count();
                 $column->append(view('widgets.dashboard-segment-1', [
                     'tasks_done' => $tasks_done,
                     'tasks_missed' => $tasks_missed,
                     'tasks_not_submitted' => $tasks_not_submitted,
-                    'meetings' => Meeting::where([])->where(
+                    'meetings' => Meeting::where([
+                        'company_id' => $u->company_id,
+                    ])->where(
                         [/* 'event_date', '>=', Carbon::now()->format('Y-m-d') */]
                     )->orderBy('id', 'desc')->limit(8)->get(),
-                    'tasks' => Task::where([])->where(
-                        [/* 'event_date', '>=', Carbon::now()->format('Y-m-d') */]
+                    'tasks' => Task::where([
+                        'company_id' => $u->company_id,
+                    ])->where(
+                        [
+                            'company_id' => $u->company_id,
+                        ]
                     )->orderBy('id', 'desc')->limit(6)->get()
                 ]));
             });
