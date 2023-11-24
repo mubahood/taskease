@@ -5,6 +5,7 @@ namespace Encore\Admin\Auth\Database;
 use App\Models\Campus;
 use App\Models\Company;
 use App\Models\UserHasProgram;
+use App\Models\Utils;
 use Carbon\Carbon;
 use Encore\Admin\Traits\DefaultDatetimeFormat;
 use Illuminate\Auth\Authenticatable;
@@ -87,6 +88,11 @@ class Administrator extends Model implements AuthenticatableContract, JWTSubject
         parent::boot();
 
         self::creating(function ($m) {
+
+            if (!Utils::validateEmail($m->email)) {
+                throw new \Exception("Invalid email address");
+            }
+
             $n = $m->first_name . " " . $m->last_name;
             if (strlen(trim($n)) > 1) {
                 $m->name = trim($n);
@@ -94,6 +100,9 @@ class Administrator extends Model implements AuthenticatableContract, JWTSubject
             $m->username = $m->email;
         });
         self::updating(function ($m) {
+            if (!Utils::validateEmail($m->email)) {
+                throw new \Exception("Invalid email address");
+            }
             $n = $m->first_name . " " . $m->last_name;
             if (strlen(trim($n)) > 1) {
                 $m->name = trim($n);

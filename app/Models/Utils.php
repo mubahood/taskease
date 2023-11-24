@@ -14,6 +14,17 @@ class Utils extends Model
 {
     use HasFactory;
 
+    public static function validateEmail($email)
+    {
+        if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+
     //mail sender
     public static function mail_sender($data)
     {

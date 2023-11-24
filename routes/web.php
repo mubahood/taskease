@@ -15,9 +15,12 @@ use Illuminate\Support\Facades\Route;
 
 
 
+/* Route::get('auth/login', function () {
+    return view('auth.login');
+})->name('login'); */
+
 Route::get('test', function () {
     $m = Meeting::find(1);
-  
 });
 /* 
    "id" => 7
