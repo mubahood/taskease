@@ -230,24 +230,33 @@ class EmployeesController extends AdminController
             ])
             ->options(
                 $roleModel
-            );
+            )->rules('required');
 
         $form->divider('SYSTEM ACCOUNT');
         $form->image('avatar', trans('admin.avatar'));
 
         $form->text('email', 'Email address')
-            ->creationRules(["unique:admin_users"]);
-        $form->text('username', 'Username')
             ->creationRules(["unique:admin_users"])
-            ->updateRules(['required', "unique:admin_users,username,{{id}}"]);
+            ->rules();
 
-        $form->password('password', trans('admin.password'))->rules('confirmed');
-        $form->password('password_confirmation', trans('admin.password_confirmation'))
-            ->default(function ($form) {
-                return $form->model()->password;
+        /* $form->text('username', 'Username')
+            ->creationRules(["unique:admin_users"])
+            ->updateRules(['required', "unique:admin_users,username,{{id}}"]); */
+
+        $form->radio('change_password', 'Change Password')
+            ->options([
+                'Change Password' => 'Change Password',
+                'Dont Change Password' => 'Dont Change Password'
+            ])->when('Change Password', function ($form) {
+                $form->password('password', trans('admin.password'))->rules('confirmed');
+                $form->password('password_confirmation', trans('admin.password_confirmation'))
+                    ->default(function ($form) {
+                        return $form->model()->password;
+                    });
             });
 
-        $form->ignore(['password_confirmation']);
+
+        $form->ignore(['password_confirmation', 'change_password']);
         $form->saving(function (Form $form) {
             if ($form->password && $form->model()->password != $form->password) {
                 $form->password = Hash::make($form->password);

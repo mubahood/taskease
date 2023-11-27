@@ -24,17 +24,21 @@ class ProjectSection extends Model
         static::updated(function ($model) {
             Project::update_progress($model->project_id);
         });
+
+        //create for creating
+        static::creating(function ($model) {
+            $model->company_id = auth()->user()->company_id;
+        });
+
         static::deleted(function ($model) {
             Project::update_progress($model->project_id);
         });
-
-  
     }
 
 
-    public static function get_array()
+    public static function get_array($where = [])
     {
-        $sections = ProjectSection::all();
+        $sections = ProjectSection::where($where)->get();
         $array = [];
         foreach ($sections as $section) {
             $array[$section->id] = $section->name_text;

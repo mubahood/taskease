@@ -2,12 +2,16 @@
 
 namespace App\Admin\Controllers;
 
+use App\Models\ProjectSection;
 use App\Models\Task;
 use App\Models\Utils;
 use Encore\Admin\Controllers\AdminController;
+use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use Illuminate\Support\Facades\Auth;
+use PharIo\Manifest\Author;
 
 class TaskController extends AdminController
 {
@@ -16,7 +20,7 @@ class TaskController extends AdminController
      *
      * @var string
      */
-    protected $title = 'Task';
+    protected $title = 'Tasks';
 
     /**
      * Make a grid builder.
@@ -52,9 +56,18 @@ class TaskController extends AdminController
             $filter->between('due_to_date', __('Due Date'))->date();
         });
         $grid->disableBatchActions();
+        
+        
+        
         $grid->model()->where('company_id', auth()->user()->company_id)
             ->orderBy('id', 'Desc');
-        $grid->column('id', __('Id'))->sortable();
+
+        $grid->column('id', __('Id'))->sortable()->hide();
+        $grid->column('due_to_date', __('Due Date'))
+            ->display(function ($due_to_date) {
+                return Utils::my_date($due_to_date);
+            })->sortable();
+
         $grid->column('created_at', __('Created'))
             ->display(function ($created_at) {
                 return date('d-m-Y', strtotime($created_at));
@@ -75,10 +88,7 @@ class TaskController extends AdminController
             })
             ->sortable();
 
-        $grid->column('due_to_date', __('Due Date'))
-            ->display(function ($due_to_date) {
-                return Utils::my_date($due_to_date);
-            })->sortable();
+
 
 
         $grid->column('delegate_submission_status', __('Delegate Submission'))
@@ -86,6 +96,8 @@ class TaskController extends AdminController
                 'Not Submitted' => 'default',
                 'Done' => 'success',
                 'Missed' => 'danger',
+                'Not Attended To' => 'danger',
+                'Done Late' => 'warning',
             ])->sortable();
         $grid->column('delegate_submission_remarks', __('Delegate Remarks'))
             ->hide();
@@ -94,6 +106,8 @@ class TaskController extends AdminController
                 'Not Submitted' => 'default',
                 'Done' => 'success',
                 'Missed' => 'danger',
+                'Not Attended To' => 'danger',
+                'Done Late' => 'warning',
             ])->sortable();
         $grid->column('manager_submission_remarks', __('Manager Remarks'))
             ->sortable();
@@ -176,24 +190,82 @@ class TaskController extends AdminController
     protected function form()
     {
         $form = new Form(new Task());
+        $u = Auth::user();
+        $form->hidden('company_id', __('Company'))->default($u->company_id);
+        $sections  = ProjectSection::get_array([
+            'company_id' => $u->company_id,
+        ]);
 
-        $form->number('company_id', __('Company id'));
-        $form->number('project_id', __('Project id'));
-        $form->number('project_section_id', __('Project section id'));
-        $form->number('assigned_to', __('Assigned to'));
-        $form->number('created_by', __('Created by'));
-        $form->number('manager_id', __('Manager id'));
-        $form->textarea('name', __('Name'));
-        $form->textarea('task_description', __('Task description'));
-        $form->datetime('due_to_date', __('Due to date'))->default(date('Y-m-d H:i:s'));
-        $form->text('delegate_submission_status', __('Delegate submission status'));
-        $form->textarea('delegate_submission_remarks', __('Delegate submission remarks'));
-        $form->text('manager_submission_status', __('Manager submission status'));
-        $form->textarea('manager_submission_remarks', __('Manager submission remarks'));
-        $form->text('priority', __('Priority'))->default('Medium');
-        $form->number('meeting_id', __('Meeting id'));
-        $form->number('rate', __('Rate'));
+        $form->text('name', __('Task title'))->rules('required');
+        $form->datetime('due_to_date', __('Due to date'))->rules('required')->default(null);
+        $form->text('task_description', __('Task description'));
+        $form->radio('priority', __('Priority'))->options([
+            'Low' => 'Low',
+            'Medium' => 'Medium',
+            'High' => 'High',
+        ])->default('Medium')->rules('required');
 
+        $form->select('project_section_id', __('Due Project'))
+            ->options($sections);
+        $form->radio('assign_to_type', 'Assign To?')->options([
+            'to_me' => 'Assign To Me',
+            'to_other' => 'Assign To Other',
+        ])->when(
+            'to_other',
+            function (Form $form) {
+                $form->select('assigned_to', __('Select Delegate'))
+                    ->options(\App\Models\User::where('company_id', auth()->user()->company_id)->pluck('name', 'id'))
+                    ->rules('required');
+            }
+        )->rules('required');
+
+        if (!$form->isCreating()) {
+
+            //get task id from url segments
+            $segs = request()->segments();
+            $task = null;
+
+            if (isset($segs[1])) {
+                $task_id = $segs[1];
+                $task = Task::find($task_id);
+                if ($task == null) {
+                    if (isset($segs[2])) {
+                        $task_id = $segs[2];
+                        $task = Task::find($task_id);
+                    }
+                }
+            }
+
+            if ($task == null) {
+                throw new \Exception('Task not found');
+            }
+
+
+
+            $form->divider('Task Status');
+            if ($task->assigned_to == $u->id) {
+                $form->radio('delegate_submission_status', 'Delegate Submission Status')->options([
+                    'Not Submitted' => 'Not Submitted',
+                    'Done' => 'Done',
+                    'Done Late' => 'Done Late',
+                    'Not Attended To' => 'Not Attended To',
+                ])->default('Not Submitted')->rules('required');
+                $form->text('delegate_submission_remarks', __('Delegate Remarks'));
+            }
+            if ($task->manager_id == $u->id) {
+                $form->radio('manager_submission_status', 'Supervisor Submission Status')->options([
+                    'Not Submitted' => 'Not Submitted',
+                    'Done' => 'Done',
+                    'Done Late' => 'Done Late',
+                    'Not Attended To' => 'Not Attended To',
+                ])->default('Not Submitted')->rules('required');
+                $form->text('manager_submission_remarks', __('Manager Remarks'));
+            }
+        }
+
+        //disable delete button
+        $form->disableViewCheck();
+        $form->disableReset();
         return $form;
     }
 }

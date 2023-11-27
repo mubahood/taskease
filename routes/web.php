@@ -19,6 +19,9 @@ use Illuminate\Support\Facades\Route;
     return view('auth.login');
 })->name('login'); */
 
+Route::get('mobile', function () {
+    return url('');
+});
 Route::get('test', function () {
     $m = Meeting::find(1);
 });

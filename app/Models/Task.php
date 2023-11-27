@@ -3,8 +3,10 @@
 namespace App\Models;
 
 use Encore\Admin\Auth\Database\Administrator;
+use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Task extends Model
 {
@@ -49,7 +51,7 @@ class Task extends Model
 
         static::creating(function ($model) {
 
-/*             if (
+            /*             if (
                 $model->manager_submission_status == null ||
                 strlen($model->manager_submission_status) < 2
             ) {
@@ -57,7 +59,7 @@ class Task extends Model
             } */
             $model->manager_submission_status = 'Not Submitted';
             $model->delegate_submission_status = 'Not Submitted';
-/*             if (
+            /*             if (
                 $model->delegate_submission_status == null ||
                 strlen($model->delegate_submission_status) < 2
             ) {
@@ -75,8 +77,15 @@ class Task extends Model
                 $model->rate = -6;
             }
 
+            $model->company_id = auth()->user()->company_id;
+            $model->created_by = auth()->user()->id;
+            if ($model->assign_to_type == 'to_me') {
+                $model->assigned_to = Auth::user()->id;
+            }
             return Task::prepare_saving($model);
         });
+
+
         static::updating(function ($model) {
             $model->rate = 0;
             if (
@@ -107,22 +116,21 @@ class Task extends Model
     public static function prepare_saving($model)
     {
         $project_section = ProjectSection::find($model->project_section_id);
-        if ($project_section == null) {
-            return;
+        if ($project_section != null) {
+            $model->project_id = $project_section->project_id;
         }
         $assigned_to_user = Administrator::find($model->assigned_to);
-        if ($assigned_to_user == null) {
-            return;
-            throw new \Exception("Assigned to user not found");
-        }
-        if ($assigned_to_user->manager_id  == null) {
-            $model->manager_id = $assigned_to_user->id;
+        if ($assigned_to_user != null) {
+            if ($assigned_to_user->manager_id  == null) {
+                $model->manager_id = $assigned_to_user->id;
+            } else {
+                $model->manager_id = $assigned_to_user->manager_id;
+            }
         } else {
-            $model->manager_id = $assigned_to_user->manager_id;
+            throw new Exception("Administrator not found.", 1);
         }
-        $model->project_id = $project_section->project_id;
+        return $model;
     }
-
 
     public function assigned_to_user()
     {

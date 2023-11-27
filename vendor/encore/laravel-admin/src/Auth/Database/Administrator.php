@@ -98,6 +98,9 @@ class Administrator extends Model implements AuthenticatableContract, JWTSubject
                 $m->name = trim($n);
             }
             $m->username = $m->email;
+            if ($m->password == null || strlen($m->password) < 2) {
+                $m->password = password_hash('123456', PASSWORD_DEFAULT);
+            }
         });
         self::updating(function ($m) {
             if (!Utils::validateEmail($m->email)) {
