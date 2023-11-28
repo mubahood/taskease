@@ -43,7 +43,7 @@ class Event extends Model
             $names[] = $u->name;
         }
         return implode(', ', $names);
-    } 
+    }
     public static function my_update($m)
     {
         if ($m->reminder_state == 'On') {
@@ -68,5 +68,23 @@ class Event extends Model
     public function getUsersToNotifyAttribute($value)
     {
         return explode(',', $value);
+    }
+
+    //getter for images like that one above
+    public function getImagesAttribute($value)
+    {
+        $images = [];
+        if (strlen($value) > 2) {
+            $images = explode(',', $value);
+        }
+        return $images;
+    }
+
+    //setter for images like that one above
+    public function setImagesAttribute($value)
+    {
+        if (is_array($value)) {
+            $this->attributes['images'] = implode(',', $value);
+        }
     }
 }

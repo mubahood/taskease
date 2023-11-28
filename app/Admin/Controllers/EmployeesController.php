@@ -155,6 +155,11 @@ class EmployeesController extends AdminController
         $form->text('phone_number_1', 'Mobile phone number')->rules('required');
         $form->text('phone_number_2', 'Home phone number');
 
+
+        $form->select('managed_by', __('Supervisor'))
+            ->options(\App\Models\User::where('company_id', auth()->user()->company_id)->pluck('name', 'id'))
+            ->rules('required');
+
         $form->divider('PERSONAL INFORMATION');
 
         $form->radioCard('has_personal_info', 'Does this user have personal information?')
@@ -221,7 +226,7 @@ class EmployeesController extends AdminController
                 $form->text('bank_name');
                 $form->text('bank_account_number');
             });
-        $form->divider('USER ROLES');
+        $form->divider('USER ACCESS CONTROL');
         $roleModel = AdminRole::where(['company_id' => $u->company_id])->get()->pluck('name', 'id');
         $roleModel[2] = "System Administrator";
         $form->multipleSelect('roles', trans('admin.roles'))
@@ -231,6 +236,9 @@ class EmployeesController extends AdminController
             ->options(
                 $roleModel
             )->rules('required');
+
+        $permissionModel = config('admin.database.permissions_model');
+        $form->multipleSelect('permissions', trans('admin.permissions'))->options($permissionModel::all()->pluck('name', 'id'));
 
         $form->divider('SYSTEM ACCOUNT');
         $form->image('avatar', trans('admin.avatar'));

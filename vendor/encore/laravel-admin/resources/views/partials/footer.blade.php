@@ -13,7 +13,7 @@
         @endif
         Powered By
         <b><a class="nav-link d-inline-block p-0 text-primary" href="https://excellentiainternational.com" target="_blank"
-                rel="noopener">Excellentia East Africa</a></b>
+                rel="noopener">TaskEase</a></b>
     </div>
     <!-- Default to the left -->
     <p class="nav d-block    text-md-start pb-2 pb-lg-0 mb-0">

@@ -20,7 +20,19 @@ class TaskController extends AdminController
      *
      * @var string
      */
-    protected $title = 'Tasks';
+
+    //function for title
+    function title()
+    {
+        //current url segments
+        $segs = request()->segments();
+        $title = "Tasks";
+        if (in_array('tasks-pending', $segs)) {
+            $title = "Pending Tasks";
+        }
+        return $title;
+    }
+
 
     /**
      * Make a grid builder.
@@ -29,6 +41,7 @@ class TaskController extends AdminController
      */
     protected function grid()
     {
+
         $grid = new Grid(new Task());
         $grid->filter(function ($filter) {
             $filter->disableIdFilter();
@@ -56,11 +69,60 @@ class TaskController extends AdminController
             $filter->between('due_to_date', __('Due Date'))->date();
         });
         $grid->disableBatchActions();
-        
-        
-        
-        $grid->model()->where('company_id', auth()->user()->company_id)
-            ->orderBy('id', 'Desc');
+
+
+        $u = Auth::user();
+
+        $segs = request()->segments();
+        $is_submitted = 'Yes';
+
+        if (in_array('tasks-pending', $segs)) {
+            $is_submitted = 'No';
+            if ($u->can('admin')) {
+                $grid->model()->where([
+                    'company_id' => $u->company_id,
+                    'is_submitted' => $is_submitted,
+                ])
+                    ->orderBy('id', 'Desc');
+            } else {
+                $grid->model()->where([
+                    'company_id' => $u->company_id,
+                    'assigned_to' => $u->id,
+                    'is_submitted' => $is_submitted,
+                ])->orWhere([
+                    'company_id' => $u->company_id,
+                    'manager_id' => $u->id,
+                    'is_submitted' => $is_submitted,
+                ])
+                    ->orderBy('id', 'Desc');
+            }
+        } else {
+
+
+            if ($u->can('admin')) {
+                $grid->model()->where([
+                    'company_id' => $u->company_id,
+                ])
+                    ->orderBy('id', 'Desc');
+            } else {
+                $grid->model()->where([
+                    'company_id' => $u->company_id,
+                    'assigned_to' => $u->id,
+                ])->orWhere([
+                    'company_id' => $u->company_id,
+                    'manager_id' => $u->id,
+                ])
+                    ->orderBy('id', 'Desc');
+            }
+        }
+
+
+        $grid->model()->where([
+            'is_submitted' => $is_submitted,
+        ]);
+
+        $grid->quickSearch('name')->placeholder('Search by name or ID');
+        $grid->disableExport();
 
         $grid->column('id', __('Id'))->sortable()->hide();
         $grid->column('due_to_date', __('Due Date'))
@@ -87,8 +149,15 @@ class TaskController extends AdminController
                 return $user->name;
             })
             ->sortable();
-
-
+        $grid->column('manager_id', __('Manager'))
+            ->display(function ($manager_id) {
+                $user = $this->manager_user;
+                if ($user == null) {
+                    return "User not found";
+                }
+                return $user->name;
+            })
+            ->sortable();
 
 
         $grid->column('delegate_submission_status', __('Delegate Submission'))

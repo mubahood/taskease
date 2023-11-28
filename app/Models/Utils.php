@@ -32,7 +32,7 @@ class Utils extends Model
             Mail::send('mail', ['body' => $data['body'], 'title' => $data['subject']], function ($m) use ($data) {
                 $m->to($data['email'], $data['name'])
                     ->subject($data['subject']);
-                $m->from('noreply@excellentiaeastafrica.com', 'Excellentia East Africa');
+                $m->from('noreply@excellentiaeastafrica.com', 'TaskEase East Africa');
             });
         } catch (\Throwable $th) {
             $msg = 'failed';

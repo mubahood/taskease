@@ -115,20 +115,27 @@ class Task extends Model
 
     public static function prepare_saving($model)
     {
+
         $project_section = ProjectSection::find($model->project_section_id);
         if ($project_section != null) {
             $model->project_id = $project_section->project_id;
         }
         $assigned_to_user = Administrator::find($model->assigned_to);
-        if ($assigned_to_user != null) {
-            if ($assigned_to_user->manager_id  == null) {
-                $model->manager_id = $assigned_to_user->id;
-            } else {
-                $model->manager_id = $assigned_to_user->manager_id;
-            }
+        $manager_user = Administrator::find($assigned_to_user->managed_by);
+        if ($manager_user != null) {
+            $model->manager_id = $manager_user->id;
         } else {
-            throw new Exception("Administrator not found.", 1);
+            $model->manager_id = $assigned_to_user->id;
         }
+
+        if (
+            $model->manager_submission_status != 'Not Submitted' &&
+            $model->delegate_submission_status != 'Not Submitted'
+        ) {
+            $model->is_submitted = 'Yes';
+        }else{
+            $model->is_submitted = 'No';
+        } 
         return $model;
     }
 
