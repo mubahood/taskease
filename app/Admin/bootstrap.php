@@ -27,7 +27,7 @@ use App\Models\Task;
 use App\Models\User;
 use Carbon\Carbon;
 
-$u = Auth::user();
+$u = Admin::user();
 
 if ($u != null) {
 
