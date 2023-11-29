@@ -87,4 +87,21 @@ class Event extends Model
             $this->attributes['images'] = implode(',', $value);
         }
     }
+
+    //do the same for files
+    public function getFilesAttribute($value)
+    {
+        $files = [];
+        if (strlen($value) > 2) {
+            $files = explode(',', $value);
+        }
+        return $files;
+    }
+
+    public function setFilesAttribute($value)
+    {
+        if (is_array($value)) {
+            $this->attributes['files'] = implode(',', $value);
+        }
+    }
 }

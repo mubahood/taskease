@@ -166,8 +166,13 @@ class EventController extends AdminController
             ->removable()
             ->uniqueName()
             ->sortable()
-            ->attribute(['accept' => 'image/*'])
-            ->thumbnail('small', $width = 300, $height = 300, $crop = true);
+            ->attribute(['accept' => 'image/*']);
+
+        $form->multipleFile('files', 'Event Files')
+            ->removable()
+            ->uniqueName()
+            ->sortable()
+            ->attribute(['accept' => 'file/*']);
 
         $form->disableReset();
         $form->disableViewCheck();
