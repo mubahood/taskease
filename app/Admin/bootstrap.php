@@ -35,7 +35,7 @@ if ($u != null) {
     Admin::navbar(function (\Encore\Admin\Widgets\Navbar $navbar) {
 
 
-
+        $u = Admin::user();
         $links = [];
         $links = [
             'New Task' => admin_url('tasks/create'),
