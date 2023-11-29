@@ -164,7 +164,6 @@ class TaskController extends AdminController
             ->label([
                 'Not Submitted' => 'default',
                 'Done' => 'success',
-                'Missed' => 'danger',
                 'Not Attended To' => 'danger',
                 'Done Late' => 'warning',
             ])->sortable();
@@ -174,7 +173,6 @@ class TaskController extends AdminController
             ->label([
                 'Not Submitted' => 'default',
                 'Done' => 'success',
-                'Missed' => 'danger',
                 'Not Attended To' => 'danger',
                 'Done Late' => 'warning',
             ])->sortable();

@@ -10,6 +10,7 @@ use App\Models\Task;
 use App\Models\User;
 use App\Models\Utils;
 use Carbon\Carbon;
+use Dflydev\DotAccessData\Util;
 use Encore\Admin\Auth\Database\Administrator;
 use Encore\Admin\Controllers\Dashboard;
 use Encore\Admin\Facades\Admin;
@@ -24,6 +25,8 @@ class HomeController extends Controller
 {
     public function index(Content $content)
     {
+        $u = Admin::user();
+        $man = Utils::manifest($u);
         $admin = Auth::user();
 
         //$faker = Faker::create();
@@ -69,43 +72,20 @@ class HomeController extends Controller
         $content
             ->title('<b>' . Utils::greet() . " " . $u->last_name . '!</b>');
 
-
-
         $content->row(function (Row $row) {
             $row->column(6, function (Column $column) {
                 $u = Admin::user();
-                $tasks_done = Task::where([
-                    'company_id' => $u->company_id,
-                    'manager_submission_status' => 'Done'
-                ])->orWhere([
-                    'company_id' => $u->company_id,
-                    'manager_submission_status' => 'Done Late'
-                ])
-                    ->count();
-                $tasks_missed = Task::where([
-                    'company_id' => $u->company_id,
-                    'manager_submission_status' => 'Not Attended To'
-                ])->count();
-                $tasks_not_submitted = Task::where([
-                    'company_id' => $u->company_id,
-                    'manager_submission_status' => 'Not Submitted'
-                ])->count();
+                $man = Utils::manifest($u);
                 $column->append(view('widgets.dashboard-segment-1', [
-                    'tasks_done' => $tasks_done,
-                    'tasks_missed' => $tasks_missed,
-                    'tasks_not_submitted' => $tasks_not_submitted,
-                    'meetings' => Meeting::where([
-                        'company_id' => $u->company_id,
-                    ])->where(
-                        [/* 'event_date', '>=', Carbon::now()->format('Y-m-d') */]
-                    )->orderBy('id', 'desc')->limit(8)->get(),
-                    'tasks' => Task::where([
-                        'company_id' => $u->company_id,
-                    ])->where(
+                    'tasks_done' => $man->tasks_done,
+                    'tasks_missed' => $man->tasks_missed,
+                    'tasks_not_submitted' => $man->tasks_pending,
+                    'events' => Event::where(
                         [
-                            'company_id' => $u->company_id,
+                            'company_id' => $u->company_id
                         ]
-                    )->orderBy('id', 'desc')->limit(6)->get()
+                    )->limit(5)->get(),
+                    'tasks' => $man->tasks_pending_items->take(6),
                 ]));
             });
             $row->column(6, function (Column $column) {
@@ -134,9 +114,6 @@ class HomeController extends Controller
                 ]));
             });
         });
-        return $content;
-
-
         return $content;
     }
 }

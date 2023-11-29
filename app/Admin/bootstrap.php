@@ -62,6 +62,23 @@ die("done"); */
 Utils::system_boot();
 
 
+Admin::navbar(function (\Encore\Admin\Widgets\Navbar $navbar) {
+
+
+    $u = Auth::user();
+
+    $links = [];
+    $links = [
+        'New Task' => admin_url('tasks/create'),
+        'New Event' => admin_url('events/create'),
+    ];
+    if ($u->can('admin')) {
+        $links['New Employee'] = admin_url('employees/create');
+    }
+    $navbar->left(Shortcut::make($links, 'fa-plus')->title('CREATE NEW'));
+});
+
+
 Admin::css('/assets/js/calender/main.css');
 Admin::js('/assets/js/calender/main.js');
 

@@ -13,19 +13,17 @@ if (!isset($tasks_count)) {
     $tasks_count = 0;
 }
 ?>
-{{-- 
-    '' => $tasks_missed,
-    '' => $tasks_not_submitted,
-    --}}<div class="row">
+
+<div class="row">
     <div class="col-12">
         <div class="row">
             <div class="col-md-4">
                 @include('widgets.box-6', [
                     'is_dark' => false,
-                    'title' => 'Done Tasks',
+                    'title' => 'Pending Tasks',
                     'icon' => 'box',
-                    'number' => $tasks_done,
-                    'link' => 'javascript:;',
+                    'number' => $tasks_not_submitted,
+                    'link' => admin_url('tasks-pending'),
                 ])
             </div>
             <div class="col-md-4">
@@ -34,16 +32,17 @@ if (!isset($tasks_count)) {
                     'title' => 'Not Attended To',
                     'icon' => 'list-task',
                     'number' => $tasks_missed,
-                    'link' => 'javascript:;',
+                    'link' => admin_url('tasks?manager_submission_status=Not+Attended+To'),
                 ])
+
             </div>
             <div class="col-md-4">
                 @include('widgets.box-6', [
                     'is_dark' => true,
-                    'title' => 'Not Submitted',
+                    'title' => 'Tasks Done',
                     'icon' => 'calendar-event-fill',
-                    'number' => $tasks_not_submitted,
-                    'link' => 'javascript:;',
+                    'number' => $tasks_done,
+                    'link' => admin_url('tasks?manager_submission_status=Done'),
                 ])
             </div>
         </div>
@@ -51,13 +50,13 @@ if (!isset($tasks_count)) {
 </div>
 <div class="row">
     <div class="col-md-6">
-        @include('dashboard.upcoming-events', [
-            'items' => $meetings,
+        @include('dashboard.tasks', [
+            'items' => $tasks,
         ])
     </div>
     <div class="col-md-6">
-        @include('dashboard.tasks', [
-            'items' => $tasks,
+        @include('dashboard.upcoming-events', [
+            'items' => $events,
         ])
     </div>
 </div>

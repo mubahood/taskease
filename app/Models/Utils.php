@@ -29,6 +29,46 @@ class Utils extends Model
         return $date;
     }
 
+    //manifest
+    public static function manifest($u)
+    {
+        $week_start = Utils::week_started(Carbon::now());
+        $week_end = Utils::week_ended(Carbon::now());
+        $ob = new \stdClass();
+        $ob->tasks_pending_items = Task::where([
+            'assigned_to' => $u->id,
+            'is_submitted' => 'No',
+        ])->get();
+
+        $ob->tasks_pending = $ob->tasks_pending_items->count();
+
+        $tasks_missed = [
+            'assigned_to' => $u->id,
+            'is_submitted' => 'Yes',
+            'company_id' => $u->company_id,
+            'manager_submission_status' => 'Not Attended To',
+        ];
+        $tasks_done = [
+            'assigned_to' => $u->id,
+            'is_submitted' => 'Yes',
+            'manager_submission_status' => 'Done',
+            'company_id' => $u->company_id,
+        ];
+        if ($u->can('admin')) {
+            unset($tasks_missed['assigned_to']);
+            unset($tasks_done['assigned_to']);
+        }
+
+        //for this week only
+        $ob->tasks_missed = Task::where($tasks_missed)
+            ->whereBetween('due_to_date', [$week_start, $week_end])
+            ->count();
+        $ob->tasks_done = Task::where($tasks_done)
+            ->whereBetween('due_to_date', [$week_start, $week_end])
+            ->count();
+
+        return $ob;
+    }
 
     public static function validateEmail($email)
     {
@@ -95,55 +135,47 @@ class Utils extends Model
     public static function prepare_calendar_events($u)
     {
 
-
-
         $conditions = [
             'company_id' => $u->company_id,
         ];
-
-        $eves = Task::where($conditions)->get();
+        $eves = Event::where($conditions)->get();
         $events = [];
         foreach ($eves as $key => $event) {
             $ev['activity_id'] = $event->id;
-            $event_date_time = Carbon::parse($event->due_to_date);
+            $event_date_time = Carbon::parse($event->event_date);
             $ev['title'] = $event_date_time->format('h:m ') . $event->name;
             $event_date = $event_date_time->format('Y-m-d');
             $event_time = $event_date_time->format('h:m a');
-            $ev['name'] = "Task#" . $event->id;
-            $ev['url_edit'] = admin_url('tasks/' . $event->id . '/edit');
-            $ev['url_view'] = admin_url('tasks/' . $event->id);
-            $ev['status'] = 'N/A';
+            $ev['name'] = $event->name;
+            $ev['url_edit'] = admin_url('events/' . $event->id . '/edit');
+            $ev['url_view'] = admin_url('events/' . $event->id);
+            $ev['status'] = $event->event_conducted;
             $ev['classNames'] = ['bg-warning', 'border-warning', 'text-dark'];
-            if (($event->manager_submission_status == 'Done' ||
-                    $event->manager_submission_status == 'Done Late' ||
-                    $event->manager_submission_status == 'Not Attended To') ||
-                ($event->delegate_submission_status == 'Done' ||
-                    $event->delegate_submission_status == 'Done Late' ||
-                    $event->delegate_submission_status == 'Not Attended To')
-            ) {
-                $ev['status'] = 'Submitted';
+            if ($event->event_conducted == 'Conducted') {
+                $ev['status'] = 'Conducted';
                 $ev['classNames'] = ['bg-success', 'border-success', 'text-white'];
+            } else if ($event->event_conducted == 'Skipped') {
+                $ev['status'] = 'Skipped';
+                $ev['classNames'] = ['bg-danger', 'border-danger', 'text-white'];
             } else {
-                $ev['status'] = 'Not Submitted';
+                $ev['status'] = 'Pending';
             }
 
             $details = $event->name . '<br><br>';
-            $participants = $event->assigned_to_user->name;
 
-            /*    if ($event->event_conducted == 'Conducted') {
-
-            } else if ($event->event_conducted == 'Pending') {
-                $ev['classNames'] = ['bg-warning', 'border-warning', 'text-dark'];
-            } else if ($event->event_conducted == 'Cancelled' || $event->event_conducted == 'Missed') {
-                $ev['classNames'] = ['bg-danger', 'border-danger', 'text-white'];
-            } */
-
-            $details .= "<b>Due Date:</b> {$event_date}<br>";
+            $details .= "<b>Event Date:</b> {$event_date}<br>";
             $details .= "<b>Time:</b> {$event_time}<br>";
-            $details .= "<b>Assigned To:</b> {$participants}<br>";
-            $ev['details'] = $details;
-            $ev['start'] = Carbon::parse($event->due_to_date)->format('Y-m-d');
+            $details .= "<b>Status:</b> {$event->event_conducted}<br>";
+            //limit description to 100 characters
 
+            if (strlen($event->description) > 100) {
+                $description = substr(strip_tags($event->description), 0, 100) . "...";
+            } else {
+                $description = $event->description;
+            }
+            $details .= "<br><b>Description:</b> {$description}<br>";
+            $ev['details'] = $details;
+            $ev['start'] = Carbon::parse($event_date)->format('Y-m-d');
             $events[] = $ev;
         }
         return $events;

@@ -157,7 +157,7 @@ class EventController extends AdminController
         $form->radioCard('event_conducted', 'Event status')->options([
             'Pending' => 'Pending',
             'Conducted' => 'Conducted',
-            'Cancelled' => 'Skipped',
+            'Skipped' => 'Skipped',
         ])->default('Pending')
             ->rules('required');
         $form->quill('outcome', 'Event Outcome');
