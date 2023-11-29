@@ -1,24 +1,22 @@
-@foreach($css as $c)
+@foreach ($css as $c)
     <link rel="stylesheet" href="{{ admin_asset("$c") }}">
 @endforeach
 
 <?php
 
 $primt_color = '#0761BB';
-?><style> 
-   
-
+?><style>
     .content-header {
-        background-color: #F9F9F9;
+        background-color: #056098;
     }
 
-   /*  .sidebar-menu .active {
+    .sidebar-menu .active {
         border-left: solid 5px {{ $primt_color }} !important;
         ;
         color: {{ $primt_color }} !important;
         ;
     }
- */
+ 
 
     .navbar,
     .logo,
@@ -43,7 +41,8 @@ $primt_color = '#0761BB';
     :root {
         --primary: {{ $primt_color }};
     }
+
     .card {
         box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px -5px, rgba(0, 0, 0, 0.04) 0px 10px 10px -5px;
     }
-</style> 
+</style>

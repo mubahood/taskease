@@ -14,6 +14,22 @@ class Utils extends Model
 {
     use HasFactory;
 
+    //get date when this week started
+    public static function week_started($date)
+    {
+        $date = Carbon::parse($date);
+        $date->startOfWeek();
+        return $date;
+    }
+    //get date when this week ended
+    public static function week_ended($date)
+    {
+        $date = Carbon::parse($date);
+        $date->endOfWeek();
+        return $date;
+    }
+
+
     public static function validateEmail($email)
     {
         if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
