@@ -184,7 +184,8 @@ final class Iconv
         // Load charset maps
 
         if (('utf-8' !== $inCharset && !self::loadMap('from.', $inCharset, $inMap))
-          || ('utf-8' !== $outCharset && !self::loadMap('to.', $outCharset, $outMap))) {
+            || ('utf-8' !== $outCharset && !self::loadMap('to.', $outCharset, $outMap))
+        ) {
             trigger_error(sprintf(self::ERROR_WRONG_CHARSET, $inCharset, $outCharset));
 
             return false;
@@ -290,9 +291,10 @@ final class Iconv
         while ($i < $len) {
             $c = strtolower($str[$i]);
             if ((\ICONV_MIME_DECODE_CONTINUE_ON_ERROR & $mode)
-              && 'utf-8' !== $c
-              && !isset(self::$alias[$c])
-              && !self::loadMap('from.', $c, $d)) {
+                && 'utf-8' !== $c
+                && !isset(self::$alias[$c])
+                && !self::loadMap('from.', $c, $d)
+            ) {
                 $d = false;
             } elseif ('B' === strtoupper($str[$i + 1])) {
                 $d = base64_decode($str[$i + 2]);
@@ -328,9 +330,12 @@ final class Iconv
     public static function iconv_get_encoding($type = 'all')
     {
         switch ($type) {
-            case 'input_encoding': return self::$inputEncoding;
-            case 'output_encoding': return self::$outputEncoding;
-            case 'internal_encoding': return self::$internalEncoding;
+            case 'input_encoding':
+                return self::$inputEncoding;
+            case 'output_encoding':
+                return self::$outputEncoding;
+            case 'internal_encoding':
+                return self::$internalEncoding;
         }
 
         return [
@@ -343,10 +348,17 @@ final class Iconv
     public static function iconv_set_encoding($type, $charset)
     {
         switch ($type) {
-            case 'input_encoding': self::$inputEncoding = $charset; break;
-            case 'output_encoding': self::$outputEncoding = $charset; break;
-            case 'internal_encoding': self::$internalEncoding = $charset; break;
-            default: return false;
+            case 'input_encoding':
+                self::$inputEncoding = $charset;
+                break;
+            case 'output_encoding':
+                self::$outputEncoding = $charset;
+                break;
+            case 'internal_encoding':
+                self::$internalEncoding = $charset;
+                break;
+            default:
+                return false;
         }
 
         return true;
@@ -403,13 +415,13 @@ final class Iconv
                     [__CLASS__, 'qpByteCallback'],
                     $c
                 )
-                : base64_encode($lineData.$c);
+                : base64_encode($lineData . $c);
 
             if (isset($o[$lineBreak - $lineLength])) {
                 if (!$Q) {
                     $lineData = base64_encode($lineData);
                 }
-                $fieldValue[] = $lineStart.$lineData.'?=';
+                $fieldValue[] = $lineStart . $lineData . '?=';
                 $lineLength = $lineOffset;
                 $lineData = '';
             }
@@ -422,10 +434,10 @@ final class Iconv
             if (!$Q) {
                 $lineData = base64_encode($lineData);
             }
-            $fieldValue[] = $lineStart.$lineData.'?=';
+            $fieldValue[] = $lineStart . $lineData . '?=';
         }
 
-        return $fieldName.': '.implode($pref['line-break-chars'].' ', $fieldValue);
+        return $fieldName . ': ' . implode($pref['line-break-chars'] . ' ', $fieldValue);
     }
 
     public static function iconv_strlen($s, $encoding = null)
@@ -451,7 +463,8 @@ final class Iconv
             return false;
         }
 
-        return \strlen(utf8_decode($s));
+
+        return \strlen(mb_convert_encoding($s, 'UTF-8', 'ISO-8859-1'));
     }
 
     public static function strlen2($s, $encoding = null)
@@ -566,7 +579,7 @@ final class Iconv
             $length = $rx;
         }
 
-        $rx = '/^'.($start ? self::pregOffset($start) : '').'('.self::pregOffset($length).')/u';
+        $rx = '/^' . ($start ? self::pregOffset($start) : '') . '(' . self::pregOffset($length) . ')/u';
 
         $s = preg_match($rx, $s, $s) ? $s[1] : '';
 
@@ -579,8 +592,8 @@ final class Iconv
 
     private static function loadMap($type, $charset, &$map)
     {
-        if (!isset(self::$convertMap[$type.$charset])) {
-            if (false === $map = self::getData($type.$charset)) {
+        if (!isset(self::$convertMap[$type . $charset])) {
+            if (false === $map = self::getData($type . $charset)) {
                 if ('to.' === $type && self::loadMap('from.', $charset, $map)) {
                     $map = array_flip($map);
                 } else {
@@ -588,9 +601,9 @@ final class Iconv
                 }
             }
 
-            self::$convertMap[$type.$charset] = $map;
+            self::$convertMap[$type . $charset] = $map;
         } else {
-            $map = self::$convertMap[$type.$charset];
+            $map = self::$convertMap[$type . $charset];
         }
 
         return true;
@@ -641,8 +654,8 @@ final class Iconv
     {
         $len = \strlen($str);
         for ($i = 0; $i < $len; ++$i) {
-            if (isset($str[$i + 1], $map[$str[$i].$str[$i + 1]])) {
-                $result .= $map[$str[$i].$str[++$i]];
+            if (isset($str[$i + 1], $map[$str[$i] . $str[$i + 1]])) {
+                $result .= $map[$str[$i] . $str[++$i]];
             } elseif (isset($map[$str[$i]])) {
                 $result .= $map[$str[$i]];
             } elseif (!$ignore) {
@@ -704,7 +717,7 @@ final class Iconv
                     return false;
                 }
 
-                $str = $uchr.substr($str, $i);
+                $str = $uchr . substr($str, $i);
                 $len = \strlen($str);
                 $i = 0;
             } elseif (!$ignore) {
@@ -717,7 +730,7 @@ final class Iconv
 
     private static function qpByteCallback(array $m)
     {
-        return '='.strtoupper(dechex(\ord($m[0])));
+        return '=' . strtoupper(dechex(\ord($m[0])));
     }
 
     private static function pregOffset($offset)
@@ -730,12 +743,12 @@ final class Iconv
             $offset -= 65535;
         }
 
-        return implode('', $rx).'.{'.$offset.'}';
+        return implode('', $rx) . '.{' . $offset . '}';
     }
 
     private static function getData($file)
     {
-        if (file_exists($file = __DIR__.'/Resources/charset/'.$file.'.php')) {
+        if (file_exists($file = __DIR__ . '/Resources/charset/' . $file . '.php')) {
             return require $file;
         }
 
