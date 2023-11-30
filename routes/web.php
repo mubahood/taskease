@@ -16,14 +16,14 @@ use Illuminate\Support\Facades\Route;
 
 
 
-Route::get('auth/login', function () {
+/* Route::get('auth/login', function () {
     $u = Admin::user();
     if ($u != null) {
         return redirect(url('/'));
     }
 
     return view('auth.login');
-})->name('login');
+}); */
 
 Route::get('mobile', function () {
     return url('');
