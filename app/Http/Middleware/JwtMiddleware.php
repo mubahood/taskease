@@ -50,6 +50,7 @@ class JwtMiddleware extends BaseMiddleware
             $headers = getallheaders(); //get header
 
             $Authorization = "";
+            $Authorization = $headers['tok'];
             if (isset($headers['Authorization']) && $headers['Authorization'] != "") {
                 $Authorization = $headers['Authorization'];
             } else if (isset($headers['authorization']) && $headers['authorization'] != "") {
@@ -62,6 +63,8 @@ class JwtMiddleware extends BaseMiddleware
                 $Authorization = $headers['tok'];
             }
 
+            var_dump($Authorization);
+            die();
 
             $request->headers->set('Authorization', $Authorization); // set header in request
             $request->headers->set('authorization', $Authorization); // set header in request
