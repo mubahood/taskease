@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Utils;
 use Closure;
 use JWTAuth;
 use Exception;
@@ -76,7 +77,7 @@ class JwtMiddleware extends BaseMiddleware
             } else if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException) {
                 return response()->json(['status' => 'Token is Expired']);
             } else {
-                return response()->json(['status' => 'Authorization Token not found']);
+                return Utils::error($e->getMessage());
             }
         }
         return $next($request);
