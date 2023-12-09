@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Encore\Admin\Auth\Database\Administrator;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -11,9 +12,6 @@ class Project extends Model
 
     public static function update_progress($project_id)
     {
-
-        
-
         $project = Project::find($project_id);
         if ($project == null) {
             return;
@@ -42,7 +40,18 @@ class Project extends Model
 
     public function getOtherClientsAttribute($value)
     {
-        return explode(',', $value);
+        if ($value == null) {
+            return [];
+        }
+        if (strlen($value) < 1) {
+            return [];
+        }
+        try {
+            //$value = explode(',', $value);
+        } catch (\Exception $e) {
+            $value = [];
+        }
+        return $value;
     }
 
     public function setOtherClientsAttribute($value)
@@ -50,5 +59,15 @@ class Project extends Model
         if (is_array($value)) {
             $this->attributes['other_clients'] = implode(',', $value);
         }
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
+
+    public function manager()
+    {
+        return $this->belongsTo(Administrator::class,'administrator_id');
     }
 }

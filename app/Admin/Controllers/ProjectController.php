@@ -29,6 +29,8 @@ class ProjectController extends AdminController
         $grid = new Grid(new Project());
 
 
+
+
         $grid->model()->where('company_id', auth()->user()->company_id);
         $u = auth()->user();
 
@@ -36,15 +38,23 @@ class ProjectController extends AdminController
             if (!$u->can('administrator')) {
                 $grid->model()->where('administrator_id', auth()->user()->id);
             }
+            //disable delete action
+            $grid->actions(function ($actions) {
+                $actions->disableDelete();
+            });
         }
 
 
         $grid->disableBatchActions();
         $grid->quickSearch('name')->placeholder('Search by name');
-        $grid->column('id', __('ID'))->sortable();
+        $grid->column('id', __('ID'))->sortable()->hide();
 
 
+        $grid->column('logo', __('Logo'))
+            ->lightbox(['width' => 60, 'height' => 60])
+            ->sortable();
         $grid->column('name', __('Project Name'))->sortable();
+
         $grid->column('client_id', __('Client'))
             ->display(function ($client_id) {
                 $client = Client::find($client_id);
@@ -72,11 +82,23 @@ class ProjectController extends AdminController
             })
             ->sortable();
         $grid->column('progress', __('Progress'))->sortable()
-            ->progressBar($style = 'primary', $size = 'sm', $max = 100);
+            ->progressBar($style = 'primary', $size = 'sm', $max = 100)
+            ->totalRow(function ($amount) {
+                if ($amount < 50) {
+                    return "<b class='text-danger'>Total progress: $amount%</b>";
+                } else {
+                    return "<b class='text-success'>Total progress: $amount%</b>";
+                }
+            });
 
         $grid->column('created_at', __('Started'))
             ->display(function ($created_at) {
                 return date('d-m-Y', strtotime($created_at));
+            });
+        $grid->column('print', __('Repoert'))
+            ->display(function ($created_at) {
+                $url = url('project-report?id=' . $this->id);
+                return "<a href='{$url}' target='_blank' class='btn btn-sm btn-primary'>Generate Report</a>";
             });
         return $grid;
     }
@@ -121,7 +143,7 @@ class ProjectController extends AdminController
                 ->orderBy('name')
                 ->pluck('name', 'id');
             $form->text('name', __('Project Name'))->rules('required');
-            $form->textarea('short_name', __('Project Short name'))->rules('required');
+            $form->text('short_name', __('Project Short name'))->rules('required');
             $form->hidden('company_id')->value(auth()->user()->company_id);
             $form->select('client_id', __('Project Client'))
                 ->options($clients)
@@ -139,7 +161,14 @@ class ProjectController extends AdminController
 
             $form->image('logo', __('Project Icon (Logo)'));
 
-            $form->textarea('details', __('Prokect Details'));
+            $form->quill('details', __('Project Details'));
+
+            $form->divider();
+            $form->text('budget_overview', __('Budget overview'));
+            $form->text('schedule_overview', __('Scheduled overview'));
+            $form->text('risks_issues', __('Project Risks & Issues'));
+            $form->text('concerns_recommendations', __('Concerns and Recommendations'));
+
 
             if ($form->isCreating()) {
                 $form->hidden('progress', __('Progress'))->default(0);
@@ -148,12 +177,16 @@ class ProjectController extends AdminController
             $form->hasMany('project_sections', 'Project Deliverables', function (Form\NestedForm $form) {
                 $form->text('name', __('Deliverable Name'))->rules('required');
                 $form->textarea('section_description', __('Deliverable Description'));
-                $form->decimal('progress', 'Deliverable Progress Percentage (out of 100%)')
+                $form->text('progress', 'Deliverable Progress Percentage (out of 100%)')
                     ->rules([
                         'required',
                         'min:0',
                         'max:100',
                     ])
+                    ->attribute('type', 'number')
+                    ->attribute('min', 0)
+                    ->attribute('max', 100)
+                    ->attribute('style', 'width: 100px; height: 30px;')
                     ->default(0);
                 $form->textarea('section_progress', __('Progress Description'));
                 $form->hidden('company_id')->value(auth()->user()->company_id);

@@ -56,4 +56,21 @@ if ($u != null) {
     Admin::css(url('/assets/css/bootstrap.css'));
     Admin::css('/css/styles.css');
     Admin::css('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css');
+
+    //remove reset button from form
+    Encore\Admin\Show::init(function (Encore\Admin\Show $show) {
+        $show->panel()->tools(function ($tools) {
+            $tools->disableDelete();
+            $tools->disableEdit();
+        });
+    });
+
+    Encore\Admin\Form::init(function (Encore\Admin\Form $form) {
+        $form->tools(function ($tools) {
+            $tools->disableDelete();
+            $tools->disableView();
+        });
+        $form->disableReset();
+        $form->disableViewCheck();
+    });
 }

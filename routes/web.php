@@ -6,6 +6,7 @@ use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\RedirectIfAuthenticated;
 use App\Models\Gen;
 use App\Models\Meeting;
+use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\Utils;
@@ -148,6 +149,34 @@ Route::get('departmental-workplan', function () {
         'tasks_done' => $tasks_done,
         'tasks_not_submited' => $tasks_not_submited,
         'tasks_submited' => $tasks_submited,
+    ])->render());
+    return $pdf->stream($file_name);
+});
+Route::get('project-report', function () {
+
+    $id = 0;
+    if (isset($_GET['id'])) {
+        $id = $_GET['id'];
+    }
+
+    $p = Project::find($id);
+    if ($p == null) {
+        die("User not found");
+    }
+ 
+
+    $title = $p->name . " " . date("Y-m-d H:i:s");
+    $file_name = $title . ".pdf";
+    $pdf = App::make('dompdf.wrapper', ['enable_remote' => true, 'enable_html5_parser' => true, 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
+
+    $pdf->setPaper('A4', 'portrait');
+    $pdf->setOptions(['dpi' => 150, 'defaultFont' => 'open-sans']);
+    $pdf->setOptions(['isPhpEnabled' => true, 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
+
+    
+    $pdf->loadHTML(view('project-report', [
+        'item' => $p,
+        'title' => $title, 
     ])->render());
     return $pdf->stream($file_name);
 });

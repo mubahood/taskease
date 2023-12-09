@@ -6,20 +6,26 @@
         <div class="d-lg-flex position-relative h-100">
 
             <!-- Home button -->
-            <a class="text-nav btn btn-icon bg-light border rounded-circle position-absolute top-0 end-0 p-0 mt-3 me-3 mt-sm-4 me-sm-4"
+            <a class=" rounded-circle position-absolute top-0 end-0 p-0 mt-3 me-3 mt-sm-4 me-sm-4"
                 href="javascript:;" data-bs-toggle="tooltip" data-bs-placement="left" title="Powered By 8Technologies Consults"
-                aria-label="Powered By 8Technologies Consults">
-                <i class="ai-home"></i>
+                aria-label="Powered By 8Technologies Consults" style="width: 70px; border-radius: 50%; " >
+
+                <img  class="text-center img img-fluid rounded-circle" style="border-radius: 50%;"  src="{{ url('assets/img/logo.png') }}" alt="logo">
+            
             </a>
 
             <!-- Sign in form -->
             <div class="d-flex flex-column align-items-center w-lg-50 h-100 px-3 px-lg-5 pt-5">
                 <div class="w-100 mt-auto" style="max-width: 526px;">
-                    <h1>Sign in to {{ env('APP_NAME') }}</h1>
+
+
+                    <h1 class="text-center mb-2 mb-md-5">{{ env('APP_NAME') }}</h1>
+                    
+                    <p class="h2 text-primary fs-5 fw-700 pt-2 pt-md-4">Sign in</p>
                     {{--                     <p class="pb-3 mb-3 mb-lg-4">Don't have an account yet?&nbsp;&nbsp;<a
                             href="account-signup.html">Register here!</a></p> --}}
                     <form action="{{ admin_url('auth/login') }}" method="post">
-                      <input type="hidden" name="_token" value="{{ csrf_token() }}"> 
+                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
                         <div class="pb-3 mb-3">
                             <div class="position-relative">
@@ -43,8 +49,9 @@
                                 <i
                                     class="ai-lock-closed fs-lg position-absolute top-50 start-0 translate-middle-y ms-3"></i>
                                 <div class="password-toggle">
-                                    <input name="password" id="password" class="form-control form-control-lg ps-5  {!! !$errors->has('password') ?: 'border-danger' !!}" type="password" placeholder="Password"
-                                        required>
+                                    <input name="password" id="password"
+                                        class="form-control form-control-lg ps-5  {!! !$errors->has('password') ?: 'border-danger' !!}" type="password"
+                                        placeholder="Password" required>
                                     <label class="password-toggle-btn" aria-label="Show/hide password">
                                         <input class="password-toggle-check" type="checkbox"><span
                                             class="password-toggle-indicator"></span>
@@ -77,7 +84,7 @@
                 <!-- Copyright -->
                 <p class="nav w-100 fs-sm pt-5 mt-auto mb-5" style="max-width: 526px;"><span
                         class="text-body-secondary">&copy; All rights reserved. Made by</span><a
-                        class="nav-link d-inline-block p-0 ms-1" href="{{ url('https://8technologies.net') }}"
+                        class="nav-link d-inline-block p-0 ms-1" href="{{ 'https://8technologies.net' }}"
                         target="_blank" rel="noopener">Eight Tech Consults</a></p>
             </div>
 
