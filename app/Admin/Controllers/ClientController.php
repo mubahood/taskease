@@ -27,11 +27,11 @@ class ClientController extends AdminController
         $grid = new Grid(new Client());
         $grid->disableBatchActions();
         $grid->quickSearch('name')->placeholder('Search by name');
-        $grid->column('name', __('Company Name'))->sortable();
-        $grid->column('short_name', __('Short name'))->hide();
         $grid->column('logo', __('Logo'))
             ->lightbox(['width' => 60, 'height' => 60])
             ->sortable();
+        $grid->column('name', __('Company Name'))->sortable();
+        $grid->column('short_name', __('Short name'))->hide();
         $grid->column('phone_number', __('Phone number'))->sortable();
         $grid->column('phone_number_2', __('Phone number 2'))->hide();
         $grid->column('p_o_box', __('P o box'))->hide();
