@@ -55,6 +55,14 @@ class Authenticate implements AuthenticatesRequests
      */
     protected function authenticate($request, array $guards)
     {
+        //get headers
+        $headers = $request->headers->all();
+
+        //set json response
+        header('Content-Type: application/json');
+        die(json_encode($headers));
+
+        die('here');
         if (empty($guards)) {
             $guards = [null];
         }
