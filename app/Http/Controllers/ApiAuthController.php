@@ -71,7 +71,7 @@ class ApiAuthController extends Controller
         return $this->success(Project::where([
             'company_id' => $u->company_id
         ])
-            ->get(), $message = "Success", 200);
+            ->get(), $message = "Success =>{$u->company_id}<=", 200);
     }
 
     public function tasks()
