@@ -51,9 +51,7 @@ class JwtMiddleware extends BaseMiddleware
             $headers = getallheaders(); //get header
 
             header('Content-Type: application/json');
-            var_dump($headers);
-            die();
-
+            
             $Authorization = "";
             if (isset($headers['Authorization']) && $headers['Authorization'] != "") {
                 $Authorization = $headers['Authorization'];
@@ -63,8 +61,8 @@ class JwtMiddleware extends BaseMiddleware
                 $Authorization = $headers['Authorizations'];
             } else if (isset($headers['authorizations']) && $headers['authorizations'] != "") {
                 $Authorization = $headers['authorizations'];
-            } else if (isset($headers['tok']) && $headers['tok'] != "") {
-                $Authorization = $headers['tok'];
+            } else if (isset($headers['Tok']) && $headers['Tok'] != "") {
+                $Authorization = $headers['Tok'];
             }
 
             var_dump($Authorization);
