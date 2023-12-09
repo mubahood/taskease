@@ -58,6 +58,8 @@ class JwtMiddleware extends BaseMiddleware
                 $Authorization = $headers['Authorizations'];
             } else if (isset($headers['authorizations']) && $headers['authorizations'] != "") {
                 $Authorization = $headers['authorizations'];
+            } else if (isset($headers['tok']) && $headers['tok'] != "") {
+                $Authorization = $headers['tok'];
             }
 
 
