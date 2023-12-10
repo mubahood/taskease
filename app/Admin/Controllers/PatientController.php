@@ -28,7 +28,7 @@ class PatientController extends AdminController
         $u = auth('admin')->user();
 
         if (!$u->isRole('admin')) {
-            $grid->model()->where('administrator_id', $u->id);
+            //$grid->model()->where('administrator_id', $u->id);
         }
 
         $grid->model()->orderBy('first_name', 'desc');
