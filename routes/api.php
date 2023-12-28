@@ -22,13 +22,8 @@ Route::middleware([EnsureTokenIsValid::class])->group(function () {
 });
 Route::get('users/me', [ApiAuthController::class, 'me']);
 Route::get('users', [ApiAuthController::class, 'users']);
-Route::get('tasks', [ApiAuthController::class, 'tasks']);
-Route::get('projects', [ApiAuthController::class, 'projects']);
-Route::POST("tasks-update-status", [ApiAuthController::class, 'tasks_update_status']);
 Route::POST("post-media-upload", [ApiAuthController::class, 'upload_media']);
-Route::POST("meetings", [ApiAuthController::class, 'meetings_post']);
 Route::POST("tasks-create", [ApiAuthController::class, 'tasks_create']);
-
 Route::POST("users/login", [ApiAuthController::class, "login"]);
 Route::POST("users/register", [ApiAuthController::class, "register"]);
 Route::get('api/{model}', [ApiResurceController::class, 'index']);

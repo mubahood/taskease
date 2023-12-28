@@ -167,7 +167,7 @@ class Gen extends Model
   <pre>import 'package:sqflite/sqflite.dart';
  
   import 'RespondModel.dart';
-  import '../utils/Utilities.dart';
+  import '../utils/Utils.dart';
  
    
   import 'RespondModel.dart';
@@ -292,7 +292,7 @@ class Gen extends Model
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
       } catch (e) {
-        Utils.toast("Failed to save student because \${e.toString()}");
+        Utils.toast("Failed to save because \${e.toString()}");
       }
     }
   
@@ -360,7 +360,7 @@ class Gen extends Model
         where: 'id = \$id'
       );
     } catch (e) {
-      Utils.toast("Failed to save student because \${e.toString()}");
+      Utils.toast("Failed to save because \${e.toString()}");
     }
   }
   
@@ -399,7 +399,7 @@ class Gen extends Model
   import '../../models/$this->class_name.dart';
   import '../../models/RespondModel.dart';
   import '../../utils/CustomTheme.dart';
-  import '../../utils/Utilities.dart';
+  import '../utils/Utils.dart';
   
   class {$this->class_name}EditScreen extends StatefulWidget {
     Map&ltString, dynamic&gt params = {};
