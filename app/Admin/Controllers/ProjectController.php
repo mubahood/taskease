@@ -53,7 +53,9 @@ class ProjectController extends AdminController
         $grid->column('logo', __('Logo'))
             ->lightbox(['width' => 60, 'height' => 60])
             ->sortable();
-        $grid->column('name', __('Project Name'))->sortable();
+        $grid->column('name', __('Project Name'))->sortable()->hide();
+
+        $grid->column('short_name', __('Project'))->sortable();
 
         $grid->column('client_id', __('Client'))
             ->display(function ($client_id) {
@@ -73,8 +75,16 @@ class ProjectController extends AdminController
                 return $client->name;
             })
             ->sortable();
-        $grid->column('short_name', __('Short name'));
+
         $grid->column('other_clients', __('Other clients'))->hide();
+        $grid->column('status', __('Status'))->sortable()
+            ->label([
+                'Active' => 'primary',
+                'Completed' => 'success',
+                'On-hold' => 'warning',
+                'Cancelled' => 'danger',
+            ], 'danger');
+
         $grid->column('details', __('Details'))->hide();
         $grid->column('deliverables', __('Deliverables'))
             ->display(function ($deliverables) {
@@ -91,10 +101,19 @@ class ProjectController extends AdminController
                 }
             });
 
-        $grid->column('created_at', __('Started'))
+        $grid->column('created_at', __('Created'))
             ->display(function ($created_at) {
                 return date('d-m-Y', strtotime($created_at));
-            });
+            })->hide();
+
+        $grid->column('start_date', __('Start Date'))
+            ->display(function ($start_date) {
+                return date('d-m-Y', strtotime($start_date));
+            })->hide();
+        $grid->column('end_date', __('End Date'))
+            ->display(function ($end_date) {
+                return date('d-m-Y', strtotime($end_date));
+            })->sortable();
         $grid->column('print', __('Repoert'))
             ->display(function ($created_at) {
                 $url = url('project-report?id=' . $this->id);
@@ -149,6 +168,8 @@ class ProjectController extends AdminController
                 ->options($clients)
                 ->rules('required');
 
+            $form->date('start_date', __('Project Start Date'))->rules('required');
+            $form->date('end_date', __('Project End Date'))->rules('required');
             $form->multipleSelect('other_clients', "Other Clients")
                 ->options($clients);
 
@@ -168,6 +189,16 @@ class ProjectController extends AdminController
             $form->text('schedule_overview', __('Scheduled overview'));
             $form->text('risks_issues', __('Project Risks & Issues'));
             $form->text('concerns_recommendations', __('Concerns and Recommendations'));
+
+            $form->radio('status', __('Project Status'))
+                ->options([
+                    'Active' => 'Active',
+                    'Completed' => 'Completed',
+                    'On-hold' => 'On Hold',
+                    'Cancelled' => 'Cancelled',
+                ])
+                ->default('active')
+                ->rules('required');
 
 
             if ($form->isCreating()) {

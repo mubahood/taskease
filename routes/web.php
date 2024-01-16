@@ -45,5 +45,9 @@ Route::get('/gen-form', function () {
 
 Route::get('generate-class', [MainController::class, 'generate_class']);
 Route::get('/gen', function () {
-    die(Gen::find($_GET['id'])->do_get());
+    $m = Gen::find($_GET['id']);
+    if($m == null){
+        return "Not found";
+    }
+    die($m->do_get());
 })->name("register");

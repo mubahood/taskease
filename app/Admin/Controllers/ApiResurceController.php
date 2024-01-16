@@ -2,43 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Association;
-use App\Models\CounsellingCentre;
-use App\Models\Crop;
-use App\Models\CropProtocol;
-use App\Models\Event;
-use App\Models\Garden;
-use App\Models\GardenActivity;
-use App\Models\Group;
-use App\Models\Institution;
-use App\Models\Job;
-use App\Models\NewsPost;
-use App\Models\Person;
-use App\Models\Product;
-use App\Models\Sacco;
-use App\Models\ServiceProvider;
 use App\Models\Utils;
 use App\Traits\ApiResponser;
 use Carbon\Carbon;
 use Encore\Admin\Auth\Database\Administrator;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
 use Throwable;
 
 class ApiResurceController extends Controller
 {
 
     use ApiResponser;
-
-
-
     public function index(Request $r, $model)
     {
-        $u = Auth::user();
-        if ($u == null) {
-            return $this->error('User not found.');
-        }
 
         $className = "App\Models\\" . $model;
         $obj = new $className;
@@ -50,14 +28,29 @@ class ApiResurceController extends Controller
             unset($_GET['_method']);
         }
 
+
         $conditions = [];
         foreach ($_GET as $k => $v) {
             if (substr($k, 0, 2) == 'q_') {
                 $conditions[substr($k, 2, strlen($k))] = trim($v);
             }
         }
-        $conditions['company_id'] = $u->company_id;
-        
+        $is_private = true;
+        if (isset($_GET['is_not_private'])) {
+            $is_not_private = ((int)($_GET['is_not_private']));
+            if ($is_not_private == 1) {
+                $is_private = false;
+            }
+        }
+        if ($is_private) {
+            $u = $r->user;
+            $administrator_id = $u->id;
+            if ($u == null) {
+                return $this->error('User not found.');
+            }
+            $conditions['administrator_id'] = $administrator_id;
+        }
+
         $items = [];
         $msg = "";
 
@@ -136,12 +129,8 @@ class ApiResurceController extends Controller
 
     public function update(Request $r, $model)
     {
-        $u = Auth::user();
-        if ($u == null) {
-            return $this->error('User not found.');
-        }
 
-
+        $u = auth('api')->user();
         if ($u == null) {
             return Utils::response([
                 'status' => 0,
@@ -149,35 +138,67 @@ class ApiResurceController extends Controller
             ]);
         }
 
-
         $className = "App\Models\\" . $model;
-        $id = ((int)($r->online_id));
+        $id = ((int)($r->id));
         $obj = $className::find($id);
 
-
+        $isEdit = true;
         if ($obj == null) {
-            return Utils::response([
-                'status' => 0,
-                'message' => "Item not found.",
-            ]);
+            $obj = new $className;
+            $isEdit = false;
+        }
+        if ($isEdit) {
+            if (isset($r->my_task)) {
+                if ($r->my_task == 'delete') {
+                    $obj->delete();
+                    return Utils::response([
+                        'status' => 1,
+                        'message' => "Deleted successfully.",
+                    ]);
+                }
+            }
         }
 
+        $table_name = $obj->getTable();
+        $cols = Schema::getColumnListing($table_name);
 
-        unset($_POST['_method']);
+
+
         if (isset($_POST['online_id'])) {
             unset($_POST['online_id']);
         }
 
+        $except = [
+            'created_at',
+            'updated_at',
+            'deleted_at',
+            'online_id',
+            'id',
+            'administrator_id',
+            'user_id',
+            'created_by',
+            'updated_by',
+        ];
+
         foreach ($_POST as $key => $value) {
+            if (in_array($key, $except)) {
+                continue;
+            }
+            if (!in_array($key, $cols)) {
+                continue;
+            }
             $obj->$key = $value;
         }
 
-
         $success = false;
         $msg = "";
+        if ($isEdit) {
+            $msg = "Updated successfully.";
+        } else {
+            $msg = "Created successfully.";
+        }
         try {
             $obj->save();
-            $msg = "Updated successfully.";
             $success = true;
         } catch (Exception $e) {
             $success = false;

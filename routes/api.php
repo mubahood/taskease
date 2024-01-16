@@ -26,7 +26,9 @@ Route::POST("post-media-upload", [ApiAuthController::class, 'upload_media']);
 Route::POST("tasks-create", [ApiAuthController::class, 'tasks_create']);
 Route::POST("users/login", [ApiAuthController::class, "login"]);
 Route::POST("users/register", [ApiAuthController::class, "register"]);
+
 Route::get('api/{model}', [ApiResurceController::class, 'index']);
+Route::post('api/{model}', [ApiResurceController::class, 'update']);
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
