@@ -94,6 +94,9 @@ class ProjectController extends AdminController
         $grid->column('progress', __('Progress'))->sortable()
             ->progressBar($style = 'primary', $size = 'sm', $max = 100)
             ->totalRow(function ($amount) {
+                //to $amount percentage
+                $amount = $amount / Project::count();
+                $amount = round($amount, 2);
                 if ($amount < 50) {
                     return "<b class='text-danger'>Total progress: $amount%</b>";
                 } else {

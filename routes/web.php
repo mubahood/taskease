@@ -11,6 +11,7 @@ use App\Models\Task;
 use App\Models\User;
 use App\Models\Utils;
 use Encore\Admin\Facades\Admin;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -21,7 +22,7 @@ Route::get('project-report', function () {
     $id = $_GET['id'];
     $project = Project::find($id);
 
-    $pdf = App::make('dompdf.wrapper'); 
+    $pdf = App::make('dompdf.wrapper');
     //'isHtml5ParserEnabled', true
     $pdf->set_option('enable_html5_parser', TRUE);
 
@@ -30,7 +31,7 @@ Route::get('project-report', function () {
         'title' => 'project',
         'item' => $project,
     ])->render());
-    
+
     return $pdf->stream('file_name.pdf');
 });
 
@@ -75,16 +76,39 @@ Route::post('reset-password', function () {
     $u->password = bcrypt($p1);
     $u->save();
 
+    return redirect(admin_url('auth/login') . '?message=Password reset successful. Login to continue.');
     if (Auth::attempt([
         'email' => $u->email,
         'password' => $p1,
     ], true)) {
-        return redirect('dashboard');
         die();
     }
     return back()
         ->withErrors(['password' => 'Failed to login. Try again.'])
         ->withInput();
+});
+
+Route::get('request-password-reset', function () {
+    return view('auth.request-password-reset');
+});
+
+Route::post('request-password-reset', function (Request $r) {
+    $u = User::where('email', $r->username)->first();
+    if ($u == null) {
+        return back()
+            ->withErrors(['username' => 'Email address not found.'])
+            ->withInput();
+    }
+    try {
+        $u->send_password_reset();
+        $msg = 'Password reset link has been sent to your email ' . $u->email;
+        return redirect(admin_url('auth/login').'?message=' . $msg);
+    } catch (\Throwable $th) {
+        $msg = $th->getMessage();
+        return back()
+            ->withErrors(['username' => $msg])
+            ->withInput();
+    }
 });
 
 Route::get('auth/login', function () {
