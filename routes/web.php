@@ -101,7 +101,7 @@ Route::post('request-password-reset', function (Request $r) {
     }
     try {
         $u->send_password_reset();
-        $msg = 'Password reset link has been sent to your email ' . $u->email;
+        $msg = 'Password reset link has been sent to your email ' . $u->email.".";
         return redirect(admin_url('auth/login').'?message=' . $msg);
     } catch (\Throwable $th) {
         $msg = $th->getMessage();
