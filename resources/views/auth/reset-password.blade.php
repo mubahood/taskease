@@ -21,17 +21,17 @@
 
                     <h1 class="text-center mb-2 mb-md-5">{{ env('APP_NAME') }}</h1>
                     
-                    <p class="h2 text-primary fs-5 fw-700 pt-2 pt-md-4">Sign in</p>
+                    <p class="h2 text-primary fs-5 fw-700 pt-2 pt-md-4">Password Reset</p>
                     {{--                     <p class="pb-3 mb-3 mb-lg-4">Don't have an account yet?&nbsp;&nbsp;<a
                             href="account-signup.html">Register here!</a></p> --}}
-                    <form action="{{ admin_url('auth/login') }}" method="post">
+                    <form method="post">
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
                         <div class="pb-3 mb-3">
                             <div class="position-relative">
                                 <i class="ai-mail fs-lg position-absolute top-50 start-0 translate-middle-y ms-3"></i>
                                 <input class="form-control form-control-lg ps-5 {!! !$errors->has('username') ?: 'border-danger' !!} " type="email"
-                                    name="username" id="username" value="{{ old('username') }}" placeholder="Email address"
+                                    name="username" readonly id="username" value="{{ $u->email }}" placeholder="Email address"
                                     required>
 
                                 @if ($errors->has('username'))
@@ -51,7 +51,7 @@
                                 <div class="password-toggle">
                                     <input name="password" id="password"
                                         class="form-control form-control-lg ps-5  {!! !$errors->has('password') ?: 'border-danger' !!}" type="password"
-                                        placeholder="Password" required>
+                                        placeholder="New Password" required>
                                     <label class="password-toggle-btn" aria-label="Show/hide password">
                                         <input class="password-toggle-check" type="checkbox"><span
                                             class="password-toggle-indicator"></span>
@@ -67,15 +67,34 @@
                                 @endforeach
                             @endif
                         </div>
-                        <div class="d-flex flex-wrap align-items-center justify-content-between pb-4">
-                            <div class="form-check my-1">
-                                <input class="form-check-input" type="checkbox" id="keep-signedin">
-                                <label class="form-check-label ms-1" for="keep-signedin">Keep me signed in</label>
+
+
+                        <div class="mb-4">
+                            <div class="position-relative">
+                                <i
+                                    class="ai-lock-closed fs-lg position-absolute top-50 start-0 translate-middle-y ms-3"></i>
+                                <div class="password-toggle">
+                                    <input name="password_1" id="password_1"
+                                        class="form-control form-control-lg ps-5  {!! !$errors->has('password') ?: 'border-danger' !!}" type="password"
+                                        placeholder="Re-Enter Password" required>
+                                    <label class="password-toggle-btn" aria-label="Show/hide password">
+                                        <input class="password-toggle-check" type="checkbox"><span
+                                            class="password-toggle-indicator"></span>
+                                    </label>
+                                </div>
                             </div>
-                            <a class="fs-sm fw-semibold text-decoration-none my-1"
-                                href="{{ url('request-password-reset') }}">Forgot password?</a>
+                            @if ($errors->has('password'))
+                                @foreach ($errors->get('password') as $message)
+                                    <label class="control-label text-danger" for="inputError"><i
+                                            class="fa fa-times-circle-o"></i>
+                                        <li>{{ $message }}</li>
+                                    </label><br>
+                                @endforeach
+                            @endif
                         </div>
-                        <button class="btn btn-lg btn-primary w-100 mb-4" type="submit">Sign in</button>
+
+ 
+                        <button class="btn btn-lg btn-primary w-100 mb-4" type="submit">SUBMIT</button>
 
 
                     </form>

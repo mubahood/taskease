@@ -85,11 +85,20 @@ class Utils extends Model
     public static function mail_sender($data)
     {
         try {
-            Mail::send('mail', ['body' => $data['body'], 'title' => $data['subject']], function ($m) use ($data) {
-                $m->to($data['email'], $data['name'])
-                    ->subject($data['subject']);
-                $m->from('noreply@excellentiaeastafrica.com', 'TaskEase East Africa');
-            });
+            Mail::send(
+                'mail',
+                [
+                    'body' => view('mail-1', [
+                        'body' => $data['body'],
+                    ]),
+                    'title' => $data['subject']
+                ],
+                function ($m) use ($data) {
+                    $m->to($data['email'], $data['name'])
+                        ->subject($data['subject']);
+                    $m->from(env('MAIL_USERNAME', 'noreply@taskease.net'), $data['subject']);
+                }
+            );
         } catch (\Throwable $th) {
             $msg = 'failed';
             throw $th;

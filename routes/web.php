@@ -16,6 +16,56 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 
+Route::get('reset-mail', function () {
+
+    //return view('mail-1');
+    $u = User::find(1);
+    try {
+        $u->send_password_reset();
+        die('Email sent');
+    } catch (\Throwable $th) {
+        die($th->getMessage());
+    }
+});
+
+Route::get('reset-password', function () {
+    $u = User::where([
+        'stream_id' => $_GET['token']
+    ])->first();
+    if ($u == null) {
+        die('Invalid token');
+    }
+    return view('auth.reset-password', ['u' => $u]);
+});
+
+Route::post('reset-password', function () {
+    $u = User::where([
+        'stream_id' => $_GET['token']
+    ])->first();
+    if ($u == null) {
+        die('Invalid token');
+    }
+    $p1 = $_POST['password'];
+    $p2 = $_POST['password_1'];
+    if ($p1 != $p2) {
+        return back()
+            ->withErrors(['password' => 'Passwords do not match.'])
+            ->withInput();
+    }
+    $u->password = bcrypt($p1);
+    $u->save();
+
+    if (Auth::attempt([
+        'email' => $u->email,
+        'password' => $p1,
+    ], true)) {
+        return redirect('dashboard');
+        die();
+    }
+    return back()
+        ->withErrors(['password' => 'Failed to login. Try again.'])
+        ->withInput();
+});
 
 Route::get('auth/login', function () {
     $u = Admin::user();
@@ -46,7 +96,7 @@ Route::get('/gen-form', function () {
 Route::get('generate-class', [MainController::class, 'generate_class']);
 Route::get('/gen', function () {
     $m = Gen::find($_GET['id']);
-    if($m == null){
+    if ($m == null) {
         return "Not found";
     }
     die($m->do_get());

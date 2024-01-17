@@ -273,7 +273,7 @@ class ApiAuthController extends Controller
         return $this->success($new_user, 'Account created successfully.');
     }
 
- 
+
 
     public function tasks_create(Request $val)
     {
@@ -292,7 +292,7 @@ class ApiAuthController extends Controller
             $task = new Task();
             $task->company_id = $u->id;
             $task->meeting_id = null;
-            $task->assigned_to = $val->assigned_to; 
+            $task->assigned_to = $val->assigned_to;
             $task->project_id = $val->project_id;
             $task->created_by = $u->id;
             $task->name = $val->name;
