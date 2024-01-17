@@ -21,12 +21,16 @@ Route::get('project-report', function () {
     $id = $_GET['id'];
     $project = Project::find($id);
 
-    $pdf = App::make('dompdf.wrapper');
+    $pdf = App::make('dompdf.wrapper'); 
+    //'isHtml5ParserEnabled', true
+    $pdf->set_option('enable_html5_parser', TRUE);
+
 
     $pdf->loadHTML(view('project-report', [
         'title' => 'project',
         'item' => $project,
     ])->render());
+    
     return $pdf->stream('file_name.pdf');
 });
 
