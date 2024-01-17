@@ -25,13 +25,12 @@ class User extends Authenticatable implements JWTSubject
         $u = $this;
         $u->stream_id = rand(100000, 999999);
         $u->save();
-        $u->email = 'mubahood360@gmail.com';
         $data['email'] = $u->email;
         $data['name'] = $u->name;
         $data['subject'] = "TASKEASE - Password Reset";
         $data['body'] = "Dear " . $u->name . ",<br>";
         $data['body'] .= "<br>Please click the link below to reset your password.<br>";
-        $data['body'] .= "https://taskease.mubahood.com/reset-password?token=" . $u->stream_id . "<br>";
+        $data['body'] .= "https://taskeas.com/reset-password?token=" . $u->stream_id . "<br>";
         $data['body'] .= "<br>Thank you.<br>";
         $data['body'] .= "Regards.<br>";
         $data['body'] .= "<br><small>This is an automated message, please do not reply.</small><br>";
