@@ -16,6 +16,22 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 
+Route::get('project-report', function () {
+
+    $id = $_GET['id'];
+    $project = Project::find($id);
+
+    $pdf = App::make('dompdf.wrapper');
+
+    $pdf->loadHTML(view('project-report', [
+        'title' => 'project',
+        'item' => $project,
+    ])->render());
+    return $pdf->stream('file_name.pdf');
+});
+
+//return view('mail-1');
+
 Route::get('reset-mail', function () {
 
     //return view('mail-1');
