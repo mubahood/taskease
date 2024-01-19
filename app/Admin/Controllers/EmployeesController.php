@@ -68,6 +68,11 @@ class EmployeesController extends AdminController
         $grid->column('nationality', __('Nationality'))->sortable();
         $grid->column('sex', __('Gender'));
         $grid->column('place_of_birth', __('Place of birth'))->sortable();
+        $grid->column('password', __('Reset Password'))->display(function ($x) {
+            $url = url("/reset-mail?id={$this->id}");
+            $link = '<a target="_blank" class="btn btn-primary btn-sm" href="' . $url . '">RESET PASSWORD</a>';
+            return $link;
+        })->hide();
         $grid->column('home_address', __('Home address'))->hide();
         $grid->column('current_address', __('Current address'))->hide();
         $grid->column('religion', __('Religion'))->hide();

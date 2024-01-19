@@ -38,9 +38,7 @@ Route::get('project-report', function () {
 //return view('mail-1');
 
 Route::get('reset-mail', function () {
-
-    //return view('mail-1');
-    $u = User::find(1);
+    $u = User::find($_GET['id']);
     try {
         $u->send_password_reset();
         die('Email sent');
@@ -101,8 +99,8 @@ Route::post('request-password-reset', function (Request $r) {
     }
     try {
         $u->send_password_reset();
-        $msg = 'Password reset link has been sent to your email ' . $u->email.".";
-        return redirect(admin_url('auth/login').'?message=' . $msg);
+        $msg = 'Password reset link has been sent to your email ' . $u->email . ".";
+        return redirect(admin_url('auth/login') . '?message=' . $msg);
     } catch (\Throwable $th) {
         $msg = $th->getMessage();
         return back()
