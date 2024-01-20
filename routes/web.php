@@ -7,6 +7,7 @@ use App\Http\Middleware\RedirectIfAuthenticated;
 use App\Models\Gen;
 use App\Models\Meeting;
 use App\Models\Project;
+use App\Models\ReportModel;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\Utils;
@@ -15,6 +16,20 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+
+
+Route::get('report', function () {
+
+    $id = $_GET['id'];
+    $item = ReportModel::find($id);
+    $pdf = App::make('dompdf.wrapper');
+    $pdf->set_option('enable_html5_parser', TRUE);
+    $pdf->loadHTML(view('report', [
+        'item' => $item,
+    ])->render());
+    return $pdf->stream('test.pdf');
+});
+
 
 
 Route::get('project-report', function () {

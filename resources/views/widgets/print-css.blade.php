@@ -1,6 +1,5 @@
 <?php
-use App\Models\Utils;
-$ent = Utils::ent();
+$ent = $company;
 ?><style>
     body,
     a,
@@ -11,9 +10,8 @@ $ent = Utils::ent();
     h4,
     h5,
     h6 {
-        font-family: sans-serif!important;
-         background-color: red;
-
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif !important;
+        font-size: 14px;
     }
 
     .sidebar {

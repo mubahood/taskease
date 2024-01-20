@@ -264,8 +264,14 @@ class TaskController extends AdminController
         ]);
 
         $form->text('name', __('Task title'))->rules('required');
-        $form->datetime('due_to_date', __('Due to date'))->rules('required')->default(null);
-        $form->text('task_description', __('Task description'));
+        $form->text('task_description', __('Task description'))->rules('required');
+        $form->decimal('hours', __('Hours'))->rules('required')
+            ->help('Enter the number of hours you expect to spend on this task. (e.g. 1.5)');
+
+        $form->date('due_to_date', __('Due to date'))
+            ->rules('required')
+            ->help('Enter the date you expect to complete this task. (e.g. 2021-12-31)');
+
         $form->radio('priority', __('Priority'))->options([
             'Low' => 'Low',
             'Medium' => 'Medium',

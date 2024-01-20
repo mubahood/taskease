@@ -32,6 +32,7 @@ Route::group([
     $router->resource('patient-records', PatientRecordController::class);
     $router->resource('treatment-records', TreatmentRecordController::class);
     $router->resource('treatment-record-items', TreatmentRecordItemController::class);
+    $router->resource('reports', ReportModelController::class);
 
     $router->resource('gens', GenController::class);
 });
