@@ -64,7 +64,7 @@ class EmployeesController extends AdminController
         $grid->column('phone_number_1', __('Phone number'));
         $grid->column('phone_number_2', __('Phone number 2'))->hide();
         $grid->column('email', __('Email'));
-        $grid->column('date_of_birth', __('D.O.B'))->sortable();
+        $grid->column('date_of_birth', __('D.O.B'))->sortable()->hide();
         $grid->column('nationality', __('Nationality'))->sortable();
         $grid->column('sex', __('Gender'));
         $grid->column('password', __('Reset Password'))->display(function ($x) {
