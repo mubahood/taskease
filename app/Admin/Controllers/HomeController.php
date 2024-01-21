@@ -26,6 +26,21 @@ class HomeController extends Controller
     public function index(Content $content)
     {
         $u = Admin::user();
+        Admin::style('.content-header{display:none;} .content-wrapper{background-color:#F8F9FA;}');
+
+        $content->row(function (Row $row) {
+            $row->column(12, function (Column $column) {
+                $u = Admin::user();
+                $man = Utils::manifest($u);
+                $column->append(view('dashboard.main', [
+                    'man' => $man,
+                    'company' => $u->company,
+                    'greet' =>  Utils::greet() . " " . '<b>' . $u->last_name . '!</b>',
+                ]));
+            });
+        });
+        return $content;
+
         $man = Utils::manifest($u);
         $admin = Auth::user();
 

@@ -45,7 +45,7 @@ class User extends Authenticatable implements JWTSubject
     public static function update_rating($id)
     {
         $user = User::find($id);
-        $tasks = Task::where('assigned_to', $id)->get();
+        /* $tasks = Task::where('assigned_to', $id)->get();
         $rate = 0;
         $count = 0;
         foreach ($tasks as $task) {
@@ -56,8 +56,13 @@ class User extends Authenticatable implements JWTSubject
         }
         if ($count > 0) {
             $rate = $rate / $count;
-        }
-        $user->rate = $rate;
+        } */
+        $work_load_pending = Task::where('assigned_to', $id)->where('manager_submission_status', 'Not Submitted')
+            ->sum('hours');
+        $work_load_completed = Task::where('assigned_to', $id)->where('manager_submission_status', 'Done')
+            ->sum('hours');
+        $user->work_load_pending = $work_load_pending;
+        $user->work_load_completed = $work_load_completed; 
         $user->save();
     }
 
@@ -82,5 +87,20 @@ class User extends Authenticatable implements JWTSubject
     public function tasks()
     {
         return $this->hasMany(Task::class, 'assigned_to');
+    }
+
+
+    //appends
+    protected $appends = ['short_name'];
+
+    public function getShortNameAttribute()
+    {
+        //in this formart - J. Doe from first_name and last_name
+        if (strlen($this->first_name) > 1) {
+            $letter_1 = substr($this->first_name, 0, 1);
+        } else {
+            $letter_1 = $this->first_name;
+        }
+        return $letter_1 . ". " . $this->last_name;
     }
 }

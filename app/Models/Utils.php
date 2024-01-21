@@ -34,6 +34,7 @@ class Utils extends Model
     {
         $week_start = Utils::week_started(Carbon::now());
         $week_end = Utils::week_ended(Carbon::now());
+
         $ob = new \stdClass();
         $ob->tasks_pending_items = Task::where([
             'assigned_to' => $u->id,
@@ -67,6 +68,80 @@ class Utils extends Model
             ->whereBetween('due_to_date', [$week_start, $week_end])
             ->count();
 
+        $ob->targets = Target::where([
+            'company_id' => $u->company_id,
+            'status' => 'Pending',
+        ])
+            ->orderby('id', 'desc')
+            ->limit(5)
+            ->get();
+        $ob->milestones = Target::where([
+            'company_id' => $u->company_id,
+            'status' => 'Completed',
+            'type' => 'Milestone',
+        ])
+            ->orderby('id', 'desc')
+            ->limit(5)
+            ->get();
+
+        //get projects weights
+        $progresses = [];
+        foreach (Project::where([
+            'company_id' => $u->company_id,
+            'status' => 'Active',
+        ])->get() as $key => $project) {
+            $progress = [];
+            $progress['id'] = $project->id;
+            $progress['name'] = $project->short_name;
+            $progress['project'] = $project;
+            if ($project->progress < 50) {
+                $color = 'red';
+            } else if ($project->progress < 75) {
+                $color = 'yellow';
+            } else {
+                $color = 'green';
+            }
+
+            $end_date = Carbon::parse($project->end_date);
+            $now = Carbon::now();
+            if ($end_date->lt($now)) {
+                $color = 'red';
+            }
+
+            $progress['progress'] = $project->progress;
+            $progress['color'] = $color;
+            $progress['tasks'] = Task::where([
+                'project_id' => $project->id,
+                'company_id' => $u->company_id,
+                'is_submitted' => 'No',
+            ])->sum('hours');
+            $progresses[] = $progress;
+        }
+        $ob->project_weights = $progresses;
+        $progress = Project::where([
+            'company_id' => $u->company_id,
+            'status' => 'Active',
+        ])->sum('progress');
+        $total_projects = $progress / Project::where([
+            'company_id' => $u->company_id,
+            'status' => 'Active',
+        ])->count();
+        $ob->total_projects_progress = round($total_projects, 2);
+        $ob->total_projects_progress_remaining = 100 - $ob->total_projects_progress;
+
+
+        /* 
+        $table->string('')->nullable()->default('No');
+        $table->integer('work_load_pending')->nullable()->default(0);
+        $table->integer('work_load_completed')->nullable()->default(0);
+        */
+        $employees = User::where([
+            'company_id' => $u->company_id,
+            'can_evaluate' => 'Yes',
+        ])
+/*         ->where('work_load_pending', '>', 0) */
+        ->get(); 
+        $ob->employees = $employees;
         return $ob;
     }
 
@@ -761,6 +836,17 @@ class Utils extends Model
         }
         return $c->format('D - d M');
     }
+
+    //return date in this formart 16th July 2021
+    public static function my_date_2($t)
+    {
+        if ($t == null || strlen($t) < 5) {
+            return $t;
+        }
+        $c = Carbon::parse($t);
+        return $c->format('dS M Y');
+    }
+
 
     public static function my_date($t)
     {

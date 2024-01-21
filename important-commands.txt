@@ -2,8 +2,8 @@ php artisan migrate
 
 php artisan make:migration create_courses_table
 
-php artisan make:migration add_hours_to_tasks --table=tasks
+php artisan make:migration add_work_load_to_admin_users --table=admin_users
  
-php artisan admin:make ReportModelController --model=App\\Models\\ReportModel
+php artisan admin:make TargetController --model=App\\Models\\Target
  
-php artisan make:model ReportModel -m
+php artisan make:model Target -m

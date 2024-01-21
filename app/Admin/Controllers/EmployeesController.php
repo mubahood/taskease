@@ -67,7 +67,6 @@ class EmployeesController extends AdminController
         $grid->column('date_of_birth', __('D.O.B'))->sortable();
         $grid->column('nationality', __('Nationality'))->sortable();
         $grid->column('sex', __('Gender'));
-        $grid->column('place_of_birth', __('Place of birth'))->sortable();
         $grid->column('password', __('Reset Password'))->display(function ($x) {
             $url = url("/reset-mail?id={$this->id}");
             $link = '<a target="_blank" class="btn btn-primary btn-sm" href="' . $url . '">RESET PASSWORD</a>';
@@ -102,6 +101,14 @@ class EmployeesController extends AdminController
         $grid->column('masters_university_name')->hide();
         $grid->column('masters_university_year_graduated')->hide();
         $grid->column('phd_university_name')->hide();
+        $grid->column('can_evaluate','Evaluate')
+            ->label([
+                'Yes' => 'success',
+                'No' => 'danger',
+            ])->sortable();
+        $grid->column('work_load_pending', 'Work Load (Hours)')->sortable();
+        $grid->column('work_load_completed', 'Work Accomplished (In Hours)')->sortable();
+
         $grid->column('rate')->sortable()
             ->label('primary');
         $grid->column('week', 'Report')
@@ -109,7 +116,7 @@ class EmployeesController extends AdminController
                 $url = url("/departmental-workplan?id={$this->id}");
                 $link = '<a target="_blank" class="btn btn-primary btn-sm" href="' . $url . '">PRINT REPORT</a>';
                 return $link;
-            });
+            })->hide();
         return $grid;
     }
 
@@ -250,6 +257,12 @@ class EmployeesController extends AdminController
         /* $form->text('username', 'Username')
             ->creationRules(["unique:admin_users"])
             ->updateRules(['required', "unique:admin_users,username,{{id}}"]); */
+
+        $form->radio('can_evaluate', 'Should be evaluate?')
+            ->options([
+                'Yes' => 'Yes',
+                'No' => 'No',
+            ])->default('No');
 
         $form->radio('change_password', 'Change Password')
             ->options([

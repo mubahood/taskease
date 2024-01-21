@@ -25,6 +25,7 @@ class ChartjsServiceProvider extends ServiceProvider
 
         Admin::booting(function () {
             Admin::js('vendor/laravel-admin-ext/chartjs/Chart.bundle.min.js');
+            Admin::js('https://cdn.jsdelivr.net/gh/emn178/chartjs-plugin-labels/src/chartjs-plugin-labels.js');
         });
     }
 }

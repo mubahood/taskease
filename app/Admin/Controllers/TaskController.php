@@ -264,7 +264,7 @@ class TaskController extends AdminController
         ]);
 
         $form->text('name', __('Task title'))->rules('required');
-        $form->text('task_description', __('Task description'))->rules('required');
+        $form->text('task_description', __('Task description'));
         $form->decimal('hours', __('Hours'))->rules('required')
             ->help('Enter the number of hours you expect to spend on this task. (e.g. 1.5)');
 

@@ -6,6 +6,7 @@ use App\Models\Client;
 use App\Models\Project;
 use Encore\Admin\Auth\Database\Administrator;
 use Encore\Admin\Controllers\AdminController;
+use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
@@ -95,7 +96,16 @@ class ProjectController extends AdminController
             ->progressBar($style = 'primary', $size = 'sm', $max = 100)
             ->totalRow(function ($amount) {
                 //to $amount percentage
-                $amount = $amount / Project::count();
+                $u = Admin::user();
+                $progress = Project::where([
+                    'company_id' => $u->company_id,
+                    'status' => 'Active',
+                ])->sum('progress');
+                $amount = $amount / Project::where([
+                    'company_id' => $u->company_id,
+                    'status' => 'Active',
+                ])->count();
+                
                 $amount = round($amount, 2);
                 if ($amount < 50) {
                     return "<b class='text-danger'>Total progress: $amount%</b>";

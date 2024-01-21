@@ -33,6 +33,6 @@ Route::group([
     $router->resource('treatment-records', TreatmentRecordController::class);
     $router->resource('treatment-record-items', TreatmentRecordItemController::class);
     $router->resource('reports', ReportModelController::class);
-
+    $router->resource('targets', TargetController::class);
     $router->resource('gens', GenController::class);
 });
