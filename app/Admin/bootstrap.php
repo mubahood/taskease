@@ -27,10 +27,10 @@ use App\Models\Task;
 use App\Models\User;
 use Carbon\Carbon;
 
-foreach (Task::all() as $key => $value) {
+/* foreach (Task::all() as $key => $value) {
     $value->hours = rand(1, 10);
     $value->save();
-}
+} */
 
 $u = Admin::user();
 
