@@ -85,6 +85,7 @@ class TaskController extends AdminController
                 ])
                     ->orderBy('id', 'Desc');
             } else if (in_array('tasks-manage', $segs)) {
+
                 $grid->model()->where([
                     'manager_id' => $u->id,
                 ])
@@ -102,6 +103,12 @@ class TaskController extends AdminController
             if ($u->can('admin')) {
                 $grid->model()->where([
                     'company_id' => $u->company_id,
+                ])
+                    ->orderBy('id', 'Desc');
+            } else if (in_array('tasks-manage', $segs)) {
+
+                $grid->model()->where([
+                    'manager_id' => $u->id,
                 ])
                     ->orderBy('id', 'Desc');
             } else {
