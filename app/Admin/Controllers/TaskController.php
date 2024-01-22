@@ -84,14 +84,14 @@ class TaskController extends AdminController
                     'is_submitted' => $is_submitted,
                 ])
                     ->orderBy('id', 'Desc');
+            } else if (in_array('tasks-manage', $segs)) {
+                $grid->model()->where([
+                    'manager_id' => $u->id,
+                ])
+                    ->orderBy('id', 'Desc');
             } else {
                 $grid->model()->where([
-                    'company_id' => $u->company_id,
                     'assigned_to' => $u->id,
-                    'is_submitted' => $is_submitted,
-                ])->orWhere([
-                    'company_id' => $u->company_id,
-                    'manager_id' => $u->id,
                     'is_submitted' => $is_submitted,
                 ])
                     ->orderBy('id', 'Desc');
