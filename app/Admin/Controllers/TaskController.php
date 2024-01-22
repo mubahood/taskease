@@ -186,7 +186,7 @@ class TaskController extends AdminController
                 if ($project == null) {
                     return "Project not found";
                 }
-                return $project->name;
+                return $project->short_name;
             })
             ->sortable();
 
@@ -215,7 +215,7 @@ class TaskController extends AdminController
             ->sortable();
 
 
-        $grid->column('rate', __('Rating'))->sortable();
+        $grid->column('hours', __('Hours'))->sortable();
 
         return $grid;
     }
