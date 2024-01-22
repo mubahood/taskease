@@ -40,6 +40,17 @@ class Utils extends Model
             'assigned_to' => $u->id,
             'is_submitted' => 'No',
         ])->get();
+        
+        
+        $ob->manage_tasks = Task::where([
+            'manager_id' => $u->id,
+            'is_submitted' => 'No',
+        ])->get();
+
+        $ob->tasks_completed = Task::where([
+            'assigned_to' => $u->id,
+            'is_submitted' => 'Yes',
+        ])->get();
 
         $ob->tasks_pending = $ob->tasks_pending_items->count();
 
@@ -141,6 +152,9 @@ class Utils extends Model
         ])
 /*         ->where('work_load_pending', '>', 0) */
         ->get(); 
+
+        //my pending tasks
+
         $ob->employees = $employees;
         return $ob;
     }

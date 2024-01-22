@@ -1,7 +1,37 @@
 <?php
 //import Utils class from models folder
 use App\Models\Utils;
-?><div class="container-fluid p-0 m-0">
+?>
+<style>
+    .quadrat {
+        -webkit-animation: NAME-YOUR-ANIMATION 1s infinite;
+        /* Safari 4+ */
+        -moz-animation: NAME-YOUR-ANIMATION 1s infinite;
+        /* Fx 5+ */
+        -o-animation: NAME-YOUR-ANIMATION 1s infinite;
+        /* Opera 12+ */
+        animation: NAME-YOUR-ANIMATION 1s infinite;
+        /* IE 10+, Fx 29+ */
+    }
+
+    @-webkit-keyframes NAME-YOUR-ANIMATION {
+
+        0%,
+        49% {
+            background-color: #0761BB;
+            border: 3px solid #ffffff;
+            color: white;
+        }
+
+        50%,
+        100% {
+            background-color: #ffffff;
+            border: 3px solid #0761BB;
+            color: #000;
+        }
+    }
+</style>
+<div class="container-fluid p-0 m-0">
     <div class="d-flex">
         <div class="mr-auto p-2">
             <p class="fs-16 fw-400">{!! $greet !!}</p>
@@ -14,6 +44,78 @@ use App\Models\Utils;
         </div>
     </div>
     <hr class="p-0 m-0">
+
+    <div class="row">
+        <div class="col-sm-6 col-lg-3">
+            <div
+                class="card mt-2 mt-md-4 mb-3 border border-primary border-5 
+            {{ $man->tasks_pending_items->count() > 0 ? 'quadrat' : '' }}
+            ">
+                <div class="card-body">
+                    <div class="d-flex">
+                        <div class="mr-auto">
+                            <p class="fw-900 fs-12 mb-3">My Pending Tasks</p>
+                            <p class="fs-46 fw-100 lh-1">{{ $man->tasks_pending_items->count() }}</p>
+                        </div>
+                        <div class="fs-46 lh-1 mt-4">
+                            📝
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+            <div
+                class="card mt-2 mt-md-4 mb-3 border border-primary border-5
+            {{ $man->manage_tasks->count() > 0 ? 'quadrat' : '' }}
+            ">
+                <div class="card-body">
+                    <div class="d-flex">
+                        <div class="mr-auto">
+                            <p class="fw-900 fs-12 mb-3">Pending Supervision</p>
+                            <p class="fs-46 fw-100 lh-1">{{ $man->manage_tasks->count() }}</p>
+                        </div>
+                        <div class="fs-46 lh-1 mt-4">
+                            📑
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+            <div class="card mt-2 mt-md-4 mb-3 border border-primary border-5">
+                <div class="card-body">
+                    <div class="d-flex">
+                        <div class="mr-auto">
+                            <p class="fw-900 fs-12 mb-3">My Workload</p>
+                            <p class="fs-46 fw-100 lh-1">{{ $man->tasks_pending_items->sum('hours') }} Hours</p>
+                        </div>
+                        <div class="fs-46 lh-1 mt-4">
+                            🏋️
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+            <div class="card mt-2 mt-md-4 mb-3 border border-primary border-5">
+                <div class="card-body">
+                    <div class="d-flex">
+                        <div class="mr-auto">
+                            <p class="fw-900 fs-12 mb-3">Work Accomplished</p>
+                            <p class="fs-46 fw-100 lh-1">{{ $man->tasks_completed->sum('hours') }} Hours</p>
+                        </div>
+                        <div class="fs-46 lh-1 mt-4">
+                            🏅
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="row">
         <div class="col-sm-6 col-lg-3">
@@ -69,7 +171,8 @@ use App\Models\Utils;
                                     <p class="fs-12 fw-700 mb-0 pb-1 lh-5">{{ $item->title }}</p>
                                     <p class="p-0 m-0 mt-1 fs-10 d-flex justify-content-between">
                                         <span>{{ Str::limit($item->department->name, 20, '...') }}</span>
-                                        <span class="text-primary fw-800">{{ Utils::my_date_2($item->due_date) }}</span>
+                                        <span
+                                            class="text-primary fw-800">{{ Utils::my_date_2($item->due_date) }}</span>
                                     </p>
                                 </div>
                             </div>
@@ -115,7 +218,9 @@ use App\Models\Utils;
                     @foreach ($man->project_weights as $item)
                         <div>
                             <p>
-                                <span class="fs-14  fw-700">{{ $item['name'] }} ({{ $item['progress'] }}%)</span>
+                                <span class="fs-14  fw-700">{{ $item['name'] }}
+                                    ({{ $item['progress'] }}%)
+                                </span>
                             </p>
                             <div class="progress mb-0 mt-1 mb-1 "
                                 style="height: 15px; background-color: rgb(190, 190, 190); border: 1px solid grey; ">
