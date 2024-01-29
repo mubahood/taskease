@@ -46,7 +46,7 @@ use App\Models\Utils;
     <hr class="p-0 m-0">
 
     <div class="row">
-        <div class="col-sm-6 col-lg-3">
+        <a href="{{ admin_url('tasks-pending') }}" class="col-sm-6 col-lg-3">
             <div
                 class="card mt-2 mt-md-4 mb-3 border border-primary border-5 
             {{ $man->tasks_pending_items->count() > 0 ? 'quadrat' : '' }}
@@ -63,9 +63,9 @@ use App\Models\Utils;
                     </div>
                 </div>
             </div>
-        </div>
+        </a>
 
-        <div class="col-sm-6 col-lg-3">
+        <a href="{{ admin_url('tasks-manage') }}" class="col-sm-6 col-lg-3">
             <div
                 class="card mt-2 mt-md-4 mb-3 border border-primary border-5
             {{ $man->manage_tasks->count() > 0 ? 'quadrat' : '' }}
@@ -82,7 +82,7 @@ use App\Models\Utils;
                     </div>
                 </div>
             </div>
-        </div>
+        </a>
 
         <div class="col-sm-6 col-lg-3">
             <div class="card mt-2 mt-md-4 mb-3 border border-primary border-5">
@@ -138,7 +138,8 @@ use App\Models\Utils;
                                     <p class="fs-12 fw-700 mb-0 pb-1 lh-5">{{ $item->title }}</p>
                                     <p class="p-0 m-0 mt-1 fs-10 d-flex justify-content-between">
                                         <span>{{ $item->lead->short_name }}</span>
-                                        <span class="text-primary fw-800">{{ Utils::my_date_2($item->due_date) }}</span>
+                                        <span
+                                            class="text-primary fw-800">{{ Utils::my_date_2($item->due_date) }}</span>
                                     </p>
                                 </div>
                             </div>

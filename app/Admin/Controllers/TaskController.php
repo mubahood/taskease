@@ -29,6 +29,8 @@ class TaskController extends AdminController
         $title = "Tasks";
         if (in_array('tasks-pending', $segs)) {
             $title = "Pending Tasks";
+        } else if (in_array('tasks-manage', $segs)) {
+            $title = "Tasks supervised by me";
         }
         return $title;
     }
@@ -85,30 +87,37 @@ class TaskController extends AdminController
                 ])
                     ->orderBy('id', 'Desc');
             } else if (in_array('tasks-manage', $segs)) {
-
                 $grid->model()->where([
                     'manager_id' => $u->id,
                 ])
                     ->orderBy('id', 'Desc');
+            } else if (in_array('tasks-completed', $segs)) {
+                $grid->model()->where([
+                    'assigned_to' => $u->id,
+                ])
+                    ->orderBy('id', 'Desc');
             } else {
+
                 $grid->model()->where([
                     'assigned_to' => $u->id,
                     'is_submitted' => $is_submitted,
                 ])
                     ->orderBy('id', 'Desc');
             }
+        } else if (in_array('tasks-manage', $segs)) {
+            $grid->model()->where([
+                'manager_id' => $u->id,
+            ])
+                ->orderBy('id', 'Desc');
+        } else if (in_array('tasks-completed', $segs)) {
+            $grid->model()->where([
+                'assigned_to' => $u->id,
+            ])
+                ->orderBy('id', 'Desc');
         } else {
-
-
             if ($u->can('admin')) {
                 $grid->model()->where([
                     'company_id' => $u->company_id,
-                ])
-                    ->orderBy('id', 'Desc');
-            } else if (in_array('tasks-manage', $segs)) {
-
-                $grid->model()->where([
-                    'manager_id' => $u->id,
                 ])
                     ->orderBy('id', 'Desc');
             } else {
@@ -123,10 +132,19 @@ class TaskController extends AdminController
             }
         }
 
+        if (in_array('tasks-manage', $segs)) {
+            $is_submitted = 'No';
+        }
 
-        $grid->model()->where([
-            'is_submitted' => $is_submitted,
-        ]);
+        if (in_array('tasks-completed', $segs)) {
+            $is_submitted = 'Yes';
+            $grid->model()->where([
+                'assigned_to' => $u->id,
+            ])
+                ->orderBy('id', 'Desc');
+        }
+
+
 
         $grid->quickSearch('name')->placeholder('Search by name or ID');
         $grid->disableExport();

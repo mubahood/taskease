@@ -52,6 +52,12 @@ class ProjectSectionController extends AdminController
             ->sortable()
             ->help('Progress of the deliverable')
             ->totalRow(function ($amount) {
+                $count = ProjectSection::where('company_id', auth()->user()->company_id)->count();
+                if ($count == 0) {
+                    return "<b class='text-danger'>Total progress: 0%</b>";
+                }
+                $amount = $amount / $count;
+                $amount = round($amount, 2);
                 if ($amount < 50) {
                     return "<b class='text-danger'>Total progress: $amount%</b>";
                 } else {
