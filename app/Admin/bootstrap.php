@@ -36,7 +36,7 @@ $u = Admin::user();
 
 if ($u != null) {
 
-    //Utils::system_boot();
+    Utils::system_boot();
     Admin::navbar(function (\Encore\Admin\Widgets\Navbar $navbar) {
 
 
