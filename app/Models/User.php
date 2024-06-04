@@ -29,7 +29,7 @@ class User extends Authenticatable implements JWTSubject
         $data['name'] = $u->name;
         $data['subject'] = env('APP_NAME') . " - Password Reset";
         $data['body'] = "<br>Dear " . $u->name . ",<br>";
-        $data['body'] .= "<br>Please click the link below to reset your TaskEase password.<br><br>";
+        $data['body'] .= "<br>Please click the link below to reset your " . env('APP_NAME') . " System password.<br><br>";
         $data['body'] .= url('reset-password') . "?token=" . $u->stream_id . "<br>";
         $data['body'] .= "<br>Thank you.<br><br>";
         $data['body'] .= "<br><small>This is an automated message, please do not reply.</small><br>";
