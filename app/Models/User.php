@@ -27,10 +27,10 @@ class User extends Authenticatable implements JWTSubject
         $u->save();
         $data['email'] = $u->email;
         $data['name'] = $u->name;
-        $data['subject'] = "TASKEASE - Password Reset";
+        $data['subject'] = env('APP_NAME') . " - Password Reset";
         $data['body'] = "<br>Dear " . $u->name . ",<br>";
         $data['body'] .= "<br>Please click the link below to reset your TaskEase password.<br><br>";
-        $data['body'] .= "https://taskease.net/reset-password?token=" . $u->stream_id . "<br>";
+        $data['body'] .= url('reset-password') . "?token=" . $u->stream_id . "<br>";
         $data['body'] .= "<br>Thank you.<br><br>";
         $data['body'] .= "<br><small>This is an automated message, please do not reply.</small><br>";
         $data['view'] = 'mail-1';
@@ -62,7 +62,7 @@ class User extends Authenticatable implements JWTSubject
         $work_load_completed = Task::where('assigned_to', $id)->where('manager_submission_status', 'Done')
             ->sum('hours');
         $user->work_load_pending = $work_load_pending;
-        $user->work_load_completed = $work_load_completed; 
+        $user->work_load_completed = $work_load_completed;
         $user->save();
     }
 
