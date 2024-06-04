@@ -67,11 +67,7 @@ class EmployeesController extends AdminController
         $grid->column('date_of_birth', __('D.O.B'))->sortable()->hide();
         $grid->column('nationality', __('Nationality'))->sortable();
         $grid->column('sex', __('Gender'));
-        $grid->column('password', __('Reset Password'))->display(function ($x) {
-            $url = url("/reset-mail?id={$this->id}");
-            $link = '<a target="_blank" class="btn btn-primary btn-sm" href="' . $url . '">RESET PASSWORD</a>';
-            return $link;
-        });
+
         $grid->column('home_address', __('Home address'))->hide();
         $grid->column('current_address', __('Current address'))->hide();
         $grid->column('religion', __('Religion'))->hide();
@@ -101,7 +97,7 @@ class EmployeesController extends AdminController
         $grid->column('masters_university_name')->hide();
         $grid->column('masters_university_year_graduated')->hide();
         $grid->column('phd_university_name')->hide();
-        $grid->column('can_evaluate','Evaluate')
+        $grid->column('can_evaluate', 'Evaluate')
             ->label([
                 'Yes' => 'success',
                 'No' => 'danger',
@@ -117,6 +113,12 @@ class EmployeesController extends AdminController
                 $link = '<a target="_blank" class="btn btn-primary btn-sm" href="' . $url . '">PRINT REPORT</a>';
                 return $link;
             })->hide();
+
+        $grid->column('password', __('Reset Password'))->display(function ($x) {
+            $url = url("/reset-mail?id={$this->id}");
+            $link = '<a target="_blank" class="btn btn-primary btn-sm" href="' . $url . '">RESET PASSWORD</a>';
+            return $link;
+        });
         return $grid;
     }
 
