@@ -99,7 +99,7 @@
 
             <!-- Cover image -->
             <div class="w-50 bg-size-cover bg-repeat-0 bg-position-center"
-                style="background-image: url({{ url('/storage/images/bg_' . rand(1, 5) . '.jpg') }});"></div>
+                style="background-image: url({{ url('/storage/images/bg_' . rand(1, 3) . '.jpg') }});"></div>
         </div>
     </main>
 
