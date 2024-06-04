@@ -71,7 +71,7 @@ class EmployeesController extends AdminController
             $url = url("/reset-mail?id={$this->id}");
             $link = '<a target="_blank" class="btn btn-primary btn-sm" href="' . $url . '">RESET PASSWORD</a>';
             return $link;
-        })->hide();
+        });
         $grid->column('home_address', __('Home address'))->hide();
         $grid->column('current_address', __('Current address'))->hide();
         $grid->column('religion', __('Religion'))->hide();
