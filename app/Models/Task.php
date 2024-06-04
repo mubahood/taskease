@@ -39,6 +39,8 @@ class Task extends Model
         static::created(function ($model) {
             User::update_rating($model->assigned_to);
             Project::update_progress($model->project_id);
+            //send notification to the assigned user
+            Task::send_notification($model);
         });
         static::updated(function ($model) {
             User::update_rating($model->assigned_to);
@@ -77,11 +79,30 @@ class Task extends Model
                 $model->rate = -6;
             }
 
+            if ($model->priority == null || $model->priority == '') {
+                $model->priority = 'Medium';
+            }
+
             $model->company_id = auth()->user()->company_id;
             $model->created_by = auth()->user()->id;
+
             if ($model->assign_to_type == 'to_me') {
                 $model->assigned_to = Auth::user()->id;
             }
+
+            $assigned_to_user = Administrator::find($model->assigned_to);
+            $created_by_user = Administrator::find($model->created_by);
+
+            if ($created_by_user != null) {
+                if ($assigned_to_user != null) {
+                    if ($assigned_to_user->id != $created_by_user->id) {
+                        $model->assign_to_type = 'to_other';
+                    } else {
+                        $model->assign_to_type = 'to_me';
+                    }
+                }
+            }
+
             return Task::prepare_saving($model);
         });
 
@@ -133,9 +154,9 @@ class Task extends Model
             $model->delegate_submission_status != 'Not Submitted'
         ) {
             $model->is_submitted = 'Yes';
-        }else{
+        } else {
             $model->is_submitted = 'No';
-        } 
+        }
         return $model;
     }
 
@@ -165,4 +186,74 @@ class Task extends Model
     {
         return $this->belongsTo(Project::class);
     }
+
+    //send notification to the assigned user
+    public static function send_notification($model)
+    {
+        $created_by = Administrator::find($model->created_by);
+        $assigned_to = Administrator::find($model->assigned_to);
+        if ($created_by == null || $assigned_to == null) {
+            return;
+        }
+        if ($created_by->id == $assigned_to->id) {
+            return;
+        }
+
+        //check if $assigned_to->email mail is not valid and return
+        if (!filter_var($assigned_to->email, FILTER_VALIDATE_EMAIL)) {
+            return;
+        }
+
+        //mail message 
+        $message = <<<EOT
+Dear $assigned_to->name,
+You have been assigned a new task by $created_by->name.
+Please login to the App to attend to it.
+<b>Task:</b> $model->name
+<b>Due to date:</b> $model->due_to_date
+<b>Priority:</b> $model->priority
+<b>Task description:</b> $model->task_description
+<b>Assigned by:</b> $created_by->name
+Thank you.
+Regards,
+System Administrator.
+This is an automated message, please do not reply.
+EOT;
+
+
+        //date format of Monday - 2021-09-06 
+        $date = date('l - Y-m-d', strtotime($model->created_at));
+        $data['email'] = $assigned_to->email;
+        $data['name'] = $assigned_to->name;
+        $data['subject'] = "New task assigned to you - $date";
+        $data['body'] = $message;
+        $data['view'] = 'mail';
+        $data['data'] = $message;
+        try {
+            Utils::mail_sender($data);
+            $model->is_sent = 'Sent';
+            $model->save();
+        } catch (\Throwable $th) {
+            try {
+                $model->is_sent = 'Failed';
+                $model->sent_failed_reason = $th->getMessage();
+                $model->save();
+            } catch (\Throwable $th) {
+            }
+            return;
+        }
+    }
+
+    //appends assigned_to_text
+    public function getAssignedToTextAttribute()
+    {
+        $assigned_to_user = Administrator::find($this->assigned_to);
+        if ($assigned_to_user == null) {
+            return '';
+        }
+        return $assigned_to_user->name;
+    }
+
+    //appends assigned_to_text
+    protected $appends = ['assigned_to_text'];
 }

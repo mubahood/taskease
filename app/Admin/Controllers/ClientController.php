@@ -25,6 +25,7 @@ class ClientController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new Client());
+        $grid->model()->where('company_id', auth()->user()->id);
         $grid->disableBatchActions();
         $grid->quickSearch('name')->placeholder('Search by name');
         $grid->column('logo', __('Logo'))

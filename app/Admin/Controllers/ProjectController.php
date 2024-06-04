@@ -171,6 +171,7 @@ class ProjectController extends AdminController
         $form = new Form(new Project());
 
         $form->tab('Basic Information', function ($form) {
+            
             $clients = \App\Models\Client::where('company_id', auth()->user()->company_id)
                 ->orderBy('name')
                 ->pluck('name', 'id');

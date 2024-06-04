@@ -123,8 +123,12 @@ class ApiAuthController extends Controller
         } catch (\Throwable $th) {
             return $this->error('Failed to update task.');
         }
+        $task = Task::find($r->task_id);
+        if ($task == null) {
+            return $this->error('Task not found.');
+        }
 
-        return $this->success(null, $message = "Success", 200);
+        return $this->success($task, $message = "Success", 200);
     }
 
 
@@ -284,6 +288,16 @@ class ApiAuthController extends Controller
                 'code' => 0,
                 'message' => "User not found.",
             ]);
+        }
+
+        if ($val->assign_to_type != 'to_me') {
+            if ($val->assigned_to == null) {
+                return Utils::response([
+                    'status' => 0,
+                    'code' => 0,
+                    'message' => "Assigned to is required.",
+                ]);
+            }
         }
 
         $message = "";
