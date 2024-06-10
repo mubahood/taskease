@@ -24,6 +24,9 @@ Route::get('users/me', [ApiAuthController::class, 'me']);
 Route::get('users', [ApiAuthController::class, 'users']);
 
 Route::POST("post-media-upload", [ApiAuthController::class, 'upload_media']);
+Route::POST("update-profile", [ApiAuthController::class, 'update_profile']);
+Route::POST("delete-account", [ApiAuthController::class, 'delete_profile']);
+Route::POST("password-change", [ApiAuthController::class, 'password_change']);
 Route::POST("tasks-create", [ApiAuthController::class, 'tasks_create']);
 Route::POST("tasks-update-status", [ApiAuthController::class, 'tasks_update_status']);
 Route::POST("users/login", [ApiAuthController::class, "login"]);

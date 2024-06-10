@@ -40,8 +40,8 @@ class Utils extends Model
             'assigned_to' => $u->id,
             'is_submitted' => 'No',
         ])->get();
-        
-        
+
+
         $ob->manage_tasks = Task::where([
             'manager_id' => $u->id,
             'is_submitted' => 'No',
@@ -150,8 +150,8 @@ class Utils extends Model
             'company_id' => $u->company_id,
             'can_evaluate' => 'Yes',
         ])
-/*         ->where('work_load_pending', '>', 0) */
-        ->get(); 
+            /*         ->where('work_load_pending', '>', 0) */
+            ->get();
 
         //my pending tasks
 
@@ -428,13 +428,13 @@ class Utils extends Model
                 }
             }
 
-            $p->phone_number = null;
+            $p->phone_number_1 = null;
             if (
                 isset($line[2]) &&
                 $line[2] != null &&
                 strlen($line[2]) > 5
             ) {
-                $p->phone_number = Utils::prepare_phone_number($line[2]);
+                $p->phone_number_1 = Utils::prepare_phone_number($line[2]);
             }
 
             if (
@@ -581,7 +581,7 @@ class Utils extends Model
                 $line[2] != null &&
                 strlen($line[2]) > 5
             ) {
-                $p->phone_number = Utils::prepare_phone_number($line[2]);
+                $p->phone_number_1 = Utils::prepare_phone_number($line[2]);
             }
 
             $_p = Person::where(['name' => $p->name, 'district_id' => $p->district_id])->first();
@@ -648,23 +648,48 @@ class Utils extends Model
     {
         $r = $_SERVER['DOCUMENT_ROOT'] . "";
 
+
+        //check if $_SERVER['HTTP_HOST'] is contains locahost
+        if (
+            (strpos($_SERVER['HTTP_HOST'], 'localhost') !== false) ||
+            (strpos($_SERVER['HTTP_HOST'], '10.0.2.2') !== false)
+        ) {
+            $script = $_SERVER['SCRIPT_FILENAME'];
+            $s = rtrim($script, 'server.php');
+
+            return $s . 'public/';
+        }
+
         if (!str_contains($r, 'home/')) {
             $r = str_replace('/public', "", $r);
             $r = str_replace('\public', "", $r);
         }
 
-        if (!(str_contains($r, 'public'))) {
-            $r = $r . "/public";
+        $isOnline = false;
+        if (isset($_SERVER['HTTP_HOST'])) {
+            $server = strtolower($_SERVER['HTTP_HOST']);
+            if (str_contains($server, 'schooldynamics.ug')) {
+                $isOnline = true;
+            }
         }
 
+        if ($isOnline) {
+            $r = $_SERVER['DOCUMENT_ROOT'] . "";
+        }
 
-        /* 
+        $r = $r . "/public/";
+
+        /*oot
          "/home/ulitscom_html/public/storage/images/956000011639246-(m).JPG
-        
+
         public_html/public/storage/images
         */
+        if ($isOnline) {
+            $r = $_SERVER['DOCUMENT_ROOT'] . "/public/";
+        }
         return $r;
     }
+
 
     public static function upload_images_2($files, $is_single_file = false)
     {

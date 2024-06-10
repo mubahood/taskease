@@ -10,6 +10,18 @@ class Project extends Model
 {
     use HasFactory;
 
+    //boot
+    protected static function boot()
+    {
+        parent::boot();
+        static::deleting(function ($project) {
+            //if id is 1, do not delete
+            if ($project->id == 1) {
+                return false;
+            }
+        });
+    }
+
     public static function update_progress($project_id)
     {
         $project = Project::find($project_id);
@@ -68,6 +80,6 @@ class Project extends Model
 
     public function manager()
     {
-        return $this->belongsTo(Administrator::class,'administrator_id');
+        return $this->belongsTo(Administrator::class, 'administrator_id');
     }
 }

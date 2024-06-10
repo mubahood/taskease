@@ -157,7 +157,7 @@ class ApiAuthController extends Controller
         if ($u == null) {
             $phone_number = Utils::prepare_phone_number($r->username);
             if (Utils::phone_number_is_valid($phone_number)) {
-                $phone_number = $r->phone_number;
+                $phone_number = $r->phone_number_1;
                 $u = User::where('phone_number_1', $phone_number)
                     ->orWhere('username', $phone_number)
                     ->orWhere('email', $phone_number)
@@ -168,6 +168,10 @@ class ApiAuthController extends Controller
         if ($u == null) {
             return $this->error('User account not found.');
         }
+        if ($u->status == 3) {
+            return $this->error('Account is deleted.');
+        }
+
 
 
         JWTAuth::factory()->setTTL(60 * 24 * 30 * 365);
@@ -254,7 +258,7 @@ class ApiAuthController extends Controller
         $user->cv = '';
         $user->language = '';
         $user->about = '';
-        $user->address = '';
+        $user->home_address = '';
         $user->name = $name;
         $user->password = password_hash(trim($r->password), PASSWORD_DEFAULT);
         if (!$user->save()) {
@@ -332,6 +336,206 @@ class ApiAuthController extends Controller
             'message' => 'Task created successfully.',
         ]);
     }
+
+
+
+    public function password_change(Request $request)
+    {
+        $u = auth('api')->user();
+        if ($u == null) {
+            return $this->error('User not found.');
+        }
+        $administrator_id = $u->id;
+
+        $u = Administrator::find($administrator_id);
+        if ($u == null) {
+            return $this->error('User not found.');
+        }
+
+        if (
+            $request->password == null ||
+            strlen($request->password) < 2
+        ) {
+            return $this->error('Password is missing.');
+        }
+
+        //check if  current_password 
+        if (
+            $request->current_password == null ||
+            strlen($request->current_password) < 2
+        ) {
+            return $this->error('Current password is missing.');
+        }
+
+        //check if  current_password
+        if (
+            !(password_verify($request->current_password, $u->password))
+        ) {
+            return $this->error('Current password is incorrect.');
+        }
+
+        $u->password = password_hash($request->password, PASSWORD_DEFAULT);
+        $msg = "";
+        $code = 1;
+        try {
+            $u->save();
+            $msg = "Password changed successfully.";
+            return $this->success($u, $msg, $code);
+        } catch (\Throwable $th) {
+            $msg = $th->getMessage();
+            $code = 0;
+            return $this->error($msg);
+        }
+        return $this->success(null, $msg, $code);
+    }
+
+
+    public function delete_profile(Request $request)
+    {
+        $u = auth('api')->user();
+        if ($u == null) {
+            return $this->error('User not found.');
+        }
+        $administrator_id = $u->id;
+
+        $u = Administrator::find($administrator_id);
+        if ($u == null) {
+            return $this->error('User not found.');
+        }
+        $u->status = '3';
+        $u->save();
+        return $this->success(null, $message = "Deleted successfully!", 1);
+    }
+
+
+    public function update_profile(Request $request)
+    {
+        $u = auth('api')->user();
+        if ($u == null) {
+            return $this->error('User not found.');
+        }
+        $administrator_id = $u->id;
+
+        $u = Administrator::find($administrator_id);
+        if ($u == null) {
+            return $this->error('User not found.');
+        }
+
+        if (
+            $request->first_name == null ||
+            strlen($request->first_name) < 2
+        ) {
+            return $this->error('First name is missing.');
+        }
+        //validate all
+        if (
+            $request->last_name == null ||
+            strlen($request->last_name) < 2
+        ) {
+            return $this->error('Last name is missing.');
+        }
+
+
+
+        if ($request->phone_number_1 != null && strlen($request->phone_number_1) > 4) {
+            $anotherUser = Administrator::where([
+                'phone_number_1' => $request->phone_number_1
+            ])->first();
+            if ($anotherUser != null) {
+                if ($anotherUser->id != $u->id) {
+                    return $this->error('Phone number is already taken.');
+                }
+            }
+
+            $anotherUser = Administrator::where([
+                'username' => $request->phone_number_1
+            ])->first();
+            if ($anotherUser != null) {
+                if ($anotherUser->id != $u->id) {
+                    return $this->error('Phone number is already taken.');
+                }
+            }
+
+            $anotherUser = Administrator::where([
+                'email' => $request->phone_number_1
+            ])->first();
+            if ($anotherUser != null) {
+                if ($anotherUser->id != $u->id) {
+                    return $this->error('Phone number is already taken.');
+                }
+            }
+        }
+
+
+
+
+        if ($request->email != null && strlen($request->email) > 4) {
+
+            if (
+                $request->email != null &&
+                strlen($request->email) > 5
+            ) {
+                $anotherUser = Administrator::where([
+                    'email' => $request->email
+                ])->first();
+                if ($anotherUser != null) {
+                    if ($anotherUser->id != $u->id) {
+                        return $this->error('Email is already taken.');
+                    }
+                }
+                //check for username as well
+                $anotherUser = Administrator::where([
+                    'username' => $request->email
+                ])->first();
+                if ($anotherUser != null) {
+                    if ($anotherUser->id != $u->id) {
+                        return $this->error('Email is already taken.');
+                    }
+                }
+                //validate email
+                if (!filter_var($request->email, FILTER_VALIDATE_EMAIL)) {
+                    return $this->error('Invalid email address.');
+                }
+            }
+        }
+
+
+
+        $msg = "";
+        //first letter to upper case
+        $u->first_name = $request->first_name;
+
+        //change first letter to upper case
+        $u->first_name = ucfirst($u->first_name);
+
+
+        $u->last_name = ucfirst($request->last_name);
+        $u->phone_number_1 = $request->phone_number_1;
+        $u->email = $request->email;
+        $u->home_address = ucfirst($request->home_address);
+
+        $images = [];
+        if (!empty($_FILES)) {
+            $images = Utils::upload_images_2($_FILES, false);
+        }
+        if (!empty($images)) {
+            $u->avatar = 'images/' . $images[0];
+        }
+
+        $code = 1;
+        try {
+            $u->save();
+            $u = Administrator::find($administrator_id);
+            $msg = "Updated successfully.";
+            return $this->success($u, $msg, $code);
+        } catch (\Throwable $th) {
+            $msg = $th->getMessage();
+            $code = 0;
+            return $this->error($msg);
+        }
+        return $this->success(null, $msg, $code);
+    }
+
 
 
 
@@ -437,20 +641,7 @@ class ApiAuthController extends Controller
                 $msg .= "Note not set. ";
             }
 
-            $online_parent_id = ((int)($request->online_parent_id));
-            if (
-                $online_parent_id > 0
-            ) {
-                $animal = Product::find($online_parent_id);
-                if ($animal != null) {
-                    $img->parent_endpoint =  'Animal';
-                    $img->parent_id =  $animal->id;
-                } else {
-                    $msg .= "parent_id NOT not found => {$request->online_parent_id}.";
-                }
-            } else {
-                $msg .= "Online_parent_id NOT set. => {$online_parent_id} ";
-            }
+
 
             $img->save();
             $_images[] = $img;
