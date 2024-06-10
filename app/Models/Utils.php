@@ -14,6 +14,15 @@ class Utils extends Model
 {
     use HasFactory;
 
+    //static short
+    public static function short($text, $limit = 100)
+    {
+        if (strlen($text) > $limit) {
+            return substr($text, 0, $limit) . "...";
+        }
+        return $text;
+    }
+
     //get date when this week started
     public static function week_started($date)
     {
@@ -230,9 +239,72 @@ class Utils extends Model
         }
     }
 
-    public static function prepare_calendar_events($u)
+
+
+    public static function prepare_calendar_tasks($u)
     {
 
+        $conditions['company_id'] = $u->company_id;
+        if ($u->isRole('company-admin')) {
+            $conditions['company_id'] = $u->company_id;
+        } else {
+            $conditions['assigned_to'] = $u->id;
+        }
+
+        $tasks = Task::where($conditions)
+            ->orderBy('id', 'desc')
+            ->limit(1000)
+            ->get();
+        $events = [];
+        foreach ($tasks as $key => $task) {
+            $ev['activity_id'] = $task->id;
+            $event_date_time = Carbon::parse($task->due_to_date);
+            $ev['title'] = self::short($task->name, 20);
+            $event_date = $event_date_time->format('Y-m-d');
+            $event_time = $event_date_time->format('h:m a');
+            $ev['name'] = $ev['title'];
+            $ev['url_edit'] = admin_url('tasks/' . $task->id . '/edit');
+            $ev['url_view'] = admin_url('tasks/' . $task->id);
+            $ev['status'] = $task->manager_submission_status;
+            $ev['classNames'] = ['bg-warning', 'border-warning', 'text-dark'];
+            if (
+                $task->manager_submission_status == 'Done' ||
+                $task->manager_submission_status == 'Done Late'
+            ) {
+                $ev['status'] = 'Done';
+                $ev['classNames'] = ['bg-success', 'border-success', 'text-white'];
+            } else if ($task->manager_submission_status == 'Not Attended To') {
+                $ev['status'] = 'Not Attended To';
+                $ev['classNames'] = ['bg-danger', 'border-danger', 'text-white'];
+            } else {
+                $ev['status'] = 'Not Submitted';
+            }
+
+            $details = $task->task_description . '<br><br>';
+
+            $details .= "<bDue Date:</b> {$event_date}<br>";
+            $details .= "<b>Is task submitted?: </b> {$task->is_submitted}<br>";
+            //limit description to 100 characters
+
+            if (strlen($task->task_description) > 100) {
+                $description = substr(strip_tags($task->task_description), 0, 100) . "...";
+            } else {
+                $description = $task->task_description;
+            }
+            $details .= "<br><b>Description:</b> {$description}<br>";
+            $ev['details'] = $details;
+            $ev['start'] = Carbon::parse($event_date)->format('Y-m-d');
+            $events[] = $ev;
+        }
+        return $events;
+    }
+
+
+
+
+    public static function prepare_calendar_events($u)
+    {
+        return self::prepare_calendar_tasks($u);
         $conditions = [
             'company_id' => $u->company_id,
         ];

@@ -31,7 +31,11 @@ class TaskController extends AdminController
             $title = "Pending Tasks";
         } else if (in_array('tasks-manage', $segs)) {
             $title = "Tasks supervised by me";
-        }
+        } else if (in_array('tasks-completed', $segs)) {
+            $title = "Completed Tasks";
+        } else {
+            $title = "Tasks";
+        } 
         return $title;
     }
 
@@ -73,31 +77,20 @@ class TaskController extends AdminController
         $grid->disableBatchActions();
 
 
-        $u = Auth::user();
+        $u = Admin::user();
 
         $segs = request()->segments();
         $is_submitted = 'Yes';
 
         if (in_array('tasks-pending', $segs)) {
             $is_submitted = 'No';
-            if ($u->can('admin')) {
+            if ($u->isRole('company-admin')) {
                 $grid->model()->where([
                     'company_id' => $u->company_id,
                     'is_submitted' => $is_submitted,
                 ])
                     ->orderBy('id', 'Desc');
-            } else if (in_array('tasks-manage', $segs)) {
-                $grid->model()->where([
-                    'manager_id' => $u->id,
-                ])
-                    ->orderBy('id', 'Desc');
-            } else if (in_array('tasks-completed', $segs)) {
-                $grid->model()->where([
-                    'assigned_to' => $u->id,
-                ])
-                    ->orderBy('id', 'Desc');
             } else {
-
                 $grid->model()->where([
                     'assigned_to' => $u->id,
                     'is_submitted' => $is_submitted,
@@ -110,23 +103,29 @@ class TaskController extends AdminController
             ])
                 ->orderBy('id', 'Desc');
         } else if (in_array('tasks-completed', $segs)) {
-            $grid->model()->where([
-                'assigned_to' => $u->id,
-            ])
-                ->orderBy('id', 'Desc');
+            $is_submitted = 'Yes';
+            if ($u->isRole('company-admin')) {
+                $grid->model()->where([
+                    'company_id' => $u->company_id,
+                    'is_submitted' => $is_submitted,
+                ])
+                    ->orderBy('id', 'Desc');
+            } else {
+                $grid->model()->where([
+                    'assigned_to' => $u->id,
+                    'is_submitted' => $is_submitted,
+                ])
+                    ->orderBy('id', 'Desc');
+            }
         } else {
-            if ($u->can('admin')) {
+            if ($u->isRole('company-admin')) {
                 $grid->model()->where([
                     'company_id' => $u->company_id,
                 ])
                     ->orderBy('id', 'Desc');
             } else {
                 $grid->model()->where([
-                    'company_id' => $u->company_id,
                     'assigned_to' => $u->id,
-                ])->orWhere([
-                    'company_id' => $u->company_id,
-                    'manager_id' => $u->id,
                 ])
                     ->orderBy('id', 'Desc');
             }
@@ -213,10 +212,11 @@ class TaskController extends AdminController
                 }
                 return $project->short_name;
             })
-            ->sortable();
+            ->sortable()
+            ->hide();
 
         $grid->column('priority', __('Priority'))
-            ->sortable();
+            ->sortable()->hide();
 
         $grid->column('created_by', __('Created By'))
             ->display(function ($created_by) {
@@ -240,7 +240,7 @@ class TaskController extends AdminController
             ->sortable();
 
 
-        $grid->column('hours', __('Hours'))->sortable();
+        $grid->column('hours', __('Hours'))->sortable()->hide();
 
         return $grid;
     }
@@ -290,21 +290,22 @@ class TaskController extends AdminController
 
         $form->text('name', __('Task title'))->rules('required');
         $form->quill('task_description', __('Task description'));
-        $form->decimal('hours', __('Hours'))->rules('required')
-            ->help('Enter the number of hours you expect to spend on this task. (e.g. 1.5)');
+        /*         $form->hidden('hours', __('Hours'))->rules('required')
+            ->help('Enter the number of hours you expect to spend on this task. (e.g. 1.5)')
+            ->default(1); */
 
         $form->date('due_to_date', __('Due to date'))
             ->rules('required')
-            ->help('Enter the date you expect to complete this task. (e.g. 2021-12-31)');
+            ->help('Enter the date you expect to complete this task. (e.g. ' . date('Y-m-d') . ')');
 
-        $form->radio('priority', __('Priority'))->options([
+        /*     $form->radio('priority', __('Priority'))->options([
             'Low' => 'Low',
             'Medium' => 'Medium',
             'High' => 'High',
-        ])->default('Medium')->rules('required');
+        ])->default('Medium')->rules('required'); */
 
-        $form->select('project_section_id', __('Due Project'))
-            ->options($sections);
+        /*    $form->select('project_section_id', __('Due Project'))
+            ->options($sections); */
         $form->radio('assign_to_type', 'Assign To?')->options([
             'to_me' => 'Assign To Me',
             'to_other' => 'Assign To Other',

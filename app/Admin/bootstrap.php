@@ -45,9 +45,9 @@ if ($u != null) {
         $links = [];
         $links = [
             'New Task' => admin_url('tasks/create'),
-            'New Event' => admin_url('events/create'),
+            'New Meeting' => admin_url('meetings/create'),
         ];
-        if ($u->can('admin')) {
+        if ($u->isRole('company-admin')) {
             $links['New Employee'] = admin_url('employees/create');
         }
         $navbar->left(Shortcut::make($links, 'fa-plus')->title('CREATE NEW'));

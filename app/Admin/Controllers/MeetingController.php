@@ -223,7 +223,7 @@ class MeetingController extends AdminController
                     'Done Late' => 'Done Late',
                     'Not Attended To' => 'Not Attended To',
                 ])->default('Not Submitted');
-            $form->textarea('delegate_submission_remarks', __('Delegate submission remarks'))->rules('required');
+            $form->textarea('delegate_submission_remarks', __('Delegate submission remarks'));
             $form->select('manager_submission_status', __('Supervisor submission status'))
                 ->options([
                     'Not Submitted' => 'Not Submitted',
