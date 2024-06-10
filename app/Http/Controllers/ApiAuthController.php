@@ -12,6 +12,7 @@ use App\Models\Utils;
 use App\Traits\ApiResponser;
 use Carbon\Carbon;
 use Encore\Admin\Auth\Database\Administrator;
+use Encore\Admin\Facades\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -334,6 +335,102 @@ class ApiAuthController extends Controller
             'data' => $newTask,
             'code' => 1,
             'message' => 'Task created successfully.',
+        ]);
+    }
+
+
+    public function meetings_create(Request $val)
+    {
+        $u = auth('api')->user();
+        if ($u == null) {
+            return Utils::response([
+                'status' => 0,
+                'code' => 0,
+                'message' => "User not found.",
+            ]);
+        }
+
+        if (!(isset($val->resolutions)) || $val->resolutions == null) {
+            //return resolutions not set
+            return Utils::response([
+                'status' => 0,
+                'code' => 0,
+                'message' => "Resolutions not set"
+            ]);
+        }
+
+        $meeting = new Meeting();
+        $meeting->created_by = $u->id;
+        $meeting->company_id = $u->company_id;
+        $meeting->name = $val->gps_latitude;
+        $meeting->details = $val->details;
+        $meeting->minutes_of_meeting = $val->details;
+        $meeting->location = $val->location_text;
+        $meeting->meeting_start_time = $val->start_date;
+        $meeting->meeting_end_time = $val->end_date;
+        $meeting->meeting_end_time = $val->session_date;
+        $local_id = $val->id;
+        $files = [];
+        foreach (Image::where([
+            'parent_id' => $local_id
+        ])->get() as $key => $value) {
+            $files[] = 'images/' . $value->src;
+        }
+        $meeting->attendance_list_pictures = $files;
+
+        try {
+            $meeting->save();
+        } catch (\Throwable $th) {
+            $msg = $th->getMessage();
+            return $this->error($msg);
+        }
+
+
+        $resolutions = null;
+        try {
+            $resolutions = json_decode($val->resolutions);
+        } catch (\Throwable $th) {
+            $resolutions = null;
+        }
+
+
+        if (($resolutions != null) && is_array($resolutions)) {
+            foreach ($resolutions as $key => $res) {
+                $task = new Task();
+                $task->company_id = $u->id;
+                $task->meeting_id = $meeting->id;
+                $task->created_by = $u->id;
+                $task->project_id = 1;
+                $task->project_section_id = 1;
+                $task->project_id = 1;
+                $task->rate = 0;
+                $task->hours = 0;
+                $task->assigned_to = $res->assigned_to;
+                $manager = Administrator::find($res->assigned_to);
+                if ($manager != null) {
+                    $task->manager_id = $manager->id;
+                }
+                $task->company_id = $u->company_id;
+                $task->name = $res->name;
+                $task->task_description = $res->task_description;
+                $task->due_to_date = $res->due_to_date;
+                $task->assign_to_type = $res->assign_to_type;
+                $task->delegate_submission_status = 'Pending';
+                $task->manager_submission_status = 'Pending';
+                $task->is_submitted = 'Pending';
+                $task->delegate_submission_remarks = '';
+                $task->manager_submission_remarks = '';
+                $task->priority = 'Medium';
+                $task->save();
+            }
+        }
+
+        $meeting = Meeting::find($meeting->id);
+        return Utils::response([
+            'status' => 1,
+            'data' => $meeting,
+            'code' => 1,
+            'message' => 'Meeting created successfully.',
         ]);
     }
 

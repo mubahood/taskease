@@ -192,7 +192,7 @@ class MeetingController extends AdminController
         $form->datetime('meeting_start_time', __('Meeting Start Time'));
         $form->datetime('meeting_end_time', __('Meeting End Time'));
         $form->text('location', __('Meeting Venue'));
-        $form->textarea('details', __('Minutes of meeting'))->rules('required');
+        $form->quill('details', __('Minutes of meeting'))->rules('required');
 
         /* $form->textarea('minutes_of_meeting', __('Minutes of meeting')); */
         /*         $form->textarea('location_gps_latitude', __('Location gps latitude'));
