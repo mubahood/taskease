@@ -34,7 +34,9 @@ use App\Models\Utils;
                     <!-- Menu Toggle Button -->
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <!-- The user image in the navbar-->
-                        <img src="{{ Admin::user()->avatar }}" class="user-image" alt="User Image">
+                        <img src="{{ Admin::user()->avatar }}" class="user-image" alt="User Image"
+                            style="width: 25px;height: 25px;object-fit: cover;object-position: center;"
+                            class="img-circle">
                         <!-- hidden-xs hides the username on small devices so only the image appears. -->
                         <span class="hidden-xs">{{ Admin::user()->name }}</span>
                     </a>
