@@ -228,7 +228,7 @@ class MeetingController extends AdminController
                 ->options(Administrator::where(
                     ['company_id' =>  $u->company_id],
                 )
-                    ->pluck('name', 'id'))->rules('required');
+                    ->pluck('name', 'id'));
 
 
             $form->datetime('due_to_date', __('Deadline'))->rules('required');
