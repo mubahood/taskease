@@ -255,7 +255,7 @@
                                         class="nav-link d-inline-block px-0 pt-1 pb-2">NUDIPU</a></li>
 
                                 <li class="nav-item"><a href="https://8technologies.net" target="_blank"
-                                        class="nav-link d-inline-block px-0 pt-1 pb-2">8technologies Consultants</a></li>
+                                        class="nav-link d-inline-block px-0 pt-1 pb-2">Staff Performance (c) 2024</a></li>
                             </ul>
                             <a href="mailto:info@NUDIPU.org" class="fw-medium">info@ict4personswithdisabilities.org</a>
                         </div>
@@ -265,7 +265,7 @@
             <p class="nav d-block  text-center text-md-start pb-2 pb-lg-0 mb-0">
                 Hand-made with ❤️ by
                 <a class="nav-link d-inline-block p-0" href="https://twitter.com/8TechConsults" target="_blank"
-                    rel="noopener">8Technologies Consults</a>
+                    rel="noopener">Staff Performance (c) 2024</a>
             </p>
         </div>
     </footer>
