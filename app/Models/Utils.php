@@ -293,7 +293,7 @@ class Utils extends Model
                 $description = $task->task_description;
             }
             $details .= "<br><b>Description:</b> {$description}<br>";
-            $ev['details'] = '';
+            $ev['details'] = $details;
             $ev['start'] = Carbon::parse($event_date)->format('Y-m-d');
             $events[] = $ev;
            /*  if($x == 19){

@@ -51,7 +51,6 @@ die("as"); */
 /* foreach (Task::all() as $key => $value) {
     $value->hours = rand(1, 10);
     $value->save();
-    
 } */
 
 $u = Admin::user();
