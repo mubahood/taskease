@@ -94,6 +94,7 @@ class HomeController extends Controller
                 ]));
             });
             $row->column(6, function (Column $column) {
+
                 $column->append(Dashboard::dashboard_calender());
             });
         });

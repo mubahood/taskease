@@ -256,6 +256,7 @@ class Utils extends Model
             ->limit(1000)
             ->get();
         $events = [];
+        $x = 1;
         foreach ($tasks as $key => $task) {
             $ev['activity_id'] = $task->id;
             $event_date_time = Carbon::parse($task->due_to_date);
@@ -292,10 +293,16 @@ class Utils extends Model
                 $description = $task->task_description;
             }
             $details .= "<br><b>Description:</b> {$description}<br>";
-            $ev['details'] = $details;
+            $ev['details'] = '';
             $ev['start'] = Carbon::parse($event_date)->format('Y-m-d');
             $events[] = $ev;
+           /*  if($x == 19){
+                die(json_encode($ev));
+                break;
+            } */
+            $x++;
         }
+
         return $events;
     }
 

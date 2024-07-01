@@ -35,7 +35,7 @@ class TaskController extends AdminController
             $title = "Completed Tasks";
         } else {
             $title = "Tasks";
-        } 
+        }
         return $title;
     }
 
@@ -49,29 +49,39 @@ class TaskController extends AdminController
     {
 
         $grid = new Grid(new Task());
+
+
+        //$grid export 
+        $grid->export(function ($export) {
+            $export->filename('Tasks-' . date('Y-m-d'));
+
+            //delegate_submission_status
+            $export->originalValue(['delegate_submission_status']);
+        });
+
         $grid->filter(function ($filter) {
             $filter->disableIdFilter();
             $filter->equal('assigned_to', __('Assigned To'))->select(\App\Models\User::where('company_id', auth()->user()->company_id)->pluck('name', 'id'));
             $filter->equal('manager_id', __('Supervisor'))->select(\App\Models\User::where('company_id', auth()->user()->company_id)->pluck('name', 'id'));
             $filter->equal('project_id', __('Project'))->select(\App\Models\Project::where('company_id', auth()->user()->company_id)->pluck('name', 'id'));
-            $filter->equal('project_section_id', __('Project Section'))->select(\App\Models\ProjectSection::where('company_id', auth()->user()->company_id)->pluck('name', 'id'));
-            $filter->equal('priority', __('Priority'))->select([
+            /*             $filter->equal('project_section_id', __('Project Section'))->select(\App\Models\ProjectSection::where('company_id', auth()->user()->company_id)->pluck('name', 'id')); */
+            /*  $filter->equal('priority', __('Priority'))->select([
                 'Low' => 'Low',
                 'Medium' => 'Medium',
                 'High' => 'High',
-            ]);
+            ]); */
             $filter->equal('delegate_submission_status', __('Delegate Submission Status'))->select([
                 'Not Submitted' => 'Not Submitted',
                 'Done' => 'Done',
                 'Done Late' => 'Done Late',
                 'Not Attended To' => 'Not Attended To',
             ]);
-            $filter->equal('manager_submission_status', __('Supervisor Submission Status'))->select([
+            /*  $filter->equal('manager_submission_status', __('Supervisor Submission Status'))->select([
                 'Not Submitted' => 'Not Submitted',
                 'Done' => 'Done',
                 'Done Late' => 'Done Late',
                 'Not Attended To' => 'Not Attended To',
-            ]);
+            ]); */
             $filter->between('due_to_date', __('Due Date'))->date();
         });
         $grid->disableBatchActions();
@@ -146,7 +156,7 @@ class TaskController extends AdminController
 
 
         $grid->quickSearch('name')->placeholder('Search by name or ID');
-        $grid->disableExport();
+        //$grid->
 
         $grid->column('id', __('Id'))->sortable()->hide();
         $grid->column('due_to_date', __('Due Date'))
@@ -164,6 +174,19 @@ class TaskController extends AdminController
 
         $grid->column('name', __('Task'))->sortable();
 
+        $grid->column('task_description', __('Task Details'))
+            ->sortable();
+
+        $grid->column('project_id', __('Project'))
+            ->display(function ($project_id) {
+                $project = $this->project;
+                if ($project == null) {
+                    return "Project not found";
+                }
+                return $project->short_name;
+            })
+            ->sortable();
+
         $grid->column('assigned_to', __('Assigned To'))
             ->display(function ($assigned_to) {
                 $user = $this->assigned_to_user;
@@ -173,7 +196,8 @@ class TaskController extends AdminController
                 return $user->name;
             })
             ->sortable();
-        $grid->column('manager_id', __('Manager'))
+
+        $grid->column('manager_id', __('Supervisor'))
             ->display(function ($manager_id) {
                 $user = $this->manager_user;
                 if ($user == null) {
@@ -181,39 +205,31 @@ class TaskController extends AdminController
                 }
                 return $user->name;
             })
-            ->sortable();
-
-
-        $grid->column('delegate_submission_status', __('Delegate Submission'))
-            ->label([
-                'Not Submitted' => 'default',
-                'Done' => 'success',
-                'Not Attended To' => 'danger',
-                'Done Late' => 'warning',
-            ])->sortable();
-        $grid->column('delegate_submission_remarks', __('Delegate Remarks'))
-            ->hide();
-        $grid->column('manager_submission_status', __('Manager Submission'))
-            ->label([
-                'Not Submitted' => 'default',
-                'Done' => 'success',
-                'Not Attended To' => 'danger',
-                'Done Late' => 'warning',
-            ])->sortable();
-        $grid->column('manager_submission_remarks', __('Manager Remarks'))
-            ->sortable();
-        $grid->column('task_description', __('Task Details'))
-            ->hide();
-        $grid->column('project_id', __('Project'))
-            ->display(function ($project_id) {
-                $project = $this->project;
-                if ($project == null) {
-                    return "Project not found";
-                }
-                return $project->short_name;
-            })
             ->sortable()
             ->hide();
+
+
+        $grid->column('delegate_submission_status', __('Submission Status'))
+            ->label([
+                'Not Submitted' => 'default',
+                'Done' => 'success',
+                'Not Attended To' => 'danger',
+                'Done Late' => 'warning',
+            ])->sortable();
+        $grid->column('delegate_submission_remarks', __('Remarks'))->sortable();
+
+        $grid->column('manager_submission_status', __('Supervisor Submission'))
+            ->label([
+                'Not Submitted' => 'default',
+                'Done' => 'success',
+                'Not Attended To' => 'danger',
+                'Done Late' => 'warning',
+            ])->sortable()->hide();
+        $grid->column('manager_submission_remarks', __('Supervisor Remarks'))
+            ->sortable()
+            ->hide();
+
+
 
         $grid->column('priority', __('Priority'))
             ->sortable()->hide();
@@ -289,7 +305,7 @@ class TaskController extends AdminController
         ]);
 
         $form->text('name', __('Task title'))->rules('required');
-        $form->quill('task_description', __('Task description'));
+        $form->textarea('task_description', __('Task description'));
         /*         $form->hidden('hours', __('Hours'))->rules('required')
             ->help('Enter the number of hours you expect to spend on this task. (e.g. 1.5)')
             ->default(1); */
