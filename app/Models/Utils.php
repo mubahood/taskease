@@ -917,6 +917,7 @@ class Utils extends Model
             $company->save();
         }
         $u = Admin::user();
+
     }
 
     public static function start_session()

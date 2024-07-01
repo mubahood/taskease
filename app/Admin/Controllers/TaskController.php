@@ -378,6 +378,14 @@ class TaskController extends AdminController
                 ])->default('Not Submitted')->rules('required');
                 $form->text('manager_submission_remarks', __('Manager Remarks'));
             }
+        } else {
+            $form->radio('delegate_submission_status', 'Delegate Submission Status')->options([
+                'Not Submitted' => 'Not Submitted',
+                'Done' => 'Done',
+                'Done Late' => 'Done Late',
+                'Not Attended To' => 'Not Attended To',
+            ])->default('Not Submitted')->rules('required');
+            $form->text('delegate_submission_remarks', __('Delegate Remarks'));
         }
 
         //disable delete button
