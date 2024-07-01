@@ -18,6 +18,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 
+Route::get('mobile', function () {
+    //return url('taskease-v1.apk');
+    return url('taskease-v1.apk');
+});
 Route::get('report', function () {
 
     $id = $_GET['id'];
