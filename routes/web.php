@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 
-Route::get('mobile', function () {
+Route::get('app', function () {
     //return url('taskease-v1.apk');
     return url('taskease-v1.apk');
 });
