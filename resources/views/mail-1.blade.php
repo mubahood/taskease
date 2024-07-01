@@ -1,6 +1,6 @@
 <?php
 if (!isset($body)) {
-    $body = 'Hello Muhindo Mubarka, Use the following to reset your Staff Performance password.';
+    $body = 'Hello Muhindo Mubarka, Use the following to reset your TaskEase password.';
 }
 ?>
 <!DOCTYPE html>
@@ -63,14 +63,14 @@ if (!isset($body)) {
     <div class="email-container" style="background-color: #e7f6ff; background: #e7f6ff;">
         <!-- Header -->
         <div class="footer" style="border-bottom: 2px solid #056098;">
-            <h2 style="color: #056098;">Staff Performance</h2>
+            <h2 style="color: #056098;">TaskEase</h2>
         </div>
         <div class=""
             style="padding-top: 10px; padding-bottom: 10px; border-bottom: 2px solid #056098;
         text-align: center;
         ">
             <a class="text-dark small " style="color: #424649" href="https://8technologies.net/">8Technologies</a> •
-            <a class="text-dark small " style="color: #424649" href="http://Staff Performance.net/">Staff Performance</a> •
+            <a class="text-dark small " style="color: #424649" href="http://TaskEase.net/">TaskEase</a> •
             <a class="text-dark small " style="color: #424649" href="https://8technologies.net/services/">Services</a> •
             <a class="text-dark small " style="color: #424649" href="https://8technologies.net/projects/">Our Work</a> •
             <a class="text-dark small " style="color: #424649" href="https://8technologies.net/brief-profile/">About
