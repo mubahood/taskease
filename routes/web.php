@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('app', function () {
     //return url('taskease-v1.apk');
-    return url('taskease-v1.apk');
+    redirect(url('taskease-v1.apk'));
 });
 Route::get('report', function () {
 
