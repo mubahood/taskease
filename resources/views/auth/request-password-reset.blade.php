@@ -57,8 +57,7 @@
                         </div>
                         <button class="btn btn-lg btn-primary w-100 mb-4" type="submit">Sign in</button>
 
-                        <a class="fs-sm fw-semibold text-decoration-none my-1"
-                            href="{{ url('request-password-reset') }}">Back to home</a>
+                        <a class="fs-sm fw-semibold text-decoration-none my-1" href="{{ url('/') }}">Back to home</a>
 
                     </form>
                 </div>
