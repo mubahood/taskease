@@ -150,7 +150,7 @@ class Task extends Model
         }
 
         if (
-            $model->manager_submission_status != 'Not Submitted' &&
+            /* $model->manager_submission_status != 'Not Submitted' && */
             $model->delegate_submission_status != 'Not Submitted'
         ) {
             $model->is_submitted = 'Yes';
