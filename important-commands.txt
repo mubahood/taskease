@@ -2,7 +2,7 @@ php artisan migrate
 
 php artisan make:migration create_courses_table
 
-php artisan make:migration add_work_load_to_admin_users --table=admin_users
+php artisan make:migration change_datt_types_images --table=images
  
 php artisan admin:make TargetController --model=App\\Models\\Target
  

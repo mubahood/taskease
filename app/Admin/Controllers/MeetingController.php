@@ -6,6 +6,7 @@ use App\Models\Meeting;
 use App\Models\Utils;
 use Encore\Admin\Auth\Database\Administrator;
 use Encore\Admin\Controllers\AdminController;
+use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
@@ -52,6 +53,14 @@ class MeetingController extends AdminController
             ->display(function ($meeting_start_time) {
                 return Utils::my_date_time_1($meeting_start_time);
             })->sortable();
+
+        //resolutions
+        $grid->column('tasks', __('Resolutions'))
+            ->display(function ($tasks) {
+                $count = count($tasks);
+                return "<span class='label label-success'>$count</span>";
+            });
+
         $grid->column('attendance_list_pictures', __('Attachments'))
             ->display(function ($attendance_list_pictures) {
                 if (!is_array($attendance_list_pictures)) {
@@ -192,7 +201,7 @@ class MeetingController extends AdminController
         $form->datetime('meeting_start_time', __('Meeting Start Time'));
         $form->datetime('meeting_end_time', __('Meeting End Time'));
         $form->text('location', __('Meeting Venue'));
-        $form->textarea('details', __('Minutes of meeting'))->rules('required');
+        $form->quill('details', __('Minutes of meeting'))->rules('required');
 
         /* $form->textarea('minutes_of_meeting', __('Minutes of meeting')); */
         /*         $form->textarea('location_gps_latitude', __('Location gps latitude'));
@@ -208,35 +217,20 @@ class MeetingController extends AdminController
         $form->hasMany('tasks', 'Resolutions', function (Form\NestedForm $form) {
             $u = auth()->user();
             $form->text('name', __('Resolution title'))->rules('required');
-            $form->text('task_description', __('Resolution Description'))->rules('required');
+            $form->text('task_description', __('Resolution Description'));
+            $u = Admin::user();
             $form->select('assigned_to', __('Assigned to'))
-                ->options(Administrator::where([])
+                ->options(Administrator::where(
+                    ['company_id' =>  $u->company_id],
+                )
                     ->pluck('name', 'id'))->rules('required');
             $form->select('manager_id', __('Supervised by'))
-                ->options(Administrator::where([])
-                    ->pluck('name', 'id'))->rules('required');
-
-            $form->select('delegate_submission_status', __('Delegate submission status'))
-                ->options([
-                    'Not Submitted' => 'Not Submitted',
-                    'Done' => 'Done',
-                    'Done Late' => 'Done Late',
-                    'Not Attended To' => 'Not Attended To',
-                ])->default('Not Submitted');
-            $form->textarea('delegate_submission_remarks', __('Delegate submission remarks'))->rules('required');
-            $form->select('manager_submission_status', __('Supervisor submission status'))
-                ->options([
-                    'Not Submitted' => 'Not Submitted',
-                    'Done' => 'Done',
-                    'Done Late' => 'Done Late',
-                    'Not Attended To' => 'Not Attended To',
-                ])->default('Not Submitted');
+                ->options(Administrator::where(
+                    ['company_id' =>  $u->company_id],
+                )
+                    ->pluck('name', 'id'));
 
 
-            $form->textarea('manager_submission_remarks', __('Manager submission remarks'));
-            $form->hidden('project_id', __('Company id'))->default(1);
-            $form->hidden('project_section_id', __('Company id'))->default(1);
-            $form->hidden('priority', __('Priority'))->default('Medium');
             $form->datetime('due_to_date', __('Deadline'))->rules('required');
             $form->hidden('company_id', __('Company id'))->default($u->company_id);
             $form->hidden('created_by', __('Created by'))->default($u->id);
@@ -244,25 +238,7 @@ class MeetingController extends AdminController
 
         /*		
 
-Full texts
-id	
-created_at	
-updated_at	
-company_id	
-project_id	
-project_section_id	
-assigned_to	
-created_by	
-manager_id	
-name	
-task_description	
-due_to_date	
-delegate_submission_status	
-delegate_submission_remarks	
-manager_submission_status	
-manager_submission_remarks	
-priority	
-meeting_id	
+
 
     */
 

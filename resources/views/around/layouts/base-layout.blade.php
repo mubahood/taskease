@@ -10,10 +10,10 @@
         content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover">
 
     <!-- SEO meta tags -->
-    <title>TaskEase - HR Management System</title>
-    <meta name="description" content="Humana Resouse Management System - 8technologies consults">
+    <title>Staff Performance - HR Management System</title>
+    <meta name="description" content="Humana Resouse Management System - Staff Performance (c) 2024">
     <meta name="keywords" content="SAAS, HR Systme, 8tech">
-    <meta name="author" content="8technologies Consults">
+    <meta name="author" content="Staff Performance (c) 2024">
 
     <!-- Webmanifest + Favicon / App icons -->
     <link rel="manifest" href="/manifest.json">

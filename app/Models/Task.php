@@ -103,7 +103,7 @@ class Task extends Model
                 }
             }
 
-            return Task::prepare_saving($model);
+            $model = Task::prepare_saving($model);
         });
 
 
@@ -130,7 +130,7 @@ class Task extends Model
             } else if ($model->manager_submission_status == 'Not Attended To') {
                 $model->rate = -6;
             }
-            return Task::prepare_saving($model);
+            $model = Task::prepare_saving($model);
         });
     }
 

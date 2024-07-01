@@ -8,7 +8,7 @@ use App\Models\Utils;
     </div>
 </div>
 
-<div class="row">
+{{-- <div class="row">
     <div class="col-12">
         <div class="card">
             <div class="card-body p-5 p-md-4">
@@ -21,7 +21,7 @@ use App\Models\Utils;
             </div>
         </div>
     </div>
-</div>
+</div> --}}
 
 
 <script>

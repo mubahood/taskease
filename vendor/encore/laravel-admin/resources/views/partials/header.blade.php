@@ -8,9 +8,9 @@ use App\Models\Utils;
     <!-- Logo -->
     <a href="{{ admin_url('/') }}" class="logo">
         <!-- mini logo for sidebar mini 50x50 pixels -->
-        <span class="logo-mini">{!! 'TaskEase' !!}</span>
+        <span class="logo-mini">{!! 'Staff Performance' !!}</span>
         <!-- logo for regular state and mobile devices -->
-        <span class="logo-lg">{!! 'TaskEase' !!}</span>
+        <span class="logo-lg">{!! 'Staff Performance' !!}</span>
     </a>
 
     <!-- Header Navbar -->
@@ -34,7 +34,9 @@ use App\Models\Utils;
                     <!-- Menu Toggle Button -->
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <!-- The user image in the navbar-->
-                        <img src="{{ Admin::user()->avatar }}" class="user-image" alt="User Image">
+                        <img src="{{ Admin::user()->avatar }}" class="user-image" alt="User Image"
+                            style="width: 25px;height: 25px;object-fit: cover;object-position: center;"
+                            class="img-circle">
                         <!-- hidden-xs hides the username on small devices so only the image appears. -->
                         <span class="hidden-xs">{{ Admin::user()->name }}</span>
                     </a>

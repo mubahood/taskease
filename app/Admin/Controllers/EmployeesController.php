@@ -236,8 +236,10 @@ class EmployeesController extends AdminController
                 $form->text('bank_account_number');
             });
         $form->divider('USER ACCESS CONTROL');
-        $roleModel = AdminRole::where(['company_id' => $u->company_id])->get()->pluck('name', 'id');
+        //$roleModel = AdminRole::where(['company_id' => $u->company_id])->get()->pluck('name', 'id');
+        $roleModel = [];
         $roleModel[2] = "System Administrator";
+        $roleModel[3] = "Employee";
         $form->multipleSelect('roles', trans('admin.roles'))
             ->attribute([
                 'autocomplete' => 'off'
