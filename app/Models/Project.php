@@ -10,6 +10,19 @@ class Project extends Model
 {
     use HasFactory;
 
+    public static function get_array($where = [])
+    {
+        $sections = Project::where($where)
+        ->orderBy('short_name', 'asc')
+        ->get();
+        $array = [];
+        foreach ($sections as $section) {
+            $array[$section->id] = $section->short_name;
+        }
+        return $array;
+    }
+
+
     //boot
     protected static function boot()
     {

@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Models\Project;
 use App\Models\ProjectSection;
 use App\Models\Task;
 use App\Models\Utils;
@@ -300,7 +301,7 @@ class TaskController extends AdminController
         $form = new Form(new Task());
         $u = Auth::user();
         $form->hidden('company_id', __('Company'))->default($u->company_id);
-        $sections  = ProjectSection::get_array([
+        $sections  = Project::get_array([
             'company_id' => $u->company_id,
         ]);
 
@@ -320,8 +321,9 @@ class TaskController extends AdminController
             'High' => 'High',
         ])->default('Medium')->rules('required'); */
 
-        /*    $form->select('project_section_id', __('Due Project'))
-            ->options($sections); */
+
+        $form->select('project_id', __('Due Project'))
+            ->options($sections)->rules('required')->required();
         $form->radio('assign_to_type', 'Assign To?')->options([
             'to_me' => 'Assign To Me',
             'to_other' => 'Assign To Other',
