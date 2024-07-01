@@ -59,14 +59,23 @@ class Task extends Model
             ) {
 
             } */
-            $model->manager_submission_status = 'Not Submitted';
-            $model->delegate_submission_status = 'Not Submitted';
+          /*   $model->manager_submission_status = 'Not Submitted';
+            $model->delegate_submission_status = 'Not Submitted'; */
             /*             if (
                 $model->delegate_submission_status == null ||
                 strlen($model->delegate_submission_status) < 2
             ) {
 
             } */
+
+            if($model->manager_submission_status == null || strlen($model->manager_submission_status) < 3){
+                $model->manager_submission_status = 'Not Submitted';
+            }
+            if($model->delegate_submission_status == null || strlen($model->delegate_submission_status) < 3){
+                $model->delegate_submission_status = 'Not Submitted';
+            }
+
+
 
             $model->rate = 0;
             if ($model->manager_submission_status == 'Not Submitted') {
