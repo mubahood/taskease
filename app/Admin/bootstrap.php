@@ -28,6 +28,26 @@ use App\Models\User;
 use Carbon\Carbon;
 use Dflydev\DotAccessData\Util;
 
+
+//date format of Monday - 2021-09-06 
+/*
+to send an email.
+$date = date('l - Y-m-d', strtotime(now()));
+$data['email'] = "amokolpriscilla@gmail.com";
+$data['name'] = 'Muhindo JOhn';
+$data['subject'] = "New test to you - $date";
+$data['body'] = 'Some message here to be sent to the user as a test message to see if the mail is working.';
+$data['view'] = 'mail';
+$data['data'] = $data['body'];
+try {
+    Utils::mail_sender($data);
+    die("siccess");
+} catch (\Throwable $th) {
+    die("error " . $th->getMessage());
+}
+
+die("as"); */
+
 /* foreach (Task::all() as $key => $value) {
     $value->hours = rand(1, 10);
     $value->save();
