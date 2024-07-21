@@ -70,7 +70,8 @@ if (!isset($body)) {
         text-align: center;
         ">
             <a class="text-dark small " style="color: #424649" href="https://8technologies.net/">8Technologies</a> •
-            <a class="text-dark small " style="color: #424649" href="http://Staff Performance.net/">Staff Performance</a> •
+            <a class="text-dark small " style="color: #424649" href="http://Staff Performance.net/">Staff
+                Performance</a> •
             <a class="text-dark small " style="color: #424649" href="https://8technologies.net/services/">Services</a> •
             <a class="text-dark small " style="color: #424649" href="https://8technologies.net/projects/">Our Work</a> •
             <a class="text-dark small " style="color: #424649" href="https://8technologies.net/brief-profile/">About
@@ -86,7 +87,7 @@ if (!isset($body)) {
             {!! $body !!}</div>
         <a href="https://8technologies.net">
             <div class="header small">
-                <h2>Eight Tech Consults</h2>
+                <h2>{{ env('APP_NAME') }}</h2>
                 <p class="small">PEOPLE • INNOVATION • TECHNOLOGY • SERVICES</p>
             </div>
         </a>

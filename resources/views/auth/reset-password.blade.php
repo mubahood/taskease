@@ -6,12 +6,13 @@
         <div class="d-lg-flex position-relative h-100">
 
             <!-- Home button -->
-            <a class=" rounded-circle position-absolute top-0 end-0 p-0 mt-3 me-3 mt-sm-4 me-sm-4"
-                href="javascript:;" data-bs-toggle="tooltip" data-bs-placement="left" title="Powered By Staff Performance (c) 2024"
-                aria-label="Powered By Staff Performance (c) 2024" style="width: 70px; border-radius: 50%; " >
+            <a class=" rounded-circle position-absolute top-0 end-0 p-0 mt-3 me-3 mt-sm-4 me-sm-4" href="javascript:;"
+                data-bs-toggle="tooltip" data-bs-placement="left" title="Powered By Staff Performance (c) 2024"
+                aria-label="Powered By Staff Performance (c) 2024" style="width: 70px; border-radius: 50%; ">
 
-                <img  class="text-center img img-fluid rounded-circle" style="border-radius: 50%;"  src="{{ url('assets/img/logo.png') }}" alt="logo">
-            
+                <img class="text-center img img-fluid rounded-circle" style="border-radius: 50%;"
+                    src="{{ url('assets/img/logo.png') }}" alt="logo">
+
             </a>
 
             <!-- Sign in form -->
@@ -20,7 +21,7 @@
 
 
                     <h1 class="text-center mb-2 mb-md-5">{{ env('APP_NAME') }}</h1>
-                    
+
                     <p class="h2 text-primary fs-5 fw-700 pt-2 pt-md-4">Password Reset</p>
                     {{--                     <p class="pb-3 mb-3 mb-lg-4">Don't have an account yet?&nbsp;&nbsp;<a
                             href="account-signup.html">Register here!</a></p> --}}
@@ -31,8 +32,8 @@
                             <div class="position-relative">
                                 <i class="ai-mail fs-lg position-absolute top-50 start-0 translate-middle-y ms-3"></i>
                                 <input class="form-control form-control-lg ps-5 {!! !$errors->has('username') ?: 'border-danger' !!} " type="email"
-                                    name="username" readonly id="username" value="{{ $u->email }}" placeholder="Email address"
-                                    required>
+                                    name="username" readonly id="username" value="{{ $u->email }}"
+                                    placeholder="Email address" required>
 
                                 @if ($errors->has('username'))
                                     @foreach ($errors->get('username') as $message)
@@ -93,7 +94,7 @@
                             @endif
                         </div>
 
- 
+
                         <button class="btn btn-lg btn-primary w-100 mb-4" type="submit">SUBMIT</button>
 
 
@@ -103,8 +104,8 @@
                 <!-- Copyright -->
                 <p class="nav w-100 fs-sm pt-5 mt-auto mb-5" style="max-width: 526px;"><span
                         class="text-body-secondary">&copy; All rights reserved. Made by</span><a
-                        class="nav-link d-inline-block p-0 ms-1" href="{{ 'https://8technologies.net' }}"
-                        target="_blank" rel="noopener">Eight Tech Consults</a></p>
+                        class="nav-link d-inline-block p-0 ms-1" href="{{ 'https://8technologies.net' }}" target="_blank"
+                        rel="noopener">{{ env('APP_NAME') }}</a></p>
             </div>
 
 

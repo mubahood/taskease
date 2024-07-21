@@ -259,7 +259,9 @@ class Utils extends Model
         foreach ($tasks as $key => $task) {
             $ev['activity_id'] = $task->id;
             $event_date_time = Carbon::parse($task->due_to_date);
+
             $ev['title'] = self::short($task->name, 20);
+            $ev['title'] = str_replace("'", '', $ev['title']);
             $event_date = $event_date_time->format('Y-m-d');
             $event_time = $event_date_time->format('h:m a');
             $ev['name'] = $ev['title'];
@@ -281,9 +283,11 @@ class Utils extends Model
             }
 
             $details = $task->task_description . '<br><br>';
+            $details = str_replace("'", '', $details);
 
             $details .= "<bDue Date:</b> {$event_date}<br>";
             $details .= "<b>Is task submitted?: </b> {$task->is_submitted}<br>";
+
             //limit description to 100 characters
 
             if (strlen($task->task_description) > 100) {
@@ -291,8 +295,10 @@ class Utils extends Model
             } else {
                 $description = $task->task_description;
             }
+
             $details .= "<br><b>Description:</b> {$description}<br>";
-            $ev['details'] = $details;
+
+            $ev['details'] = str_replace("'", '', $details);
             $ev['start'] = Carbon::parse($event_date)->format('Y-m-d');
             $events[] = $ev;
         }
