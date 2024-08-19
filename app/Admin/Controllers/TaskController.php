@@ -313,6 +313,7 @@ class TaskController extends AdminController
 
         $form->date('due_to_date', __('Due to date'))
             ->rules('required')
+            ->default(date('Y-m-d'))
             ->help('Enter the date you expect to complete this task. (e.g. ' . date('Y-m-d') . ')');
 
         /*     $form->radio('priority', __('Priority'))->options([
