@@ -186,9 +186,11 @@ class Utils extends Model
     {
         try {
             Mail::send(
-                'mails/mail-1',
+                'mail',
                 [
-                    'body' => $data['body'],
+                    'body' => view('mail-1', [
+                        'body' => $data['body'],
+                    ]),
                     'title' => $data['subject']
                 ],
                 function ($m) use ($data) {
